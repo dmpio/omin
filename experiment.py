@@ -1,4 +1,5 @@
 """
+experiment.py contains a number of functions that are designed to normalize proteomics data to an input fraction.
 Author: James Draper
 Email: james.drape@duke.edu
 Date: October 12, 2016

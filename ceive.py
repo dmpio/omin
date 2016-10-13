@@ -1,25 +1,46 @@
 import omin
 import pandas as pd
 
-
 def setDiff(list_A, list_B):
     """Takes difference of two lists with respect to list_A. Simillar to `list(set(list_A)-set(list_B))` however
     duplicates are not deleted and order is preserved.
 
-    Args:
-        list_A (list): A list of elements.
-        list_B (list): A list of elements.
-    Return:
+    Parameters
+    ----------
+    list_A : list
+    list_B : list
+
+    Returns
+    -------
+    the_diff :  list
+        List of the difference between sets.
     """
-    return [i for i in list_A if i not in set(list_B)]
+    the_diff = [i for i in list_A if i not in set(list_B)]
+
+    return the_diff
 
 class CompOb:
-    """
+    """Make a comparison object that mirrors the output of a Venn diagram.
+    Attributes
+    ----------
+    justA : DataFrame
+        The elements exclusive to list_A.
+    justB : DataFrame
+        The elements exclusive to list_B.
+    AandB : DataFrame
+        The elements found in list_A and list_B.
     """
     def __init__(self,list_A,list_B,how=None,modification_labels = ["Acetyl","Phospho"]):
         """
+        Parameters
+        ----------
+        list_A : list
+        list_B : list
+        how : str
+            Can be compared by any column as a string. If no string is specified then the index is used.
+        modification_labels : list
+            If none is specified then it defaults to  ["Acetyl", "Phospho"]
         """
-        #If how is not specified then the index is used
         if how == None:
             self.justA = list_A.ix[setDiff(list_A.index,list_B.index)]
             self.justB = list_B.ix[setDiff(list_B.index,list_A.index)]
@@ -30,64 +51,54 @@ class CompOb:
             combo = pd.concat([list_A,list_B],keys=modification_labels)
             self.AandB = combo.ix[combo[how].isin(set(list_A[how])&set(list_B[how]))]
 
-
-
-
-# def aboveCut(trunch_object, cond):
-#     """Selects p-values above a given cutoff in a given trunch_object and returns a DataFrame of p-values and log fold
-#     changes.
-#
-#     Parameters
-#     ----------
-#     trunch_object:
-#
-#     cond:
-#
-#     Returns
-#     -------
-#
-#     """
-#     pv = omin.sep(trunch_object.pval, cond).ix[:, 0].sort_values()
-#     pv = pv[pv<.05]
-#     lfc = omin.sep(trunch_object.lfc,cond).ix[pv.index]
-#
-#     return pd.concat([pv,lfc],axis=1)
-
 def aboveCut(trunch_object,cond,pval_kind="pval",lfc_kind="lfc",cut=.05):
     """Selects p-values above a given cutoff in a given trunch_object and returns a DataFrame of p-values and log fold
     changes.
 
     Parameters
     ----------
-    trunch_object:
-
-    cond:
+    trunch_object : (:obj)
+    cond : str
+    pval_kind : str
+        If none is specified it defaults to "pval"
+    lfc_kind : str
+        If none is specified it defaults to "lfc"
+    cut : float
+        If none is specified it defaults to .05
 
     Returns
     -------
-
+    above_cut : DataFrame
+        Contains p-values and log fold change columns.
     """
     pv = omin.sep(trunch_object.__dict__[pval_kind], cond).ix[:, 0].sort_values()
     pv = pv[pv<cut]
     lfc = omin.sep(trunch_object.__dict__[lfc_kind],cond).ix[pv.index]
-
-    return pd.concat([pv,lfc],axis=1)
-
+    above_cut = pd.concat([pv,lfc],axis=1)
+    return above_cut
 
 def allComp(trunch_object, modification_object, cond,pval_kind="pval",lfc_kind="lfc",cut=.05):
     """
-
-    TODO: Include modification columns
+    Notes
+    -----
+        TODO: Include modification columns
 
     Parameters
     ----------
-    trunch_object
-    modification_object
-    cond
+    trunch_object : (:obj)
+    modification_object : (:obj)
+    cond : str
+    pval_kind : str
+        If none is specified it defaults to "pval"
+    lfc_kind : str
+        If none is specified it defaults to "lfc"
+    cut : float
+        If none is specified it defaults to .05
 
     Returns
     -------
-
+    compound : DataFrame
+    
     """
     # Grab the P-values and LFCs
     pv_lfc = omin.aboveCut(modification_object, cond, pval_kind,lfc_kind,cut)

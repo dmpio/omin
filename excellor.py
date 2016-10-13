@@ -4,13 +4,6 @@ import pandas as pd
 import string
 from omin.norm import *
 
-# def excellor(koabun, wtabun):
-#     abun = pd.concat([koabun,wtabun],axis=1)
-#     logabun = pd.concat([logger(koabun).com,logger(wtabun).com],axis=1)
-#     logoave = pd.concat([logdiv(logger(koabun)),logdiv(logger(wtabun))],axis=1)
-#     logopool = pd.concat([overPooler(koabun),overPooler(wtabun)],axis=1)
-#     return pd.concat([abun,logabun,logabun,logoave,logopool],axis=1)
-#
 def excellor(compob, venn_list, parent_file, file_name):
     """
 
@@ -44,11 +37,10 @@ def excellor(compob, venn_list, parent_file, file_name):
     writer.save()
     print("Your file has been saved:", parent_file, "/", file_name)
 
-
 def xLc(let):
     """
     xLc() short for Excel Columnizer
-    
+
     Converts column letter labels from excel into a number that can be used as dataframe index.
     e.g.;
     xLc("A") returns 0, xLc("BA") returns 51
@@ -69,12 +61,10 @@ def cLx(i):
         return alpha[isel]+alpha[(i-1)%25]
     else:
         return alpha[i]
-    
-#cLx(25)+":"+cLx(89)
 
 def rgb2hex(rgb_tuple):
     """
-    Takes a tuple of RGB values e.g. (253,253,245) and returns a 
+    Takes a tuple of RGB values e.g. (253,253,245) and returns a
     hexidecimal value for that color.
     """
     hexcolor = '#%02x%02x%02x' % rgb_tuple

@@ -3,19 +3,20 @@ import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind
 
-
-# def sep(d,s):
-#     """
-#     Takes a pandas DataFrame(d) and a string(s) and returns a new DataFrame
-#     made of columns from d that contain that the string s.
-#     """
-#     dataframe = d[d.columns[d.columns.str.contains(s, case=False)]].copy()
-#     return dataframe
-
 def sep(dataframe_in, search_term):
-    """
-    Takes a pandas DataFrame(d) and a string(s) and returns a new DataFrame
-    made of columns from d that contain that the string s.
+    """Takes DataFrame and search_term and returns a new DataFrame that contains columns that contain that search_term.
+
+    Parameters
+    ----------
+    dataframe_in : DataFrame
+    search_term : str
+        What kind of columns do you want to find.
+
+    Returns
+    -------
+    dataframe_out : DataFrame
+        A DataFrame that with columns contain just search_term.
+
     """
     dataframe_out = None
     if dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)].any():
@@ -24,10 +25,12 @@ def sep(dataframe_in, search_term):
         print("The DataFrame has no columns that contain:", search_term)
     return dataframe_out
 
-def modSel(d, mod1, mod2):
-    dmod1 = d[d.Modifications.str.contains(mod1)]
-    dmod2 = d[d.Modifications.str.contains(mod2)]
-    dmod12 = d[d.Modifications.str.contains(mod1) ^ d.Modifications.str.contains(mod2, case=False)]
+def modSel(dataframe_in, mod1, mod2):
+    """
+    """
+    dmod1 = dataframe_in[dataframe_in.Modifications.str.contains(mod1)]
+    dmod2 = dataframe_in[dataframe_in.Modifications.str.contains(mod2)]
+    dmod12 = dataframe_in[dataframe_in.Modifications.str.contains(mod1) ^ dataframe_in.Modifications.str.contains(mod2, case=False)]
     return dmod12, dmod1, dmod2
 
 
@@ -75,7 +78,7 @@ def logger(d):
 def logdiv(lso):
     """
     Takes: lso = logspace object
-    Returns: dout = DataFrame of log2-AVE 
+    Returns: dout = DataFrame of log2-AVE
     """
     dout = lso.log.as_matrix() - lso.ave.as_matrix()
     dout = pd.DataFrame(dout, index=lso.log.index)
@@ -112,7 +115,7 @@ def logFC(d, num, dem):
     """
     Takes:
     d = DataFrame
-    num = treatment 
+    num = treatment
     """
     dout = treatAve(d, num).as_matrix() - treatAve(d, dem).as_matrix()
     dout = pd.DataFrame(dout,

@@ -3,11 +3,29 @@ import pandas as pd
 import omin
 
 class Modgeno:
-    """
-    Separates each group of modfied peptides into genotypes namely wild type
-    (wt) and knockout(ko).
+    """Separates each group of modfied peptides into genotypes namely wild type (wt) and knockout(ko).
+    
+    Attributes
+    ----------
+    wt : DataFrame
+    ko : DataFrame
+    lfc : DataFrame
+    pval : DataFrame
+    epval_ko : DataFrame
+    elfc_ko : DataFrame
+    epval_wt : DataFrame
+    elfc_wt : DataFrame
+    
     """
     def __init__(self,wt,ko,condlist,control):
+        """
+        Parameters
+        ----------
+        wt : DataFrame
+        ko : DataFrame
+        condlist : list
+        control : str
+        """
         testlist = condlist.copy()
         testlist.remove(control)
         self.wt = wt

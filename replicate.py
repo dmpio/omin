@@ -4,7 +4,7 @@ import omin
 
 class Modgeno:
     """Separates each group of modfied peptides into genotypes namely wild type (wt) and knockout(ko).
-    
+
     Attributes
     ----------
     wt : DataFrame
@@ -15,7 +15,7 @@ class Modgeno:
     elfc_ko : DataFrame
     epval_wt : DataFrame
     elfc_wt : DataFrame
-    
+
     """
     def __init__(self,wt,ko,condlist,control):
         """
@@ -38,14 +38,27 @@ class Modgeno:
         self.elfc_wt = pd.concat([omin.logFC(omin.overPooler(self.wt),i,control) for i in testlist],axis=1)
 
 class Nonmodgeno:
+    """
+    Parameters
+    ----------
+    wt : DataFrame
+    ko : DataFrame
+    """
     def __init__(self,wt,ko):
         self.wt = wt
         self.ko = ko
-    
+
 class Geno:
-    """
-    Separates each group of modfied peptides into genotypes namely wild type
-    (wt) and knockout(ko).
+    """Separates each group of modfied peptides into genotypes namely wild type (wt) and knockout(ko).
+
+    Attributes
+    ----------
+    ko : DataFrame
+    wt : DataFrame
+    wtpho : DataFrame
+    wtace : DataFrame
+    kopho : DataFrame
+    koace : DataFrame
     """
     def __init__(self,abun,condlist,control,mitopep=None,modified=True):
         if modified == True:
@@ -62,7 +75,7 @@ class Geno:
             kopho,koace = omin.sepCon(self.ko,"Phospho")
             self.ace = Nonmodgeno(wtace,koace)
             self.pho = Nonmodgeno(wtpho,kopho)
-            
+
 class Rep:
     def __init__(self,abun,condlist,control,mitopep=None,modified=True):
         if modified == True:
@@ -73,7 +86,7 @@ class Rep:
             rep1,rep2 = omin.sepCon(abun,"1..Replicate")
             self.rep1 = Geno(rep1,condlist,control,modified)
             self.rep2 = Geno(rep2,condlist,control,modified)
-        
+
 class Replicate:
     def __init__(self,pep,prot):
         self.pep = pep
@@ -98,7 +111,7 @@ class Replicate:
         nonmod = pep[~phoacemod].copy()
         self.modpepabun = omin.sep(mod,"Abundance:")
         self.nonmodpepabun = omin.sep(nonmod,"Abundance:")
-        
+
     def diffGeno(self,condlist,control):
         self.mod = Rep(self.modpepabun,condlist,control,self.mitopep)
         self.nonmod = Rep(self.nonmodpepabun,condlist,control,modified=False)

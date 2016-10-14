@@ -3,4 +3,4 @@
 
  Welcome, to the vangard of bleeding edge of most new revolution in proteomics analysis.
 
-![hold on to yr buttz](https://media.giphy.com/media/OCu7zWojqFA1W/giphy.gif)
+![logo]](https://github.com/dmpio/omin/images/logo.png)

@@ -5,11 +5,32 @@ import matplotlib
 from matplotlib import pyplot as plt
 
 class modgeno:
-    """
-    Separates each group of modfied peptides into genotypes namely wild type
-    (wt) and knockout(ko).
+    """Separates each group of modfied peptides into genotypes namely wild type (wt) and knockout(ko).
+
+    Attributes
+    ----------
+    wt : DataFrame
+    ko : DataFrame
+    lfc : DataFrame
+    pval : DataFrame
+    epval_ko : DataFrame
+    elfc_ko : DataFrame
+    epval_wt : DataFrame
+    elfc_wt : DataFrame
+
     """
     def __init__(self,wt,ko,condlist,control):
+        """
+        Parameters
+        ----------
+        wt : DataFrame
+        ko : DataFrame
+        condlist : list
+            List of conditions.
+        control : str
+            A the control group amoung the condition list.
+
+        """
         testlist = condlist.copy()
         testlist.remove(control)
         self.wt = wt
@@ -22,16 +43,36 @@ class modgeno:
         self.elfc_wt = pd.concat([omin.logFC(omin.overPooler(self.wt),i,control) for i in testlist],axis=1)
 
 class Trunch:
-    """
-    Takes peptide file DataFrame and protein file DataFrame
+    """Takes peptide file DataFrame and protein file DataFrame.
+
+    Attributes
+    ----------
+    peptides : DataFrame
+    proteins : DataFrame
+    pepace : DataFrame
+    peppho : DataFrame
+    pepace : DataFrame
+    mpa : DataFrame
+    mitoprot : DataFrame
+    mitopep : DataFrame
+    bdex : DataFrame
+    wdex : DataFrame
+    allpepabun : DataFrame
+    modpepabun : DataFrame
+    ko : DataFrame
+    wt : DataFrame
     """
     def __init__(self,pep,prot):
         """
-        Feed me your peptide and protein files.
-        NEED TO INCLUDE:
-        - Handling for replicates
-        - A way for the user to select the conditions and control from 
-        abundance columns.
+        Notes
+        -----
+            Need handling for replicates and way for user to select the conditions and control from abundance columns.
+
+        Parameters
+        ----------
+        pep : DataFrame
+        prot : DataFrame
+
         """
         self.peptides = pep
         self.proteins = prot
@@ -50,15 +91,20 @@ class Trunch:
         self.mitopep.index = self.mpa.index
         self.bdex = self.mitopep[self.mitopep.MitoCarta2_List==1.0]
         self.wdex = self.mitopep[self.mitopep.MitoCarta2_List!=1.0]
-        #sepate all peptide abundance columns 
+        #sepate all peptide abundance columns
         self.allpepabun = omin.sep(pep,"Abundance:")
         #from all peptide abundance columns separate all modified proteins
         self.modpepabun = self.allpepabun.iloc[self.pepacepho.index].copy()
         self.ko,self.wt = omin.sepCon(self.modpepabun,"KO")#FIXME: KO cannot be hardcoded
-        
+
     def diffGeno(self,condlist,control):
-        """
-        Separate modification columns
+        """Separate modification columns
+
+        Parameters
+        ----------
+        condlist : list
+        control : str
+        
         """
         wtpho,wtace = omin.sepCon(self.wt,"Phospho")
         kopho,koace = omin.sepCon(self.ko,"Phospho")

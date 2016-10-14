@@ -1,5 +1,4 @@
 # This code has been adapted from Bonferioni Calculator v1.1.py here is the original documentation:
-
     #Source code for “Bonferroni Calculator”
     #program requires python 3.2 or higher, available for free at http://www.python.org/getit/releases/3.2/
     #Contact Dr. Naugler at:
@@ -7,7 +6,6 @@
     #14, 3535 Research Road NW
     #Calgary AB Canada T2L 2K8
     #Ph: 403-770-3756; Email: christopher.naugler@cls.ab.ca
-
     #NOTE Version 1.1, released March 2013, contains an important fix for the interpretation of Bonferroni-Holm and Benjamini-Hochberg calculations
     #Specifically, in version 1.1, when Benjamini-Hochberg calculations are performed in the rank-ordered list of P-values AFTER the first significant
     #P-value has been declared, any subsequent P-values which calculate to >0.05 are defaulted to equal the largest statistically significant adjusted P-value
@@ -24,8 +22,6 @@
     #
     #Please update to this latest version
     #Information about future updates can be found at: https://sites.google.com/site/christophernaugler/open-source-software-for-performing-bonferroni-and-related-corrections
-
-
     #The authors do not assume any liability for errors resulting from the use of this software.
 
 class Comparison:

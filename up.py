@@ -31,7 +31,7 @@ def fasta2Seq(fasta):
 
     Returns
     -------
-
+    one_string : str
     """
     one_string = "".join(fasta[1:])
     return one_string
@@ -41,7 +41,7 @@ def seqNum(seq):
 
     Notes
     -----
-        Review this functions useage and rewrite annotation. 
+        Review this functions useage and rewrite annotation.
 
     Parameters
     ----------

@@ -13,4 +13,3 @@ from omin.excellor import *
 from omin.fdr import *
 from omin.experiment import *
 import omin.vis
-

@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind
 
-def sep(dataframe_in, search_term):
+def sep(dataframe_in, search_term, strict = False):
     """Takes DataFrame and search_term and returns a new DataFrame that contains columns that contain that search_term.
 
     Parameters
@@ -12,6 +12,8 @@ def sep(dataframe_in, search_term):
     dataframe_in : DataFrame
     search_term : str
         What kind of columns do you want to find.
+    strict : bool
+        Defaults to False
 
     Returns
     -------
@@ -21,7 +23,10 @@ def sep(dataframe_in, search_term):
     """
     dataframe_out = None
     if dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)].any():
-        dataframe_out = dataframe_in[dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)]].copy()
+        if strict:
+            dataframe_out = dataframe_in[dataframe_in.columns[np.array([search_term in set(re.sub(" ","",i).split(",")) for i in dataframe_in.columns])]]
+        else:
+            dataframe_out = dataframe_in[dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)]].copy()
     else:
         print("The DataFrame has no columns that contain:", search_term)
     return dataframe_out

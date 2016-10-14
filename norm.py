@@ -122,7 +122,7 @@ def logger(d):
     -------
     gout : (:obj)
         logspace object.
-        
+
     """
     dout = d.apply(np.log2)
     dout.columns = "Log2 " + dout.columns
@@ -149,6 +149,10 @@ def logdiv(lso):
     return dout
 
 def dfMin(d1, d2):
+    """ Take the difference of two DataFrames.
+
+
+    """
     return pd.DataFrame(d1.as_matrix() - d2.as_matrix(), index=d1.index)
 
 def treatAve(d, treat):

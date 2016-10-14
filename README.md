@@ -1,6 +1,4 @@
-# omin
-Basically the Manhattan Project of Omics data analysis
+# __omin__
+### Basically the Manhattan Project of Omics data analysis
 
-Welcome! 
-
-Come back later for meaningful content.
+ Welcome, to the vangard of bleeding edge of most new revolution in proteomics analysis.

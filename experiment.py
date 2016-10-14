@@ -376,7 +376,7 @@ class ModDetect:
 
 class Experiment:
     """
-
+    
     Attributes
     ----------
     peptides : (:obj)

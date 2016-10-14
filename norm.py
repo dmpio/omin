@@ -221,8 +221,19 @@ def pvaln(numer, denom):
     return pvals
 
 
-def overPooler(d):
-    logoverave = logdiv(logger(d))
+def overPooler(dataframe):
+    """Devides DataFrame by pool.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+
+    Returns
+    -------
+    dopool : DataFrame
+        You dataframe devided by the pool
+    """
+    logoverave = logdiv(logger(dataframe))
     # c,s = sepCon(logoverave,"Control")#FIXME
     c, s = betSep(logoverave, "Control", "Pool")  # FIXED!
     dopool = dfMin(logoverave, c)
@@ -230,30 +241,77 @@ def overPooler(d):
     dopool.columns = colnm
     return dopool
 
+def tooLogFC(num, dem, search_term):
+    """Takes the Log2 fold change for two DataFrames.
 
-def tooLogFC(num, dem, s):
+    Parameters
+    ----------
+    num : DataFrame
+    dem : DataFrame
+    search_term : str
+
+    Returns
+    -------
+    lfc : DataFrame
+
+    """
     numop = overPooler(num)
     demop = overPooler(dem)
-    lfc = sep(numop, s).mean(axis=1) - sep(demop, s).mean(axis=1)
-    lfc = pd.DataFrame(lfc, columns=["LogFC " + s])
+    lfc = sep(numop, search_term).mean(axis=1) - sep(demop, search_term).mean(axis=1)
+    lfc = pd.DataFrame(lfc, columns=["LogFC " + search_term])
     return lfc
 
-def tooPvalr(num, dem, s):
+def tooPvalr(num, dem, search_term):
+    """Takes the p-value for two DataFrames.
+
+    Parameters
+    ----------
+    num : DataFrame
+    dem : DataFrame
+    search_term : str
+
+    Returns
+    -------
+    pval : DataFrame
+
+    """
     numop = overPooler(num)
     demop = overPooler(dem)
-    pval = ttest_ind(sep(numop, s), sep(demop, s), axis=1, nan_policy="omit").pvalue
-    pval = pd.DataFrame(pval, index=num.index, columns=["Pval " + s])
+    pval = ttest_ind(sep(numop, search_term), sep(demop, search_term), axis=1, nan_policy="omit").pvalue
+    pval = pd.DataFrame(pval, index=num.index, columns=["Pval " + search_term])
     return pval
 
-def preLogFC(numop, demop, s):
-    """If you have already divided by pool.
+def preLogFC(numop, demop, search_term):
+    """Takes the Log2 fold change If you have already divided by pool.
+
+    Parameters
+    ----------
+    numop : DataFrame
+    demop : DataFrame
+    search_term : str
+
+    Returns
+    -------
+    lfc : DataFrame
+
     """
-    lfc = sep(numop, s).mean(axis=1) - sep(demop, s).mean(axis=1)
-    lfc = pd.DataFrame(lfc, columns=["LogFC " + s])
+    lfc = sep(numop, search_term).mean(axis=1) - sep(demop, search_term).mean(axis=1)
+    lfc = pd.DataFrame(lfc, columns=["LogFC " + search_term])
     return lfc
 
 def prePvalr(numop, demop, s):
-    """If you have already divided by pool.
+    """Takes the p-value if you have already divided by pool.
+
+    Parameters
+    ----------
+    numop : DataFrame
+    demop : DataFrame
+    search_term : str
+
+    Returns
+    -------
+    lfc : DataFrame
+
     """
     pval = ttest_ind(sep(numop, s), sep(demop, s), axis=1, nan_policy="omit").pvalue
     pval = pd.DataFrame(pval, index=numop.index, columns=["Pval " + s])

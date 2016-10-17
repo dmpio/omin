@@ -1,5 +1,6 @@
 """
 experiment.py contains a number of functions that are designed to normalize proteomics data to an input fraction.
+FIXME : Beef up this documentation. Look for other sample python and R scripts published we can use as template.
 Author: James Draper
 Email: james.drape@duke.edu
 Date: October 12, 2016

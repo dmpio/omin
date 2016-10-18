@@ -108,7 +108,7 @@ def normalizeTo(different, normal):
     normalized : DataFrame
     """
     normalized = different / normFactors(normal).as_matrix()
-    return
+    return normalized 
 
 class Logger:
     """The class Logger preforms operations on normalized peptides.

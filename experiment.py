@@ -108,7 +108,7 @@ def normalizeTo(different, normal):
     normalized : DataFrame
     """
     normalized = different / normFactors(normal).as_matrix()
-    return normalized 
+    return normalized
 
 class Logger:
     """The class Logger preforms operations on normalized peptides.
@@ -403,6 +403,8 @@ class Experiment:
             Should the genotypes be compared in their current order with the first element as the numerator and the
             second as the denominator. If False the list is reversed. Defaults to True.
         """
+        #Make a switch here.
+
         self.peptides = WithInput(raw_file.peptides)
         self.proteins = WithInput(raw_file.proteins)
         # FIXME: the next couple of lines would probably be better handled in an outside function or class idk.

@@ -59,7 +59,7 @@ def manyModSel(pepdf, *terms):
     pepdf : DataFrame
         With peptides information.
     terms : str
-        Can be any number of modifictions as a string. Case does not matter and regex special characters can be
+        Can be any number of modifications as a string. Case does not matter and regex special characters can be
         used e.g. 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
     Returns
     -------

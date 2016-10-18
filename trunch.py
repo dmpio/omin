@@ -5,7 +5,7 @@ import matplotlib
 from matplotlib import pyplot as plt
 
 class modgeno:
-    """Separates each group of modfied peptides into genotypes namely wild type (wt) and knockout(ko).
+    """Separates each group of modified peptides into genotypes namely wild type (wt) and knockout(ko).
 
     Attributes
     ----------
@@ -28,7 +28,7 @@ class modgeno:
         condlist : list
             List of conditions.
         control : str
-            A the control group amoung the condition list.
+            A the control group among the condition list.
 
         """
         testlist = condlist.copy()

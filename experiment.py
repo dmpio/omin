@@ -11,6 +11,7 @@ Date: October 12, 2016
 # FIXME: make method that includes some amount of case handling.this may be better handled at manyModSel level.
 mod_dict = {}
 mod_dict["Acetyl"] = 'Acetyl'
+mod_dict["Aceyl"] = "Acetyl"
 mod_dict["Phospho"] = "Phospho"
 mod_dict["HMG"] = "hydroxy...methyl.glutaryl"
 
@@ -224,32 +225,6 @@ def masterPep(peptide_df):
                                    index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
     return master_prot_acc
 
-class WithInput:
-    """
-    Attributes
-    ----------
-    raw : DataFrame
-        The raw DataFrame with all information.
-    abundance : DataFrame
-        Abundance columns from raw DataFrame.
-    inputs : DataFrame
-        The input fraction from the abundance columns.
-    enriched : DataFrame
-        The enriched fraction from the abundance columns.
-
-    """
-    def __init__(self, raw):
-        """Takes raw DataFrame and isolates the abundance columns breaking those into the input and enriched fractions.
-
-        Parameters
-        ----------
-        raw: DataFrame
-
-        """
-        self.raw = raw
-        self.abundance = omin.sep(raw, 'Abundance:')
-        self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
-
 class Compare:
     """
     Attributes
@@ -375,6 +350,63 @@ class ModDetect:
         occupancy_abundance.columns = "Relative occupancy " + self.correlated_protein_abundance.columns
         self.relative_occupancy = Compare(occupancy_abundance, genotypes)
 
+class WithInput:
+    """
+    Attributes
+    ----------
+    raw : DataFrame
+        The raw DataFrame with all information.
+    abundance : DataFrame
+        Abundance columns from raw DataFrame.
+    inputs : DataFrame
+        The input fraction from the abundance columns.
+    enriched : DataFrame
+        The enriched fraction from the abundance columns.
+
+    """
+
+    def __init__(self, raw):
+        """Takes raw DataFrame and isolates the abundance columns breaking those into the input and enriched fractions.
+
+        Parameters
+        ----------
+        raw: DataFrame
+
+        """
+        self.raw = raw
+        self.abundance = omin.sep(raw, 'Abundance:')
+        self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
+
+class PoolMod:
+    def __init__(self,abundance,mod,genotypes):
+        self.abundance = omin.sep(abundance,mod)
+        for geno in genotypes:
+            self.__dict__[geno] = omin.sep(self.abundance,geno)
+
+class WithPool:
+    """
+    Attributes
+    ----------
+    raw : DataFrame
+        The raw DataFrame with all information.
+    abundance : DataFrame
+        Abundance columns from raw DataFrame.
+    """
+
+    def __init__(self, raw,modifications,genotypes):
+        """
+
+        Parameters
+        ----------
+        raw: DataFrame
+
+        """
+        self.raw = raw
+        self.abundance = omin.sep(raw, "Abundance:")
+        #self.logged = omin.overPooler(self.abundance)
+        for mod in modifications:
+            self.__dict__[mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes)
+
 class Experiment:
     """
     
@@ -403,24 +435,29 @@ class Experiment:
             Should the genotypes be compared in their current order with the first element as the numerator and the
             second as the denominator. If False the list is reversed. Defaults to True.
         """
-        #Make a switch here.
-
-        self.peptides = WithInput(raw_file.peptides)
-        self.proteins = WithInput(raw_file.proteins)
-        # FIXME: the next couple of lines would probably be better handled in an outside function or class idk.
-        # Normalize the enriched peptides to the input peptides
-        setattr(self.peptides, 'norm', normalizeTo(self.peptides.enriched, self.peptides.inputs))
-        # Normlize the enriched proteins to the input peptides
-        setattr(self.proteins, 'norm', normalizeTo(self.proteins.inputs, self.peptides.inputs))
-        # Run normalized peptides through Logger class
-        setattr(self.peptides, 'norm_log', Logger(self.peptides.norm))
-        # Run normalized proteins through logger class
-        setattr(self.proteins, 'norm_log', Logger(self.proteins.norm))
-        # Grab the master proteins with <1% FDR
-        setattr(self.proteins, 'fdr', masterOne(raw_file.proteins))
-        fdr_mpa_list = pd.DataFrame(self.proteins.fdr.Accession, index=self.proteins.fdr.Accession.index)
-        # Dynamically set the modifications as class attributes
-        for mod in modifications:
-            if type(manyModSel(raw_file.peptides, mod_dict[mod])) != type(np.nan):
-                self.__dict__[mod] = ModDetect(raw_file.peptides, mod_dict[mod], genotypes, self.peptides,
-                                               self.proteins, compare_in_order)
+        #NORMALIZE TO INPUT
+        if raw_file.peptides.columns.str.contains("Input", case=False).any():
+            print("Normalizing to: Input...")
+            self.peptides = WithInput(raw_file.peptides)
+            self.proteins = WithInput(raw_file.proteins)
+            # FIXME: the next couple of lines would probably be better handled in an outside function or class idk.
+            # Normalize the enriched peptides to the input peptides
+            setattr(self.peptides, 'norm', normalizeTo(self.peptides.enriched, self.peptides.inputs))
+            # Normlize the enriched proteins to the input peptides
+            setattr(self.proteins, 'norm', normalizeTo(self.proteins.inputs, self.peptides.inputs))
+            # Run normalized peptides through Logger class
+            setattr(self.peptides, 'norm_log', Logger(self.peptides.norm))
+            # Run normalized proteins through logger class
+            setattr(self.proteins, 'norm_log', Logger(self.proteins.norm))
+            # Grab the master proteins with <1% FDR
+            setattr(self.proteins, 'fdr', masterOne(raw_file.proteins))
+            fdr_mpa_list = pd.DataFrame(self.proteins.fdr.Accession, index=self.proteins.fdr.Accession.index)
+            # Dynamically set the modifications as class attributes
+            for mod in modifications:
+                if type(manyModSel(raw_file.peptides, mod_dict[mod])) != type(np.nan):
+                    self.__dict__[mod] = ModDetect(raw_file.peptides, mod_dict[mod], genotypes, self.peptides,
+                                                   self.proteins, compare_in_order)
+        else:
+            print("Normalizing to: Pool...")
+            self.peptides = WithPool(raw_file.peptides,modifications,genotypes)
+            self.proteins = WithPool(raw_file.proteins,modifications,genotypes)

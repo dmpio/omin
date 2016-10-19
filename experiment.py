@@ -63,18 +63,27 @@ def manyModSel(pepdf, *terms):
         used e.g. 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
     Returns
     -------
-    selected : DataFrame or np.NAN
-        Contains the just the modified peptides.
+    selected : tuple
+
     """
+    selected = ()
     for i in terms:
         moddex = pepdf.Modifications.str.contains(pat=i, case=False)
         if moddex.sum() > 0:
-            selected = pepdf.ix[moddex]
+            selected += (pepdf.ix[moddex],)
             print(moddex.sum(), "peptides with", i, "modification found.")
-            return selected
+
         else:
             print("No peptides with", i, "modification were found.")
-            return np.nan
+            # selected += (np.nan,)
+            pass
+
+    if len(selected) > 1:
+        all_select = np.bitwise_or.reduce([df.index for df in selected])
+        all_selected = pepdf.ix[all_select]
+        selected = selected + (all_selected,)
+
+    return selected
 
 def normFactors(peptide_data):
     """Takes peptide abundance data and returns normalization factors.
@@ -317,7 +326,7 @@ class ModDetect:
 
         """
         # Grab the raw peptide data for modification in question
-        self.raw = manyModSel(whole_set, modification)
+        self.raw = manyModSel(whole_set, modification)[0]
         # Grab the master protein accession for the peptides
         self.mpa = masterPep(self.raw)
         # Grab the protein accessions for the correlated protein abundances for the modifidied peptides
@@ -454,7 +463,7 @@ class Experiment:
             fdr_mpa_list = pd.DataFrame(self.proteins.fdr.Accession, index=self.proteins.fdr.Accession.index)
             # Dynamically set the modifications as class attributes
             for mod in modifications:
-                if type(manyModSel(raw_file.peptides, mod_dict[mod])) != type(np.nan):
+                if len(manyModSel(raw_file.peptides, mod_dict[mod])) != 0:
                     self.__dict__[mod] = ModDetect(raw_file.peptides, mod_dict[mod], genotypes, self.peptides,
                                                    self.proteins, compare_in_order)
         else:

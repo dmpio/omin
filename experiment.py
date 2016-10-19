@@ -388,7 +388,22 @@ class WithInput:
         self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
 
 class FracParse:
+    """
+    Attributes
+    ----------
+    abundance : DataFrame
+    log_div_ave : DataFrame
+    pool_normalized : DataFrame
+    [selected conditions] : DataFrame
+        These are created dynamically from the list the user selects.
+    """
     def __init__(self,abundance,select_list):
+        """
+        Parameters
+        ----------
+        abundance : DataFrame
+        select_list : list
+        """
         self.abundance = abundance
         self.log_div_ave = omin.logNormToAve(self.abundance)
         self.pool_normalized = omin.normToPool(self.log_div_ave)
@@ -398,6 +413,14 @@ class FracParse:
             self.__dict__[select] = omin.sep(self.pool_normalized,term)
 
 class PoolMod:
+    """
+
+    Attributes
+    ----------
+    abundance : DataFrame
+    [genotype] : (:obj)
+        FracParse object.
+    """
     def __init__(self,abundance,mod,genotypes,select_list):
         self.abundance = omin.sep(abundance,mod)
         for geno in genotypes:
@@ -429,7 +452,7 @@ class WithPool:
 
 class Experiment:
     """
-    
+
     Attributes
     ----------
     peptides : (:obj)
@@ -484,6 +507,16 @@ class Experiment:
             self.proteins = WithPool(raw_file.proteins,modifications,genotypes,select_list)
 
 def conditionSelect(peptide_abundance):
+    """Allows the user to select which columns contain conditions.
+
+    Parameters
+    ----------
+    peptide_abundance : DataFrame
+
+    Returns
+    -------
+    select_list : list
+    """
     print(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]))
     col_num = int(input("Which column has condition data?(Enter the number)"))
     select_set = set(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]).ix[:, col_num])

@@ -191,8 +191,21 @@ def logFC(d, num, dem):
     return dout
 
 def logFolder(ko, wt):
+    """
+
+    Parameters
+    ----------
+    ko : DataFrame
+    wt : DataFrame
+
+    Returns
+    -------
+    lfc : DataFrame
+
+    """
     lfc = ko.mean(axis=1) - wt.mean(axis=1)
-    return pd.DataFrame(lfc, columns=["lfc"])
+    lfc = pd.DataFrame(lfc, columns=["lfc"])
+    return lfc
 
 def pvalr(d, A, B):
     """

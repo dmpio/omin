@@ -17,6 +17,7 @@ mod_dict["HMG"] = "hydroxy...methyl.glutaryl"
 
 #Load boilerplate modules.
 import omin
+import re
 import pandas as pd
 import numpy as np
 
@@ -64,6 +65,7 @@ def manyModSel(pepdf, *terms):
     Returns
     -------
     selected : tuple
+        Entering more than one term last element of the tuple will contain all modified peptides.
 
     """
     selected = ()
@@ -75,7 +77,6 @@ def manyModSel(pepdf, *terms):
 
         else:
             print("No peptides with", i, "modification were found.")
-            # selected += (np.nan,)
             pass
 
     if len(selected) > 1:
@@ -386,11 +387,21 @@ class WithInput:
         self.abundance = omin.sep(raw, 'Abundance:')
         self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
 
+class FracParse:
+    def __init__(self,abundance,select_list):
+        self.abundance = abundance
+        self.log_div_ave = omin.logNormToAve(self.abundance)
+        self.pool_normalized = omin.normToPool(self.log_div_ave)
+
+        for select in select_list:
+            term = re.sub("_", " ", select)
+            self.__dict__[select] = omin.sep(self.pool_normalized,term)
+
 class PoolMod:
-    def __init__(self,abundance,mod,genotypes):
+    def __init__(self,abundance,mod,genotypes,select_list):
         self.abundance = omin.sep(abundance,mod)
         for geno in genotypes:
-            self.__dict__[geno] = omin.sep(self.abundance,geno)
+            self.__dict__[geno] = FracParse(omin.sep(self.abundance,geno),select_list)
 
 class WithPool:
     """
@@ -402,7 +413,7 @@ class WithPool:
         Abundance columns from raw DataFrame.
     """
 
-    def __init__(self, raw,modifications,genotypes):
+    def __init__(self, raw,modifications,genotypes,select_list):
         """
 
         Parameters
@@ -412,9 +423,9 @@ class WithPool:
         """
         self.raw = raw
         self.abundance = omin.sep(raw, "Abundance:")
-        #self.logged = omin.overPooler(self.abundance)
+
         for mod in modifications:
-            self.__dict__[mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes)
+            self.__dict__[mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,select_list)
 
 class Experiment:
     """
@@ -468,5 +479,18 @@ class Experiment:
                                                    self.proteins, compare_in_order)
         else:
             print("Normalizing to: Pool...")
-            self.peptides = WithPool(raw_file.peptides,modifications,genotypes)
-            self.proteins = WithPool(raw_file.proteins,modifications,genotypes)
+            select_list = conditionSelect(omin.sep(raw_file.peptides,"Abundance:"))
+            self.peptides = WithPool(raw_file.peptides,modifications,genotypes,select_list)
+            self.proteins = WithPool(raw_file.proteins,modifications,genotypes,select_list)
+
+def conditionSelect(peptide_abundance):
+    print(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]))
+    col_num = int(input("Which column has condition data?(Enter the number)"))
+    select_set = set(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]).ix[:, col_num])
+
+    select_list = [re.sub(" ", "_", i.strip()) for i in select_set]
+    #print(select_list)
+    [print(n, i) for n, i in enumerate(select_list)]
+    remove_num = int(input("Enter the number of any element that need to be removed."))
+    select_list.remove(select_list[remove_num])
+    return select_list

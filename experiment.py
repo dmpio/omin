@@ -7,6 +7,7 @@ Date: October 12, 2016
 """
 
 # Dict of modifications found in proteome discoverer modifications column
+# FIXME: Make normalization to input handle several modification types.
 # FIXME: Make this a file in the module that can be updated by the user and automatically
 # FIXME: make method that includes some amount of case handling.this may be better handled at manyModSel level.
 mod_dict = {}

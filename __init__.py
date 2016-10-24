@@ -11,5 +11,6 @@ from omin.ceive import *
 from omin.excellor import *
 from omin.fdr import *
 from omin.experiment import *
+from omin.norm_to_input import *
 from omin.norm_to_pool import *
 import omin.vis

@@ -1,5 +1,37 @@
+# -*- coding: utf-8 -*-
 import omin
 import pandas as pd
+import numpy as np
+###FILTERING FUNCTIONS###
+# ----------------------------------------------------------------------------------------------------------------------
+def specSel(dataframe,include_list,exclude_list,case=True):
+    """Select columns whose headers contain items just the items you want.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    include_list : list
+    exclude_list : list
+
+    Returns
+    -------
+    selected : DataFrame
+
+    """
+    allbool = np.ones(len(dataframe.columns),dtype=bool)
+    for mod in include_list:
+            trubool = dataframe.columns.str.contains(mod,case)
+            allbool = allbool&trubool
+    for ex in exclude_list:
+        fakbool = dataframe.columns.str.contains(ex,case)
+        allbool = allbool&~fakbool
+
+    if allbool.any():
+        selected = dataframe[dataframe.columns[allbool]]
+    else:
+        print("Special select failed. Try something else.")
+        selected = np.nan
+    return selected
 
 def setDiff(list_A, list_B):
     """Takes difference of two lists with respect to list_A. Simillar to `list(set(list_A)-set(list_B))` however
@@ -98,7 +130,7 @@ def allComp(trunch_object, modification_object, cond,pval_kind="pval",lfc_kind="
     Returns
     -------
     compound : DataFrame
-    
+
     """
     # Grab the P-values and LFCs
     pv_lfc = omin.aboveCut(modification_object, cond, pval_kind,lfc_kind,cut)

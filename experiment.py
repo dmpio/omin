@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 experiment.py contains a number of functions that are designed to normalize proteomics data to an input fraction.
 FIXME : Beef up this documentation. Look for other sample python and R scripts published we can use as template.
@@ -7,19 +8,18 @@ Date: October 12, 2016
 """
 
 # Dict of modifications found in proteome discoverer modifications column
+# FIXME: Make normalization to input handle several modification types.
 # FIXME: Make this a file in the module that can be updated by the user and automatically
 # FIXME: make method that includes some amount of case handling.this may be better handled at manyModSel level.
-mod_dict = {}
-mod_dict["Acetyl"] = 'Acetyl'
-mod_dict["Aceyl"] = "Acetyl"
-mod_dict["Phospho"] = "Phospho"
-mod_dict["HMG"] = "hydroxy...methyl.glutaryl"
-
 #Load boilerplate modules.
 import omin
 import re
 import pandas as pd
 import numpy as np
+import pickle
+###LOAD MODIFICATION DICTIONARY###
+#----------------------------------------------------------------------------------------------------------------------
+# mod_dict = pickle.load(open("mod_dict.pickle","rb"))
 
 class RawData:
     """Converts Proteome Discoverer .txt files into pandas DataFrames
@@ -52,107 +52,6 @@ class RawData:
         self.proteins = pd.read_csv(proteins_file, delimiter="\t", low_memory=False)
         print("number of proteins:", self.proteins.shape[0])
 
-def manyModSel(pepdf, *terms):
-    """Searches peptide DataFrame Modifications column for terms.
-
-    Parameters
-    ----------
-    pepdf : DataFrame
-        With peptides information.
-    terms : str
-        Can be any number of modifications as a string. Case does not matter and regex special characters can be
-        used e.g. 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
-    Returns
-    -------
-    selected : tuple
-        Entering more than one term last element of the tuple will contain all modified peptides.
-
-    """
-    selected = ()
-    for i in terms:
-        moddex = pepdf.Modifications.str.contains(pat=i, case=False)
-        if moddex.sum() > 0:
-            selected += (pepdf.ix[moddex],)
-            print(moddex.sum(), "peptides with", i, "modification found.")
-
-        else:
-            print("No peptides with", i, "modification were found.")
-            pass
-
-    if len(selected) > 1:
-        all_select = np.bitwise_or.reduce([df.index for df in selected])
-        all_selected = pepdf.ix[all_select]
-        selected = selected + (all_selected,)
-
-    return selected
-
-def normFactors(peptide_data):
-    """Takes peptide abundance data and returns normalization factors.
-
-    Normalization factors are derived by the taking the sum of each column in DataFrame then dividing each sum by the
-    mean of all the sums.
-
-    Parameters
-    ----------
-    peptide_data : DataFrame
-
-    Returns
-    -------
-    norm_factors: DataFrame
-
-    """
-    norm_factors = peptide_data.sum() / peptide_data.sum().mean()
-    return norm_factors
-
-def normalizeTo(different, normal):
-    """Normalizes one DataFrame to another.
-
-    The 'different' DataFrame is normalized to the 'normal' DataFrame using the normFactors function.
-
-    Parameters
-    ----------
-    different : DataFrame
-    normal : DataFrame
-
-    Returns
-    -------
-    normalized : DataFrame
-    """
-    normalized = different / normFactors(normal).as_matrix()
-    return normalized
-
-class Logger:
-    """The class Logger preforms operations on normalized peptides.
-
-    Attributes
-    ----------
-    log2 : DataFrame
-        Containing the log2 of the normalized data
-    ave : DataFrame
-        Containing the average of the aformentioned DataFrame
-    log_div_ave : DataFrame
-        Containing the log2-ave.
-    """
-
-    def __init__(self, normalized_data):
-        """
-        Parameters
-        ----------
-        normalized_data : DataFrame
-            Takes normalized peptide or protein in a DataFrame
-        """
-        logged = normalized_data.apply(np.log2)
-        logged.columns = "Log2 " + logged.columns
-        logged.index = normalized_data.index
-        self.log2 = logged
-        ave = self.log2.mean(axis=1)
-        ave = pd.DataFrame(ave, columns=["Ave"])
-        ave.index = normalized_data.index
-        self.ave = ave
-        log_div_ave = pd.DataFrame(self.log2.values - self.ave.values)
-        log_div_ave.columns = "Log2-AVE " + normalized_data.columns
-        log_div_ave.index = ave.index
-        self.log_div_ave = log_div_ave
 
 def masterCleanse(protein_df):
     """Filters raw protein DataFrame for master proteins.
@@ -360,33 +259,6 @@ class ModDetect:
         occupancy_abundance.columns = "Relative occupancy " + self.correlated_protein_abundance.columns
         self.relative_occupancy = Compare(occupancy_abundance, genotypes)
 
-class WithInput:
-    """
-    Attributes
-    ----------
-    raw : DataFrame
-        The raw DataFrame with all information.
-    abundance : DataFrame
-        Abundance columns from raw DataFrame.
-    inputs : DataFrame
-        The input fraction from the abundance columns.
-    enriched : DataFrame
-        The enriched fraction from the abundance columns.
-
-    """
-
-    def __init__(self, raw):
-        """Takes raw DataFrame and isolates the abundance columns breaking those into the input and enriched fractions.
-
-        Parameters
-        ----------
-        raw: DataFrame
-
-        """
-        self.raw = raw
-        self.abundance = omin.sep(raw, 'Abundance:')
-        self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
-
 class FracParse:
     """
     Attributes
@@ -448,7 +320,7 @@ class WithPool:
         self.abundance = omin.sep(raw, "Abundance:")
 
         for mod in modifications:
-            self.__dict__[mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,select_list)
+            self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,select_list)
 
 class Experiment:
     """
@@ -481,30 +353,17 @@ class Experiment:
         #NORMALIZE TO INPUT
         if raw_file.peptides.columns.str.contains("Input", case=False).any():
             print("Normalizing to: Input...")
-            self.peptides = WithInput(raw_file.peptides)
-            self.proteins = WithInput(raw_file.proteins)
-            # FIXME: the next couple of lines would probably be better handled in an outside function or class idk.
-            # Normalize the enriched peptides to the input peptides
-            setattr(self.peptides, 'norm', normalizeTo(self.peptides.enriched, self.peptides.inputs))
-            # Normlize the enriched proteins to the input peptides
-            setattr(self.proteins, 'norm', normalizeTo(self.proteins.inputs, self.peptides.inputs))
-            # Run normalized peptides through Logger class
-            setattr(self.peptides, 'norm_log', Logger(self.peptides.norm))
-            # Run normalized proteins through logger class
-            setattr(self.proteins, 'norm_log', Logger(self.proteins.norm))
-            # Grab the master proteins with <1% FDR
-            setattr(self.proteins, 'fdr', masterOne(raw_file.proteins))
-            fdr_mpa_list = pd.DataFrame(self.proteins.fdr.Accession, index=self.proteins.fdr.Accession.index)
-            # Dynamically set the modifications as class attributes
-            for mod in modifications:
-                if len(manyModSel(raw_file.peptides, mod_dict[mod])) != 0:
-                    self.__dict__[mod] = ModDetect(raw_file.peptides, mod_dict[mod], genotypes, self.peptides,
-                                                   self.proteins, compare_in_order)
+            pep_sel,prot_sel = omin.vLook(raw_file.peptides,raw_file.proteins,modifications)
+            self.peptides = omin.PeptidesWithInput(raw_file.peptides,modifications,pep_sel)
+            self.proteins = omin.ProteinsWithInput(raw_file.proteins,modifications)
         else:
             print("Normalizing to: Pool...")
             select_list = conditionSelect(omin.sep(raw_file.peptides,"Abundance:"))
             self.peptides = WithPool(raw_file.peptides,modifications,genotypes,select_list)
             self.proteins = WithPool(raw_file.proteins,modifications,genotypes,select_list)
+    def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+        # return "".join(list(self.__dict__.keys()))
 
 def conditionSelect(peptide_abundance):
     """Allows the user to select which columns contain conditions.

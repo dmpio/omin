@@ -1,5 +1,113 @@
+# -*- coding: utf-8 -*-
 import omin
 import pandas as pd
+import numpy as np
+#---------------------------------------------------------------------------------------------------------------------
+def specSel(dataframe,include_list,exclude_list,case=True):
+    """Select columns whose headers contain items just the items you want.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    include_list : list
+    exclude_list : list
+
+    Returns
+    -------
+    selected : DataFrame
+
+    """
+    allbool = np.ones(len(dataframe.columns),dtype=bool)
+    for mod in include_list:
+            trubool = dataframe.columns.str.contains(mod,case)
+            allbool = allbool&trubool
+    for ex in exclude_list:
+        fakbool = dataframe.columns.str.contains(ex,case)
+        allbool = allbool&~fakbool
+
+    if allbool.any():
+        selected = dataframe[dataframe.columns[allbool]]
+    else:
+        print("Special select failed. Try something else.")
+        selected = np.nan
+    return selected
+
+def manyModSel(pepdf, terms):
+    """Returns searched peptide a tuple of searched DataFrames with a given modifications or modifications.
+
+    Parameters
+    ----------
+    pepdf : DataFrame
+        With peptides information.
+    terms : list
+        Can be any number of modifications as a string. Case does not matter and regex special characters can be
+        used e.g. 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
+
+    Returns
+    -------
+    selected : tuple
+        Entering more than one term last element of the tuple will contain all modified peptides.
+
+    """
+    selected = ()
+    for term in terms:
+        term = omin.mod_dict[term]
+        moddex = pepdf.Modifications.str.contains(pat=term, case=False)
+        if moddex.sum() > 0:
+            selected += (pepdf.ix[moddex],)
+            print(moddex.sum(), "peptides with", term, "modification found.")
+        else:
+            print("No peptides with", term, "modification were found.")
+            pass
+    if len(selected) > 1:
+        all_select = np.bitwise_or.reduce([df.index for df in selected])
+        all_selected = pepdf.ix[all_select]
+        selected = selected + (all_selected,)
+    return selected
+
+def vLook(peptides,proteins,mods):
+    """Returns a tuple of selected peptides and proteins.
+
+    Takes raw peptides and protiens returns a tuple of selected peptides and proteins. The function can also select for a sigle
+    modification or many modifications.
+
+    Parameters
+    ----------
+    peptides : DataFrame
+    proteins : DataFrame
+    mods : list
+
+    Returns
+    -------
+    peptide_select : DataFrame
+    protein_select : DataFrame
+
+    Examples
+    --------
+    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins)
+    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,"hydroxy...methyl.glutaryl")
+    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,"Acetyl","Phospho")
+
+    See Also
+    --------
+    manyModSel
+    masterOne
+    masterPep
+
+    """
+
+    fdr = omin.masterOne(proteins)
+    if len(mods) == 0:
+        mpa = omin.masterPep(peptides)
+    else:
+        mpa = omin.masterPep(omin.manyModSel(peptides,mods)[-1])
+    fdrdf = pd.DataFrame(fdr.Accession,index = fdr.index)
+    peptide_select = mpa.merge(fdrdf, on ="Accession",how="left",right_index=True)
+    protein_select = mpa.merge(fdrdf, on ="Accession",how="left",left_index=True)
+    return peptide_select,protein_select
+
+###VENN DIAGRAM FUNCTIONS###
+# ---------------------------------------------------------------------------------------------------------------------
 
 def setDiff(list_A, list_B):
     """Takes difference of two lists with respect to list_A. Simillar to `list(set(list_A)-set(list_B))` however
@@ -98,7 +206,7 @@ def allComp(trunch_object, modification_object, cond,pval_kind="pval",lfc_kind="
     Returns
     -------
     compound : DataFrame
-    
+
     """
     # Grab the P-values and LFCs
     pv_lfc = omin.aboveCut(modification_object, cond, pval_kind,lfc_kind,cut)

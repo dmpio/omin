@@ -11,17 +11,15 @@ Date: October 12, 2016
 # FIXME: Make normalization to input handle several modification types.
 # FIXME: Make this a file in the module that can be updated by the user and automatically
 # FIXME: make method that includes some amount of case handling.this may be better handled at manyModSel level.
-mod_dict = {}
-mod_dict["Acetyl"] = 'Acetyl'
-mod_dict["Aceyl"] = "Acetyl"
-mod_dict["Phospho"] = "Phospho"
-mod_dict["HMG"] = "hydroxy...methyl.glutaryl"
-
 #Load boilerplate modules.
 import omin
 import re
 import pandas as pd
 import numpy as np
+import pickle
+###LOAD MODIFICATION DICTIONARY###
+#----------------------------------------------------------------------------------------------------------------------
+# mod_dict = pickle.load(open("mod_dict.pickle","rb"))
 
 class RawData:
     """Converts Proteome Discoverer .txt files into pandas DataFrames
@@ -54,38 +52,6 @@ class RawData:
         self.proteins = pd.read_csv(proteins_file, delimiter="\t", low_memory=False)
         print("number of proteins:", self.proteins.shape[0])
 
-def manyModSel(pepdf, *terms):
-    """Searches peptide DataFrame Modifications column for terms.
-
-    Parameters
-    ----------
-    pepdf : DataFrame
-        With peptides information.
-    terms : str
-        Can be any number of modifications as a string. Case does not matter and regex special characters can be
-        used e.g. 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
-    Returns
-    -------
-    selected : tuple
-        Entering more than one term last element of the tuple will contain all modified peptides.
-
-    """
-    selected = ()
-    for i in terms:
-        moddex = pepdf.Modifications.str.contains(pat=i, case=False)
-        if moddex.sum() > 0:
-            selected += (pepdf.ix[moddex],)
-            print(moddex.sum(), "peptides with", i, "modification found.")
-
-        else:
-            print("No peptides with", i, "modification were found.")
-            pass
-
-    if len(selected) > 1:
-        all_select = np.bitwise_or.reduce([df.index for df in selected])
-        all_selected = pepdf.ix[all_select]
-        selected = selected + (all_selected,)
-    return selected
 
 def masterCleanse(protein_df):
     """Filters raw protein DataFrame for master proteins.
@@ -293,49 +259,6 @@ class ModDetect:
         occupancy_abundance.columns = "Relative occupancy " + self.correlated_protein_abundance.columns
         self.relative_occupancy = Compare(occupancy_abundance, genotypes)
 
-# class WithInput:
-#     """
-#     Attributes
-#     ----------
-#     raw : DataFrame
-#         The raw DataFrame with all information.
-#     abundance : DataFrame
-#         Abundance columns from raw DataFrame.
-#     inputs : DataFrame
-#         The input fraction from the abundance columns.
-#     enriched : DataFrame
-#         The enriched fraction from the abundance columns.
-#
-#     """
-#
-#     def __init__(self, raw):
-#         """Takes raw DataFrame and isolates the abundance columns breaking those into the input and enriched fractions.
-#
-#         Parameters
-#         ----------
-#         raw: DataFrame
-#
-#         """
-#         self.raw = raw
-#         self.abundance = omin.sep(raw, 'Abundance:')
-#         self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
-
-
-class PeptidesWithInput:
-    def __init__(self, raw, modifications):
-        self.raw = raw
-        self.abundance = omin.sep(raw, 'Abundance:')
-        modifications.append("Input")
-        # self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
-        for mod in modifications:
-            notlist = list(np.array(modifications)[np.array([mod != i for i in modifications])])
-            self.__dict__[mod].__dict__["Abundance"] = omin.specSel(self.abundance,[mod],notlist)
-
-        modifications.remove("Input")
-        for mod in modifications:
-            self.__dict__[mod].__dict__["Normalized"] = omin.normalizeTo(self.__dict__[mod].Abundance, self.Input)
-
-
 class FracParse:
     """
     Attributes
@@ -397,7 +320,7 @@ class WithPool:
         self.abundance = omin.sep(raw, "Abundance:")
 
         for mod in modifications:
-            self.__dict__[mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,select_list)
+            self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,select_list)
 
 class Experiment:
     """
@@ -430,9 +353,9 @@ class Experiment:
         #NORMALIZE TO INPUT
         if raw_file.peptides.columns.str.contains("Input", case=False).any():
             print("Normalizing to: Input...")
-            self.peptides = PeptidesWithInput(raw_file.peptides,modifications)
+            pep_sel,prot_sel = omin.vLook(raw_file.peptides,raw_file.proteins,modifications)
+            self.peptides = omin.PeptidesWithInput(raw_file.peptides,modifications)
             #self.proteins = WithInput(raw_file.proteins,modifications)
-
             # # FIXME: the next couple of lines would probably be better handled in an outside function or class idk.
             # # Normalize the enriched peptides to the input peptides
             # setattr(self.peptides, 'norm', normalizeTo(self.peptides.enriched, self.peptides.inputs))
@@ -455,6 +378,9 @@ class Experiment:
             select_list = conditionSelect(omin.sep(raw_file.peptides,"Abundance:"))
             self.peptides = WithPool(raw_file.peptides,modifications,genotypes,select_list)
             self.proteins = WithPool(raw_file.proteins,modifications,genotypes,select_list)
+    def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+        # return "".join(list(self.__dict__.keys()))
 
 def conditionSelect(peptide_abundance):
     """Allows the user to select which columns contain conditions.

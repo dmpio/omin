@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import pandas as pd
+import numpy as np
+import re
+import omin
 
 def normFactors(peptide_data):
     """Takes peptide abundance data and returns normalization factors.
@@ -67,3 +71,39 @@ class Logger:
         log_div_ave.columns = "Log2-AVE " + normalized_data.columns
         log_div_ave.index = ave.index
         self.log_div_ave = log_div_ave
+    def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+class Fractions:
+    def __init__(self, modifications,abundance):
+        for mod in modifications:
+            notlist = list(np.array(modifications)[np.array([mod != i for i in modifications])])
+            self.__dict__[mod] = omin.specSel(abundance,[mod],notlist)
+    def addAttribute(self,attribute_name,attribute_data):
+        self.__dict__[attribute_name] = attribute_data
+
+class PeptidesWithInput:
+    def __init__(self, raw, modifications):
+        self.raw = raw
+        self.abundance = omin.sep(raw, 'Abundance:')
+        modifications.append("Input")
+        # self.inputs, self.enriched = omin.sepCon(self.abundance, 'Input')
+        # for mod in modifications:
+        self.fractions = Fractions(modifications,self.abundance)
+            #notlist = list(np.array(modifications)[np.array([mod != i for i in modifications])])
+            #self.__dict__[mod] = omin.specSel(self.abundance,[mod],notlist)
+
+        # modifications.remove("Input")
+        # for mod in modifications:
+        #     load_normalized = omin.normalizeTo(self.__dict__[mod], self.Input)
+        #     self.__dict__[mod+"_Load_Normalized"] = load_normalized
+        #     self.__dict__[mod+"_Relative_Abundance"] = omin.Logger(load_normalized)
+    def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+class ProteinsWithInput:
+    def __init__(self,raw,modifications):
+        self.raw = raw
+        self.abundance = omin.sep(raw,'Abundance:')
+    def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))

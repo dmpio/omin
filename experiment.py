@@ -354,25 +354,8 @@ class Experiment:
         if raw_file.peptides.columns.str.contains("Input", case=False).any():
             print("Normalizing to: Input...")
             pep_sel,prot_sel = omin.vLook(raw_file.peptides,raw_file.proteins,modifications)
-            self.peptides = omin.PeptidesWithInput(raw_file.peptides,modifications)
-            #self.proteins = WithInput(raw_file.proteins,modifications)
-            # # FIXME: the next couple of lines would probably be better handled in an outside function or class idk.
-            # # Normalize the enriched peptides to the input peptides
-            # setattr(self.peptides, 'norm', normalizeTo(self.peptides.enriched, self.peptides.inputs))
-            # # Normlize the enriched proteins to the input peptides
-            # setattr(self.proteins, 'norm', normalizeTo(self.proteins.inputs, self.peptides.inputs))
-            # # Run normalized peptides through Logger class
-            # setattr(self.peptides, 'norm_log', Logger(self.peptides.norm))
-            # # Run normalized proteins through logger class
-            # setattr(self.proteins, 'norm_log', Logger(self.proteins.norm))
-            # # Grab the master proteins with <1% FDR
-            # setattr(self.proteins, 'fdr', masterOne(raw_file.proteins))
-            # fdr_mpa_list = pd.DataFrame(self.proteins.fdr.Accession, index=self.proteins.fdr.Accession.index)
-            # # Dynamically set the modifications as class attributes
-            # for mod in modifications:
-            #     if len(manyModSel(raw_file.peptides, mod_dict[mod])) != 0:
-            #         self.__dict__[mod] = ModDetect(raw_file.peptides, mod_dict[mod], genotypes, self.peptides,
-            #                                        self.proteins, compare_in_order)
+            self.peptides = omin.PeptidesWithInput(raw_file.peptides,modifications,pep_sel)
+            self.proteins = omin.ProteinsWithInput(raw_file.proteins,modifications)
         else:
             print("Normalizing to: Pool...")
             select_list = conditionSelect(omin.sep(raw_file.peptides,"Abundance:"))

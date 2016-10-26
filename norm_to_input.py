@@ -108,6 +108,9 @@ class PeptidesWithInput:
         self.abundance = omin.sep(self.raw_file, 'Abundance:')
         self.fractions = Fractions(modifications,self.abundance,pepsel)
 
+    def addAttribute(self,attribute_name,attribute_data):
+        self.__dict__[attribute_name] = attribute_data
+
     def __repr__(self):
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
@@ -115,5 +118,9 @@ class ProteinsWithInput:
     def __init__(self,raw,modifications):
         self.raw_file = raw
         self.abundance = omin.sep(raw,'Abundance:')
+
+    def addAttribute(self,attribute_name,attribute_data):
+        self.__dict__[attribute_name] = attribute_data
+        
     def __repr__(self):
         return "Attributes: "+", ".join(list(self.__dict__.keys()))

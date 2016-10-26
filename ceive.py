@@ -2,6 +2,7 @@
 import omin
 import pandas as pd
 import numpy as np
+import re
 
 ###FILTERING FUNCTIONS##
 #---------------------------------------------------------------------------------------------------------------------
@@ -304,3 +305,27 @@ def allComp(trunch_object, modification_object, cond,pval_kind="pval",lfc_kind="
     # Change NaNs for zeros
     compound = compound.fillna(0)
     return compound
+###INTERACTIVE SELECTION###
+#----------------------------------------------------------------------------------------------------------------------
+
+def treatmentSelect(peptide_abundance):
+    """Allows the user to select which columns contain treatments.
+
+    Parameters
+    ----------
+    peptide_abundance : DataFrame
+
+    Returns
+    -------
+    select_list : list
+    """
+    print(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]))
+    col_num = int(input("Which column has treatment data?(Enter the number)"))
+    select_set = set(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]).ix[:, col_num])
+
+    select_list = [re.sub(" ", "_", i.strip()) for i in select_set]
+    #print(select_list)
+    [print(n, i) for n, i in enumerate(select_list)]
+    remove_num = int(input("Enter the number of any element that need to be removed."))
+    select_list.remove(select_list[remove_num])
+    return select_list

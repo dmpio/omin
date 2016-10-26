@@ -8,7 +8,7 @@ Date: October 12, 2016
 """
 
 # Dict of modifications found in proteome discoverer modifications column
-# FIXME: Make normalization to input handle several modification types.
+# FIXME : Remove deprecated classes below.
 # FIXME: Make this a file in the module that can be updated by the user and automatically
 # FIXME: make method that includes some amount of case handling.this may be better handled at manyModSel level.
 #Load boilerplate modules.
@@ -53,7 +53,7 @@ class RawData:
         print("number of proteins:", self.proteins.shape[0])
 
 class Compare:
-    """
+    """DEPRECATED
     Attributes
     ----------
     abundance : DataFrame
@@ -102,7 +102,8 @@ class Compare:
         self.dem_ave = pd.DataFrame(dem.mean(axis=1), columns=[genotype_list[1] + " AVE"], index=dem.index)
 
 class ModDetect:
-    """This class detects the modified peptides and proteins for a given modification.
+    """DEPRECATED
+    This class detects the modified peptides and proteins for a given modification.
 
     Attributes
     ----------
@@ -176,69 +177,7 @@ class ModDetect:
                                            index=fdr_mpa_pep.index)
         occupancy_abundance.columns = "Relative occupancy " + self.correlated_protein_abundance.columns
         self.relative_occupancy = Compare(occupancy_abundance, genotypes)
-#
-# class FracParse:
-#     """
-#     Attributes
-#     ----------
-#     abundance : DataFrame
-#     log_div_ave : DataFrame
-#     pool_normalized : DataFrame
-#     [selected conditions] : DataFrame
-#         These are created dynamically from the list the user selects.
-#     """
-#     def __init__(self,abundance,select_list):
-#         """
-#         Parameters
-#         ----------
-#         abundance : DataFrame
-#         select_list : list
-#         """
-#         self.abundance = abundance
-#         self.log_div_ave = omin.logNormToAve(self.abundance)
-#         self.pool_normalized = omin.normToPool(self.log_div_ave)
-#
-#         for select in select_list:
-#             term = re.sub("_", " ", select)
-#             self.__dict__[select] = omin.sep(self.pool_normalized,term)
-#
-# class PoolMod:
-#     """
-#
-#     Attributes
-#     ----------
-#     abundance : DataFrame
-#     [genotype] : (:obj)
-#         FracParse object.
-#     """
-#     def __init__(self,abundance,mod,genotypes,select_list):
-#         self.abundance = omin.sep(abundance,mod)
-#         for geno in genotypes:
-#             self.__dict__[geno] = FracParse(omin.sep(self.abundance,geno),select_list)
-#
-# class WithPool:
-#     """
-#     Attributes
-#     ----------
-#     raw : DataFrame
-#         The raw DataFrame with all information.
-#     abundance : DataFrame
-#         Abundance columns from raw DataFrame.
-#     """
-#
-#     def __init__(self, raw,modifications,genotypes,select_list):
-#         """
-#
-#         Parameters
-#         ----------
-#         raw: DataFrame
-#
-#         """
-#         self.raw = raw
-#         self.abundance = omin.sep(raw, "Abundance:")
-#
-#         for mod in modifications:
-#             self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,select_list)
+
 ###MAIN CLASS###
 #----------------------------------------------------------------------------------------------------------------------
 class Experiment:
@@ -282,6 +221,7 @@ class Experiment:
             if treatments == None:
                 print("You didn't specify any treatments. Please select them now...")
                 treatments = omin.treatmentSelect(omin.sep(raw_file.peptides,"Abundance:"))
+            pep_sel,prot_sel = omin.vLook(raw_file.peptides,raw_file.proteins,modifications)
             self.peptides = omin.WithPool(raw_file.peptides,modifications,genotypes,treatments)
             self.proteins = omin.WithPool(raw_file.proteins,modifications,genotypes,treatments)
     def __repr__(self):

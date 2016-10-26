@@ -7,6 +7,8 @@ from matplotlib import pyplot as plt
 from matplotlib_venn import venn2, venn3, venn2_circles, venn3_circles
 import numpy as np
 
+# FIXME : merge the volcan and plotByMito function
+
 def volcan(FC,pvals,aspect = 1,cutoff = .05):
     """Takes p-values and log2 fold changes and returns a basic volcano plot figure.
 

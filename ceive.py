@@ -2,7 +2,90 @@
 import omin
 import pandas as pd
 import numpy as np
+
+###FILTERING FUNCTIONS##
 #---------------------------------------------------------------------------------------------------------------------
+
+def masterCleanse(protein_df):
+    """Filters raw protein DataFrame for master proteins.
+
+    The raw protein data from Proteome Discoverer there is a column with the title 'Master' this funtion scans through
+    that column and selects only the proteins that end with the string "IsMasterProtein"
+
+    Parameters
+    ----------
+    protein_df : DataFrame
+        Raw protein DataFrame
+
+    Returns
+    -------
+    clean : DataFrame
+        Protein DataFrame that contains only proteins with 'IsMasterProtein' in 'Master' column of protein_df
+    """
+    clean = protein_df.ix[protein_df.Master.str.endswith("IsMasterProtein")]
+    return clean
+
+def onePerQ(protein_df):
+    """Filters raw protein DataFrame for proteins that are less than 1% the expected q-value.
+
+    Scans through the protein DataFrame selecting only the proteins with less than 1% of the expected q-value.
+
+    Parameters
+    ----------
+    protein_df : DataFrame
+        Raw protein DataFrame
+
+    Returns
+    -------
+    clean : DataFrame
+        Protein data that contains only proteins with proteins only less than 1% of the expected q-value.
+    """
+    one_per = protein_df["Exp. q-value"] < .01
+    one_per = protein_df.ix[one_per]
+    return one_per
+
+
+def masterOne(protein_df):
+    """Takes a raw protein DataFrame and filters it using first the 'masterCleanse' function and 'onePerQ' function.
+
+    Parameters
+    ----------
+    protein_df : DataFrame
+        Raw proteins.
+
+    Returns
+    -------
+    master_one : DataFrame
+        Of master proteins with exp. q-value <1%
+    """
+    master = masterCleanse(protein_df)
+    master_one = onePerQ(master)
+    return master_one
+
+
+def masterPep(peptide_df):
+    """Takes a peptide DataFrame and returns just the first master protein accession for each peptide.
+
+    Notes
+    -----
+    Assumes the first uniprot ID list is the correct one. Peptides with no master protein accession will be lost however
+    the index of peptide_df will be preserved.
+
+    Parameters
+    ----------
+    peptide_df : DataFrame
+
+    Returns
+    -------
+    master_prot_acc : DataFrame
+
+    """
+    master_prot_acc = [i.split(';')[0] for i in peptide_df['Master Protein Accessions'].dropna()]
+
+    master_prot_acc = pd.DataFrame(master_prot_acc,
+                                   index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
+    return master_prot_acc
+
 def specSel(dataframe,include_list,exclude_list,case=True):
     """Select columns whose headers contain items just the items you want.
 
@@ -96,11 +179,11 @@ def vLook(peptides,proteins,mods):
 
     """
 
-    fdr = omin.masterOne(proteins)
+    fdr = masterOne(proteins)
     if len(mods) == 0:
-        mpa = omin.masterPep(peptides)
+        mpa = masterPep(peptides)
     else:
-        mpa = omin.masterPep(omin.manyModSel(peptides,mods)[-1])
+        mpa = masterPep(manyModSel(peptides,mods)[-1])
     fdrdf = pd.DataFrame(fdr.Accession,index = fdr.index)
     peptide_select = mpa.merge(fdrdf, on ="Accession",how="left",right_index=True)
     protein_select = mpa.merge(fdrdf, on ="Accession",how="left",left_index=True)

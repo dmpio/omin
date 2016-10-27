@@ -1,4 +1,6 @@
-<img align="center" src="https://github.com/dmpio/omin/blob/master/images/logo.png" alt="logo">
+
+<center><img src="https://github.com/dmpio/omin/blob/master/images/logo.png" alt="logo"></center>
+<center>This is an image</center>
 # __omin__
 ### Basically the Manhattan Project of Omics data analysis
 

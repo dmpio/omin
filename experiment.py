@@ -7,19 +7,16 @@ Email: james.drape@duke.edu
 Date: October 12, 2016
 """
 
-# Dict of modifications found in proteome discoverer modifications column
-# FIXME: Make normalization to input handle several modification types.
-# FIXME: Make this a file in the module that can be updated by the user and automatically
-# FIXME: make method that includes some amount of case handling.this may be better handled at manyModSel level.
+# FIXME : Remove deprecated classes below.
+
 #Load boilerplate modules.
 import omin
 import re
 import pandas as pd
 import numpy as np
 import pickle
-###LOAD MODIFICATION DICTIONARY###
+
 #----------------------------------------------------------------------------------------------------------------------
-# mod_dict = pickle.load(open("mod_dict.pickle","rb"))
 
 class RawData:
     """Converts Proteome Discoverer .txt files into pandas DataFrames
@@ -46,96 +43,26 @@ class RawData:
             Name of Proteome Discoverer Peptides file as string.
         proteins_file : str
             Name of Proteome Discoverer Proteins file as string.
+
+        Examples
+        --------
+        Load file strings:
+        >>>peptides_file = "mydatafolder/peptides.txt"
+        >>>proteins_file = "mydatafolder/proteins.txt"
+
+        Create RawData object:
+        >>>raw_data = omin.RawData(peptides_file,proteins_file)
+
         """
         self.peptides = pd.read_csv(peptides_file, delimiter="\t", low_memory=False)
         print("number of peptides:", self.peptides.shape[0])
         self.proteins = pd.read_csv(proteins_file, delimiter="\t", low_memory=False)
         print("number of proteins:", self.proteins.shape[0])
-
-
-def masterCleanse(protein_df):
-    """Filters raw protein DataFrame for master proteins.
-
-    The raw protein data from Proteome Discoverer there is a column with the title 'Master' this funtion scans through
-    that column and selects only the proteins that end with the string "IsMasterProtein"
-
-    Parameters
-    ----------
-    protein_df : DataFrame
-        Raw protein DataFrame
-
-    Returns
-    -------
-    clean : DataFrame
-        Protein DataFrame that contains only proteins with 'IsMasterProtein' in 'Master' column of protein_df
-    """
-    clean = protein_df.ix[protein_df.Master.str.endswith("IsMasterProtein")]
-    return clean
-
-
-def onePerQ(protein_df):
-    """Filters raw protein DataFrame for proteins that are less than 1% the expected q-value.
-
-    Scans through the protein DataFrame selecting only the proteins with less than 1% of the expected q-value.
-
-    Parameters
-    ----------
-    protein_df : DataFrame
-        Raw protein DataFrame
-
-    Returns
-    -------
-    clean : DataFrame
-        Protein data that contains only proteins with proteins only less than 1% of the expected q-value.
-    """
-    one_per = protein_df["Exp. q-value"] < .01
-    one_per = protein_df.ix[one_per]
-    return one_per
-
-
-def masterOne(protein_df):
-    """Takes a raw protein DataFrame and filters it using first the 'masterCleanse' function and 'onePerQ' function.
-
-    Parameters
-    ----------
-    protein_df : DataFrame
-        Raw proteins.
-
-    Returns
-    -------
-    master_one : DataFrame
-        Of master proteins with exp. q-value <1%
-    """
-    master = masterCleanse(protein_df)
-    master_one = onePerQ(master)
-    return master_one
-
-
-def masterPep(peptide_df):
-    """Takes a peptide DataFrame and returns just the first master protein accession for each peptide.
-
-    Notes
-    -----
-    Assumes the first uniprot ID list is the correct one. Peptides with no master protein accession will be lost however
-    the index of peptide_df will be preserved.
-
-    Parameters
-    ----------
-    peptide_df : DataFrame
-
-    Returns
-    -------
-    master_prot_acc : DataFrame
-
-    """
-    master_prot_acc = [i.split(';')[0] for i in peptide_df['Master Protein Accessions'].dropna()]
-
-    master_prot_acc = pd.DataFrame(master_prot_acc,
-                                   index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
-    return master_prot_acc
+    def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 class Compare:
-    """
+    """DEPRECATED
     Attributes
     ----------
     abundance : DataFrame
@@ -184,7 +111,8 @@ class Compare:
         self.dem_ave = pd.DataFrame(dem.mean(axis=1), columns=[genotype_list[1] + " AVE"], index=dem.index)
 
 class ModDetect:
-    """This class detects the modified peptides and proteins for a given modification.
+    """DEPRECATED
+    This class detects the modified peptides and proteins for a given modification.
 
     Attributes
     ----------
@@ -228,7 +156,7 @@ class ModDetect:
         # Grab the raw peptide data for modification in question
         self.raw = manyModSel(whole_set, modification)[0]
         # Grab the master protein accession for the peptides
-        self.mpa = masterPep(self.raw)
+        self.mpa = omin.masterPep(self.raw)
         # Grab the protein accessions for the correlated protein abundances for the modifidied peptides
         fdr = pd.DataFrame(processed_proteins.fdr.Accession, index=processed_proteins.fdr.Accession.index)
         # Essentially the same as PAG's vlookup step
@@ -259,69 +187,8 @@ class ModDetect:
         occupancy_abundance.columns = "Relative occupancy " + self.correlated_protein_abundance.columns
         self.relative_occupancy = Compare(occupancy_abundance, genotypes)
 
-class FracParse:
-    """
-    Attributes
-    ----------
-    abundance : DataFrame
-    log_div_ave : DataFrame
-    pool_normalized : DataFrame
-    [selected conditions] : DataFrame
-        These are created dynamically from the list the user selects.
-    """
-    def __init__(self,abundance,select_list):
-        """
-        Parameters
-        ----------
-        abundance : DataFrame
-        select_list : list
-        """
-        self.abundance = abundance
-        self.log_div_ave = omin.logNormToAve(self.abundance)
-        self.pool_normalized = omin.normToPool(self.log_div_ave)
-
-        for select in select_list:
-            term = re.sub("_", " ", select)
-            self.__dict__[select] = omin.sep(self.pool_normalized,term)
-
-class PoolMod:
-    """
-
-    Attributes
-    ----------
-    abundance : DataFrame
-    [genotype] : (:obj)
-        FracParse object.
-    """
-    def __init__(self,abundance,mod,genotypes,select_list):
-        self.abundance = omin.sep(abundance,mod)
-        for geno in genotypes:
-            self.__dict__[geno] = FracParse(omin.sep(self.abundance,geno),select_list)
-
-class WithPool:
-    """
-    Attributes
-    ----------
-    raw : DataFrame
-        The raw DataFrame with all information.
-    abundance : DataFrame
-        Abundance columns from raw DataFrame.
-    """
-
-    def __init__(self, raw,modifications,genotypes,select_list):
-        """
-
-        Parameters
-        ----------
-        raw: DataFrame
-
-        """
-        self.raw = raw
-        self.abundance = omin.sep(raw, "Abundance:")
-
-        for mod in modifications:
-            self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,select_list)
-
+###MAIN CLASS###
+#----------------------------------------------------------------------------------------------------------------------
 class Experiment:
     """
 
@@ -335,7 +202,8 @@ class Experiment:
         These modification could be anything defined by the user. The defaults are Acetyl and Phospho
 
     """
-    def __init__(self, raw_file, modifications=["Acetyl", "Phospho"], genotypes=["ko", "wt"], compare_in_order=True):
+    def __init__(self, raw_file = None, modifications=["Acetyl", "Phospho"], genotypes=["ko", "wt"], compare_in_order=True,
+    treatments = None):
         """
 
         Parameters
@@ -349,7 +217,25 @@ class Experiment:
         compare_in_order : bool
             Should the genotypes be compared in their current order with the first element as the numerator and the
             second as the denominator. If False the list is reversed. Defaults to True.
+
+        Examples
+        --------
+        Load file strings:
+        >>>peptides_file = "mydatafolder/peptides.txt"
+        >>>proteins_file = "mydatafolder/proteins.txt"
+
+        Create RawData object:
+        >>>raw_data = omin.RawData(peptides_file,proteins_file)
+
+        Create Experiment object
+        >>>new_exp = omin.Experiment(raw_data)
+
+        Create Experiment object with non-standard modifications, and treatments.
+        >>>weird_exp = omin.Experiment(weird_data, modifications=["HMG"], treatments=["Rest", "10 Post"])
         """
+        #verify raw_file
+        if not isinstance(raw_file,omin.experiment.RawData):
+            raise NotImplementedError("raw_file must be a omin.experiment.RawData object.")
         #NORMALIZE TO INPUT
         if raw_file.peptides.columns.str.contains("Input", case=False).any():
             print("Normalizing to: Input...")
@@ -357,32 +243,14 @@ class Experiment:
             self.peptides = omin.PeptidesWithInput(raw_file.peptides,modifications,pep_sel)
             self.proteins = omin.ProteinsWithInput(raw_file.proteins,modifications)
         else:
+        #NORMALIZE TO POOL
             print("Normalizing to: Pool...")
-            select_list = conditionSelect(omin.sep(raw_file.peptides,"Abundance:"))
-            self.peptides = WithPool(raw_file.peptides,modifications,genotypes,select_list)
-            self.proteins = WithPool(raw_file.proteins,modifications,genotypes,select_list)
+            if treatments == None:
+                print("You didn't specify any treatments. Please select them now...")
+                treatments = omin.treatmentSelect(omin.sep(raw_file.peptides,"Abundance:"))
+            pep_sel,prot_sel = omin.vLook(raw_file.peptides,raw_file.proteins,modifications)
+            self.peptides = omin.WithPool(raw_file.peptides,modifications,genotypes,treatments)
+            self.proteins = omin.WithPool(raw_file.proteins,modifications,genotypes,treatments)
     def __repr__(self):
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
         # return "".join(list(self.__dict__.keys()))
-
-def conditionSelect(peptide_abundance):
-    """Allows the user to select which columns contain conditions.
-
-    Parameters
-    ----------
-    peptide_abundance : DataFrame
-
-    Returns
-    -------
-    select_list : list
-    """
-    print(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]))
-    col_num = int(input("Which column has condition data?(Enter the number)"))
-    select_set = set(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]).ix[:, col_num])
-
-    select_list = [re.sub(" ", "_", i.strip()) for i in select_set]
-    #print(select_list)
-    [print(n, i) for n, i in enumerate(select_list)]
-    remove_num = int(input("Enter the number of any element that need to be removed."))
-    select_list.remove(select_list[remove_num])
-    return select_list

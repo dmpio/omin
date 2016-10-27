@@ -2,7 +2,91 @@
 import omin
 import pandas as pd
 import numpy as np
+import re
+
+###FILTERING FUNCTIONS##
 #---------------------------------------------------------------------------------------------------------------------
+
+def masterCleanse(protein_df):
+    """Filters raw protein DataFrame for master proteins.
+
+    The raw protein data from Proteome Discoverer there is a column with the title 'Master' this funtion scans through
+    that column and selects only the proteins that end with the string "IsMasterProtein"
+
+    Parameters
+    ----------
+    protein_df : DataFrame
+        Raw protein DataFrame
+
+    Returns
+    -------
+    clean : DataFrame
+        Protein DataFrame that contains only proteins with 'IsMasterProtein' in 'Master' column of protein_df
+    """
+    clean = protein_df.ix[protein_df.Master.str.endswith("IsMasterProtein")]
+    return clean
+
+def onePerQ(protein_df):
+    """Filters raw protein DataFrame for proteins that are less than 1% the expected q-value.
+
+    Scans through the protein DataFrame selecting only the proteins with less than 1% of the expected q-value.
+
+    Parameters
+    ----------
+    protein_df : DataFrame
+        Raw protein DataFrame
+
+    Returns
+    -------
+    clean : DataFrame
+        Protein data that contains only proteins with proteins only less than 1% of the expected q-value.
+    """
+    one_per = protein_df["Exp. q-value"] < .01
+    one_per = protein_df.ix[one_per]
+    return one_per
+
+
+def masterOne(protein_df):
+    """Takes a raw protein DataFrame and filters it using first the 'masterCleanse' function and 'onePerQ' function.
+
+    Parameters
+    ----------
+    protein_df : DataFrame
+        Raw proteins.
+
+    Returns
+    -------
+    master_one : DataFrame
+        Of master proteins with exp. q-value <1%
+    """
+    master = masterCleanse(protein_df)
+    master_one = onePerQ(master)
+    return master_one
+
+
+def masterPep(peptide_df):
+    """Takes a peptide DataFrame and returns just the first master protein accession for each peptide.
+
+    Notes
+    -----
+    Assumes the first uniprot ID list is the correct one. Peptides with no master protein accession will be lost however
+    the index of peptide_df will be preserved.
+
+    Parameters
+    ----------
+    peptide_df : DataFrame
+
+    Returns
+    -------
+    master_prot_acc : DataFrame
+
+    """
+    master_prot_acc = [i.split(';')[0] for i in peptide_df['Master Protein Accessions'].dropna()]
+
+    master_prot_acc = pd.DataFrame(master_prot_acc,
+                                   index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
+    return master_prot_acc
+
 def specSel(dataframe,include_list,exclude_list,case=True):
     """Select columns whose headers contain items just the items you want.
 
@@ -96,15 +180,56 @@ def vLook(peptides,proteins,mods):
 
     """
 
-    fdr = omin.masterOne(proteins)
+    fdr = masterOne(proteins)
     if len(mods) == 0:
-        mpa = omin.masterPep(peptides)
+        mpa = masterPep(peptides)
     else:
-        mpa = omin.masterPep(omin.manyModSel(peptides,mods)[-1])
+        mpa = masterPep(manyModSel(peptides,mods)[-1])
     fdrdf = pd.DataFrame(fdr.Accession,index = fdr.index)
     peptide_select = mpa.merge(fdrdf, on ="Accession",how="left",right_index=True)
     protein_select = mpa.merge(fdrdf, on ="Accession",how="left",left_index=True)
     return peptide_select,protein_select
+
+def mitoCartaPepOut(raw_file,mods = ["Acetyl","Phospho"],dex = False):
+    """
+    Parameters
+    ----------
+    raw_file : (:obj)
+        An instance of the class omin.experiment.RawData
+    mods : list
+        Defaults to ["Acetyl","Phospho"].
+    dex : bool
+        Defaults to False. When False output is mitocarta_pep if True output is a tuple containing mitodex and nonmitodex
+
+    Returns
+    -------
+    (mitodex, nonmitodex) : tuple(DataFrame,DataFrame)
+    mitocarta_pep : Dataframe
+
+    Examples
+    --------
+    >>>mitocarta_pep = mitoCartaPepOut(raw_object)# Grab the full MitoCarta2.0 call sheet as a dataframe.
+    >>>mitodex,nonmitodex = mitoCartaPepOut(raw_object,dex=True) #Grab the mito/non-mito peptides for plotting by setting dex to True
+
+    See Also
+    --------
+    omin.experiment.RawData
+    omin.vis.plotByMito
+
+    """
+    peptides = raw_file.peptides
+    proteins = raw_file.proteins
+    mods = ["Acetyl","Phospho"]
+    carta = omin.mitoCartaCall.mitoProt(proteins)
+    pepsel,prosel = omin.vLook(peptides,proteins,mods)
+    mitocarta_pep = pepsel.merge(carta,on="Accession",how="left")
+    mitocarta_pep.index = pepsel.index
+    if dex:
+        nonmitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List != 1]
+        mitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List == 1]
+        return mitodex,nonmitodex
+    else:
+        return mitocarta_pep
 
 ###VENN DIAGRAM FUNCTIONS###
 # ---------------------------------------------------------------------------------------------------------------------
@@ -221,3 +346,27 @@ def allComp(trunch_object, modification_object, cond,pval_kind="pval",lfc_kind="
     # Change NaNs for zeros
     compound = compound.fillna(0)
     return compound
+###INTERACTIVE SELECTION###
+#----------------------------------------------------------------------------------------------------------------------
+
+def treatmentSelect(peptide_abundance):
+    """Allows the user to select which columns contain treatments.
+
+    Parameters
+    ----------
+    peptide_abundance : DataFrame
+
+    Returns
+    -------
+    select_list : list
+    """
+    print(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]))
+    col_num = int(input("Which column has treatment data?(Enter the number)"))
+    select_set = set(pd.DataFrame([i.split(",") for i in peptide_abundance.columns]).ix[:, col_num])
+
+    select_list = [re.sub(" ", "_", i.strip()) for i in select_set]
+    #print(select_list)
+    [print(n, i) for n, i in enumerate(select_list)]
+    remove_num = int(input("Enter the number of any element that need to be removed."))
+    select_list.remove(select_list[remove_num])
+    return select_list

@@ -7,19 +7,16 @@ Email: james.drape@duke.edu
 Date: October 12, 2016
 """
 
-# Dict of modifications found in proteome discoverer modifications column
 # FIXME : Remove deprecated classes below.
-# FIXME: Make this a file in the module that can be updated by the user and automatically
-# FIXME: make method that includes some amount of case handling.this may be better handled at manyModSel level.
+
 #Load boilerplate modules.
 import omin
 import re
 import pandas as pd
 import numpy as np
 import pickle
-###LOAD MODIFICATION DICTIONARY###
+
 #----------------------------------------------------------------------------------------------------------------------
-# mod_dict = pickle.load(open("mod_dict.pickle","rb"))
 
 class RawData:
     """Converts Proteome Discoverer .txt files into pandas DataFrames
@@ -46,11 +43,23 @@ class RawData:
             Name of Proteome Discoverer Peptides file as string.
         proteins_file : str
             Name of Proteome Discoverer Proteins file as string.
+
+        Examples
+        --------
+        Load file strings:
+        >>>peptides_file = "mydatafolder/peptides.txt"
+        >>>proteins_file = "mydatafolder/proteins.txt"
+
+        Create RawData object:
+        >>>raw_data = omin.RawData(peptides_file,proteins_file)
+
         """
         self.peptides = pd.read_csv(peptides_file, delimiter="\t", low_memory=False)
         print("number of peptides:", self.peptides.shape[0])
         self.proteins = pd.read_csv(proteins_file, delimiter="\t", low_memory=False)
         print("number of proteins:", self.proteins.shape[0])
+    def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 class Compare:
     """DEPRECATED
@@ -193,7 +202,7 @@ class Experiment:
         These modification could be anything defined by the user. The defaults are Acetyl and Phospho
 
     """
-    def __init__(self, raw_file, modifications=["Acetyl", "Phospho"], genotypes=["ko", "wt"], compare_in_order=True,
+    def __init__(self, raw_file = None, modifications=["Acetyl", "Phospho"], genotypes=["ko", "wt"], compare_in_order=True,
     treatments = None):
         """
 
@@ -208,7 +217,25 @@ class Experiment:
         compare_in_order : bool
             Should the genotypes be compared in their current order with the first element as the numerator and the
             second as the denominator. If False the list is reversed. Defaults to True.
+
+        Examples
+        --------
+        Load file strings:
+        >>>peptides_file = "mydatafolder/peptides.txt"
+        >>>proteins_file = "mydatafolder/proteins.txt"
+
+        Create RawData object:
+        >>>raw_data = omin.RawData(peptides_file,proteins_file)
+
+        Create Experiment object
+        >>>new_exp = omin.Experiment(raw_data)
+
+        Create Experiment object with non-standard modifications, and treatments.
+        >>>weird_exp = omin.Experiment(weird_data, modifications=["HMG"], treatments=["Rest", "10 Post"])
         """
+        #verify raw_file
+        if not isinstance(raw_file,omin.experiment.RawData):
+            raise NotImplementedError("raw_file must be a omin.experiment.RawData object.")
         #NORMALIZE TO INPUT
         if raw_file.peptides.columns.str.contains("Input", case=False).any():
             print("Normalizing to: Input...")

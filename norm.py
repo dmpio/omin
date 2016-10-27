@@ -161,21 +161,21 @@ def dfMin(d1, d2):
     """
     return pd.DataFrame(d1.as_matrix() - d2.as_matrix(), index=d1.index)
 
-def treatAve(d, treat):
-    return pd.DataFrame(sep(d, treat).mean(axis=1),
+def treatAve(dataframe, treat):
+    return pd.DataFrame(sep(dataframe, treat).mean(axis=1),
                         columns=["AVE " + treat],
-                        index=d.index)
+                        index=dataframe.index)
 
 def treatSTD(d, treat):
     return pd.DataFrame(sep(d, treat).std(axis=1),
                         columns=["STDEV " + treat],
                         index=d.index)
 
-def treatAveSTD(d, t1, t2):
-    avet1 = treatAve(d, t1)
-    avet2 = treatAve(d, t2)
-    stdt1 = treatSTD(d, t1)
-    stdt2 = treatSTD(d, t2)
+def treatAveSTD(d, numer, denom):
+    avet1 = treatAve(d, numer)
+    avet2 = treatAve(d, denom)
+    stdt1 = treatSTD(d, numer)
+    stdt2 = treatSTD(d, denom)
     return pd.concat([avet1, avet2, stdt1, stdt2], axis=1)
 
 def logFC(d, num, dem):

@@ -190,6 +190,47 @@ def vLook(peptides,proteins,mods):
     protein_select = mpa.merge(fdrdf, on ="Accession",how="left",left_index=True)
     return peptide_select,protein_select
 
+def mitoCartaPepOut(raw_file,mods = ["Acetyl","Phospho"],dex = False):
+    """
+    Parameters
+    ----------
+    raw_file : (:obj)
+        An instance of the class omin.experiment.RawData
+    mods : list
+        Defaults to ["Acetyl","Phospho"].
+    dex : bool
+        Defaults to False. When False output is mitocarta_pep if True output is a tuple containing mitodex and nonmitodex
+
+    Returns
+    -------
+    (mitodex, nonmitodex) : tuple(DataFrame,DataFrame)
+    mitocarta_pep : Dataframe
+
+    Examples
+    --------
+    >>>mitocarta_pep = mitoCartaPepOut(raw_object)# Grab the full MitoCarta2.0 call sheet as a dataframe.
+    >>>mitodex,nonmitodex = mitoCartaPepOut(raw_object,dex=True) #Grab the mito/non-mito peptides for plotting by setting dex to True
+
+    See Also
+    --------
+    omin.experiment.RawData
+    omin.vis.plotByMito
+
+    """
+    peptides = raw_file.peptides
+    proteins = raw_file.proteins
+    mods = ["Acetyl","Phospho"]
+    carta = omin.mitoCartaCall.mitoProt(proteins)
+    pepsel,prosel = omin.vLook(peptides,proteins,mods)
+    mitocarta_pep = pepsel.merge(carta,on="Accession",how="left")
+    mitocarta_pep.index = pepsel.index
+    if dex:
+        nonmitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List != 1]
+        mitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List == 1]
+        return mitodex,nonmitodex
+    else:
+        return mitocarta_pep
+
 ###VENN DIAGRAM FUNCTIONS###
 # ---------------------------------------------------------------------------------------------------------------------
 

@@ -1,6 +1,9 @@
 __all__ = ["norm","up","excellor","vis","trunch","replicate","ceive","mitoCartaCall","fdr","experiment","norm_to_pool",
-"norm_to_input","transform"]
+"norm_to_input","transform","comparison"]
 
+__docformat__ = 'restructuredtext'
+
+from omin.info import __doc__
 from omin.up import *
 from omin.norm import *
 from omin.trunch import *
@@ -16,6 +19,7 @@ from omin.norm_to_input import *
 from omin.norm_to_pool import *
 import omin.vis
 import omin.transform
+from omin.comparison import *
 
 import os
 import pickle

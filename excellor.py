@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+"""
+
+"""
 import numpy as np
 import pandas as pd
 import string
 from omin.norm import *
 
 def excellor(compob, venn_list, parent_file, file_name):
-    """
+    """Takes objects containing DataFrames and outputs those as Excel files.
 
     Parameters
     ----------

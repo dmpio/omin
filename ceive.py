@@ -183,6 +183,8 @@ def vLook(peptides,proteins,mods):
     fdr = masterOne(proteins)
     if len(mods) == 0:
         mpa = masterPep(peptides)
+    if len(mods) == 1:
+        mpa = masterPep(manyModSel(peptides,mods)[0])
     else:
         mpa = masterPep(manyModSel(peptides,mods)[-1])
     fdrdf = pd.DataFrame(fdr.Accession,index = fdr.index)
@@ -219,7 +221,6 @@ def mitoCartaPepOut(raw_file,mods = ["Acetyl","Phospho"],dex = False):
     """
     peptides = raw_file.peptides
     proteins = raw_file.proteins
-    mods = ["Acetyl","Phospho"]
     carta = omin.mitoCartaCall.mitoProt(proteins)
     pepsel,prosel = omin.vLook(peptides,proteins,mods)
     mitocarta_pep = pepsel.merge(carta,on="Accession",how="left")

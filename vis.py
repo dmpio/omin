@@ -9,7 +9,7 @@ import numpy as np
 
 # FIXME : merge the volcan and plotByMito function
 
-def volcan(FC,pvals,aspect = 1,cutoff = .05):
+def volcan(FC,pvals,cutoff = -np.log10(.05),aspect=None):
     """Takes p-values and log2 fold changes and returns a basic volcano plot figure.
 
     Parameters
@@ -28,17 +28,19 @@ def volcan(FC,pvals,aspect = 1,cutoff = .05):
     x1 = FC
     #PLOT
     plt.scatter(x1,y1,c=(.3,.3,.3),zorder=10)
-    plt.axhspan(-np.log10(cutoff), -np.log10(pvals.min())+2, facecolor='y', alpha=0.25)
+    plt.axhspan(cutoff, -np.log10(pvals.min())+2, facecolor='y', alpha=0.25)
     plt.ylim([0,int(y1.max())+2])
     plt.xlim([-5,5])
-    plt.axes().set_aspect(aspect)
     plt.grid(True)
     #LABELS
     plt.xlabel("Log2 Fold Change",fontname = "arial")
     plt.ylabel('-Log10 of P-Value',fontname = "arial")
+
+    if aspect != None:
+        plt.axes().set_aspect(aspect)
     return plt
 
-def plotByMito(lfc,pval,bdex,wdex):
+def plotByMito(lfc,pval,bdex,wdex,cutoff = -np.log10(.05),aspect = None):
     """Creates a volcano plot that plots mitochondrial proteins as black and the non-mitochondrial proteins as white.
 
     Parameters
@@ -47,6 +49,8 @@ def plotByMito(lfc,pval,bdex,wdex):
     pval : DataFrame
     bdex : DataFrame
     wdex : DataFrame
+    cutoff : float
+    aspect : float
 
     Returns
     -------
@@ -77,12 +81,15 @@ def plotByMito(lfc,pval,bdex,wdex):
                 zorder=9)
 
     #Show cutoff
-    plt.axhspan(-np.log10(.05), -np.log10(pval.min())+2, facecolor='y', alpha=0.25)
+    plt.axhspan(cutoff, -np.log10(pval.min())+2, facecolor='y', alpha=0.25)
     #Set plot limits
     plt.ylim([0,5])
     plt.xlim([-3,3])
     #Show grid
     plt.grid(True)
+    #Set aspect
+    if aspect != None:
+        plt.axes().set_aspect(aspect)
     return plt
 
 def trePlot(trunob):

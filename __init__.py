@@ -5,13 +5,12 @@ __docformat__ = 'restructuredtext'
 
 from omin.info import __doc__
 from omin.up import *
+from omin.ceive import *
 from omin.norm import *
 from omin.trunch import *
 #import omin.mitoCartaCall
 from omin.mitoCartaCall import *
-
 from omin.replicate import *
-from omin.ceive import *
 from omin.excellor import *
 from omin.fdr import *
 from omin.experiment import *

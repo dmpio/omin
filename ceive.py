@@ -4,6 +4,213 @@ import pandas as pd
 import numpy as np
 import re
 
+###Selection Functions###
+# ---------------------------------------------------------------------------------------------------------------------
+
+def sep(dataframe_in, search_term, strict=False, match=False):
+    """Takes DataFrame and search_term and returns a new DataFrame that contains columns that contain that search_term.
+
+    Parameters
+    ----------
+    dataframe_in : DataFrame
+    search_term : str
+        What kind of columns do you want to find.
+    strict : bool
+        Defaults to False. FIXME : Annotate this.
+    match : bool
+        Defaults to False. If the function will use pandas dataframe.columns.str.match which is more strict than dataframe.columns.str.search.
+    Returns
+    -------
+    dataframe_out : DataFrame
+        A DataFrame that with columns contain just search_term.
+
+    Examples
+    --------
+    >>>omin.sep(mydataframe,"Search Term")
+    dataframe_out
+    >>>omin.sep(mydataframe,"Search Term",match=True)
+    Scricter dataframe_out
+
+    See Also
+    --------
+    omin.sepCon
+    omin.betSep
+    omin.modSel
+    omin.manyModSel
+
+    """
+    dataframe_out = None
+    if match:
+        dataframe_out = dataframe_in[dataframe_in.columns[dataframe_in.columns.str.match(search_term)]].copy()
+        return dataframe_out
+
+    if dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)].any():
+        if strict:
+            dataframe_out = dataframe_in[dataframe_in.columns[
+                np.array([search_term in set(re.sub(" ", "", i).split(",")) for i in dataframe_in.columns])]]
+        else:
+            dataframe_out = dataframe_in[
+                dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)]].copy()
+    else:
+        print("The DataFrame has no columns that contain:", search_term)
+    return dataframe_out
+
+def modSel(dataframe_in, mod1, mod2):
+    """Selects peptides with modifications
+
+    Parameters
+    ----------
+    dataframe_in : DataFrame
+    mod1 : str
+    mod2 : str
+
+    Returns
+    -------
+    dmod12 : DataFrame
+        Contains peptides with both mod1 and mod2.
+    dmod1 : DataFrame
+        Contains peptides with mod1
+    dmod2 : DataFrame
+        Contains peptides with mod1
+
+    See Also
+    --------
+    omin.sep
+    omin.sepCon
+
+    """
+    dmod1 = dataframe_in[dataframe_in.Modifications.str.contains(mod1)]
+    dmod2 = dataframe_in[dataframe_in.Modifications.str.contains(mod2)]
+    dmod12 = dataframe_in[dataframe_in.Modifications.str.contains(mod1) ^ dataframe_in.Modifications.str.contains(mod2, case=False)]
+    return dmod12, dmod1, dmod2
+
+def sepCon(dataframe_in, separation_term):
+    """Separates dataframe_in two DataFrames one with the separation_term and one without the separation_term.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    separation_term : str
+
+    Returns
+    -------
+    with_term = DataFrame
+    without_term = DataFrame
+
+    See Also
+    --------
+    omin.sep
+    omin.betSep
+    omin.modSel
+    omin.manyModSel
+    omin.specSel
+
+    """
+    with_term = dataframe_in[dataframe_in.columns[dataframe_in.columns.str.contains(separation_term, case=False)]]
+    without_term = dataframe_in[dataframe_in.columns[~dataframe_in.columns.str.contains(separation_term, case=False)]]
+    return with_term, without_term
+
+def betSep(dataframe_in, *args):
+    """A better version of the function sepCon.
+
+    Parameters
+    ----------
+    dataframe_in : DataFrame
+    *args : str
+
+    Returns
+    -------
+    with_terms : DataFrame
+    without_terms : DataFrame
+
+    """
+    sel = np.array([dataframe_in.columns.str.contains(i, case=False) for i in args])
+    sel = np.any(sel, axis=0)
+    with_terms = dataframe_in[dataframe_in.columns[sel]]
+    without_terms = dataframe_in[dataframe_in.columns[~sel]]
+    return with_terms,without_terms
+
+def specSel(dataframe,include_list,exclude_list,case=True):
+    """Select columns whose headers contain items just the items you want.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    include_list : list
+    exclude_list : list
+
+    Returns
+    -------
+    selected : DataFrame
+
+    """
+    allbool = np.ones(len(dataframe.columns),dtype=bool)
+    for mod in include_list:
+            trubool = dataframe.columns.str.contains(mod,case)
+            allbool = allbool&trubool
+    for ex in exclude_list:
+        fakbool = dataframe.columns.str.contains(ex,case)
+        allbool = allbool&~fakbool
+
+    if allbool.any():
+        selected = dataframe[dataframe.columns[allbool]]
+    else:
+        print("Special select failed. Try something else.")
+        selected = np.nan
+    return selected
+
+def manyModSel(pepdf, terms):
+    """Returns searched peptide a tuple of searched DataFrames with a given modifications or modifications.
+
+    Parameters
+    ----------
+    pepdf : DataFrame
+        With peptides information.
+    terms : list
+        Can be any number of modifications as a string. Case does not matter and regex special characters can be
+        used e.g. 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
+
+    Returns
+    -------
+    selected : tuple
+        Entering more than one term last element of the tuple will contain all modified peptides.
+
+    """
+    selected = ()
+    for term in terms:
+        term = omin.mod_dict[term]
+        moddex = pepdf.Modifications.str.contains(pat=term, case=False)
+        if moddex.sum() > 0:
+            selected += (pepdf.ix[moddex],)
+            print(moddex.sum(), "peptides with", term, "modification found.")
+        else:
+            print("No peptides with", term, "modification were found.")
+            pass
+    if len(selected) > 1:
+        all_select = np.bitwise_or.reduce([df.index for df in selected])
+        all_selected = pepdf.ix[all_select]
+        selected = selected + (all_selected,)
+    return selected
+
+def sevSel(dataframe=None, term_list=None, match=False):
+    """
+    Parameters
+    ----------
+    dataframe : DataFrame
+    term_list : list
+
+    Returns
+    -------
+    dataframe_out : DataFrame
+
+    """
+    if match:
+        dataframe_out = pd.concat([omin.sep(dataframe, term, match=True) for term in term_list], axis=1)
+        return dataframe_out
+    else:
+        dataframe_out = pd.concat([omin.sep(dataframe, term) for term in term_list], axis=1)
+        return dataframe_out
+
 ###FILTERING FUNCTIONS##
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -86,68 +293,6 @@ def masterPep(peptide_df):
     master_prot_acc = pd.DataFrame(master_prot_acc,
                                    index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
     return master_prot_acc
-
-def specSel(dataframe,include_list,exclude_list,case=True):
-    """Select columns whose headers contain items just the items you want.
-
-    Parameters
-    ----------
-    dataframe : DataFrame
-    include_list : list
-    exclude_list : list
-
-    Returns
-    -------
-    selected : DataFrame
-
-    """
-    allbool = np.ones(len(dataframe.columns),dtype=bool)
-    for mod in include_list:
-            trubool = dataframe.columns.str.contains(mod,case)
-            allbool = allbool&trubool
-    for ex in exclude_list:
-        fakbool = dataframe.columns.str.contains(ex,case)
-        allbool = allbool&~fakbool
-
-    if allbool.any():
-        selected = dataframe[dataframe.columns[allbool]]
-    else:
-        print("Special select failed. Try something else.")
-        selected = np.nan
-    return selected
-
-def manyModSel(pepdf, terms):
-    """Returns searched peptide a tuple of searched DataFrames with a given modifications or modifications.
-
-    Parameters
-    ----------
-    pepdf : DataFrame
-        With peptides information.
-    terms : list
-        Can be any number of modifications as a string. Case does not matter and regex special characters can be
-        used e.g. 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
-
-    Returns
-    -------
-    selected : tuple
-        Entering more than one term last element of the tuple will contain all modified peptides.
-
-    """
-    selected = ()
-    for term in terms:
-        term = omin.mod_dict[term]
-        moddex = pepdf.Modifications.str.contains(pat=term, case=False)
-        if moddex.sum() > 0:
-            selected += (pepdf.ix[moddex],)
-            print(moddex.sum(), "peptides with", term, "modification found.")
-        else:
-            print("No peptides with", term, "modification were found.")
-            pass
-    if len(selected) > 1:
-        all_select = np.bitwise_or.reduce([df.index for df in selected])
-        all_selected = pepdf.ix[all_select]
-        selected = selected + (all_selected,)
-    return selected
 
 def vLook(peptides,proteins,mods):
     """Returns a tuple of selected peptides and proteins.

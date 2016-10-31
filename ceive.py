@@ -204,12 +204,58 @@ def sevSel(dataframe=None, term_list=None, match=False):
     dataframe_out : DataFrame
 
     """
+    if type(term_list) == str:
+        term_list = [term_list]
     if match:
         dataframe_out = pd.concat([omin.sep(dataframe, term, match=True) for term in term_list], axis=1)
         return dataframe_out
     else:
         dataframe_out = pd.concat([omin.sep(dataframe, term) for term in term_list], axis=1)
         return dataframe_out
+
+def colSelPro(dataframe=None,term_list=None):
+    """Returns the dataframe of the columns specified in the terms_list.
+
+    For each term in term_list an exact match is tried before excepting when omin.sep method is used.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    term_list : list
+
+    Returns
+    -------
+    out_dataframe : DataFrame
+
+    """
+    df_list = []
+    for term in term_list:
+        try:
+            selected_col = dataframe[term]
+            df_list.append(selected_col)
+
+        except:
+            selected_col = omin.sep(dataframe,term)
+            df_list.append(selected_col)
+
+    out_dataframe = pd.concat(df_list,axis=1)
+    return out_dataframe
+
+def superGroup(dataframe=None,multi_index_name=None):
+    """Returns a dataframe entered but multiindexed with name multi_index_name.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    muti_index_name : str
+
+    Returns
+    -------
+    out_dataframe : DataFrame
+
+    """
+    out_dataframe = pd.DataFrame(dataframe.values,index=dataframe.index,columns=pd.MultiIndex.from_product([[multi_index_name],dataframe.columns]))
+    return out_dataframe
 
 ###FILTERING FUNCTIONS##
 #---------------------------------------------------------------------------------------------------------------------

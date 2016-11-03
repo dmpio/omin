@@ -241,21 +241,27 @@ def colSelPro(dataframe=None,term_list=None):
     out_dataframe = pd.concat(df_list,axis=1)
     return out_dataframe
 
-def superGroup(dataframe=None,multi_index_name=None):
-    """Returns a dataframe entered but multiindexed with name multi_index_name.
+def superGroup(dataframe=None,new_level=None):
+    """Returns a multiindexed DataFrame with the top index named new_level.
 
     Parameters
     ----------
     dataframe : DataFrame
-    muti_index_name : str
+    new_level : str
 
     Returns
     -------
-    out_dataframe : DataFrame
+    out_df : DataFrame
 
     """
-    out_dataframe = pd.DataFrame(dataframe.values,index=dataframe.index,columns=pd.MultiIndex.from_product([[multi_index_name],dataframe.columns]))
-    return out_dataframe
+    if type(dataframe.columns) == pd.indexes.base.Index:
+        out_df = pd.DataFrame(dataframe.values,index=dataframe.index,columns=pd.MultiIndex.from_product([[new_level],dataframe.columns]))
+        return out_df
+    if type(dataframe.columns) == pd.indexes.multi.MultiIndex:
+        levels = [list(i.values) for i in dataframe.columns.levels]
+        levels = [[new_level]]+levels
+        out_df = pd.DataFrame(dataframe.values, index = dataframe.index, columns = pd.MultiIndex.from_product(levels))
+        return out_df
 
 ###FILTERING FUNCTIONS##
 #---------------------------------------------------------------------------------------------------------------------

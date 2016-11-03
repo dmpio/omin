@@ -272,6 +272,24 @@ def superGroup(dataframe=None,new_level=None):
             out_df = pd.DataFrame(dataframe.values,index=dataframe.index,columns=multi)
             return out_df
 
+def modKindCheck(dataframe,modification):
+    """Returns a boolean dataframe True if the given mod is found.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    modification : str
+
+    Returns
+    -------
+    out_dataframe : DataFrame
+    
+    """
+    series = dataframe.Modifications.str.contains(modification)
+    out_dataframe = pd.DataFrame(series)
+    out_dataframe.columns = [modification+"-peptide?"]
+    return out_dataframe
+
 ###FILTERING FUNCTIONS##
 #---------------------------------------------------------------------------------------------------------------------
 

@@ -1,4 +1,63 @@
+# -*- coding: utf-8 -*-
 import omin
+import pandas as pd
+
+def methodChoice(dataframe, method, axis=1):
+    """Returns a dataframe that has been operated on by a given method.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+    method : str
+        A method of the user's choice.
+    axis : int
+        Either 0 or 1.
+
+    Returns
+    -------
+    choice : Series or DataFrame
+
+    Examples
+    --------
+    >>>methodChoice(MyDataFrame,"std")
+    You can also choose the axis to perform operations.
+    >>>methodChoice(MyDataFrame,"Mean")
+    """
+    choice = getattr(dataframe, method)(axis=axis)
+    return choice
+
+def mcConstruct(dataframe,compare_list,method):
+    """Returns a multi-indexed DataFrame
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+        Normalized abundance columns
+    compare_list : list
+        A list of treatments, genotypes or whatever being compared.
+    method : str or list
+        The method(s) of your choice.
+
+    Returns
+    -------
+    sup_trans : DataFrame
+        A muli-indexed DataFrame with methods as index.
+
+    """
+    if type(method) == str:
+        trans = pd.DataFrame([methodChoice(omin.sep(dataframe,thing),method) for thing in compare_list]).T
+        trans.columns = compare_list
+        sup_trans = omin.superGroup(trans,method.upper())
+        return sup_trans
+    if type(method) == list:
+        all_methods = []
+        for i in method:
+            trans = pd.DataFrame([methodChoice(omin.sep(dataframe,thing),i) for thing in compare_list]).T
+            trans.columns = compare_list
+            sup_trans = omin.superGroup(trans,i.upper())
+            all_methods.append(sup_trans)
+        sup_trans = pd.concat(all_methods,axis=1)
+        return sup_trans
 
 def compare(experiment_object=None, fraction=None, genotype=None, treatment=None,comparison= None):
     """Returns a tuple containing the Log2 fold change and p-values for a given comparison of an Experiment object.

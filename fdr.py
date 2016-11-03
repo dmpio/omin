@@ -23,6 +23,7 @@
     #Please update to this latest version
     #Information about future updates can be found at: https://sites.google.com/site/christophernaugler/open-source-software-for-performing-bonferroni-and-related-corrections
     #The authors do not assume any liability for errors resulting from the use of this software.
+import pandas as pd
 
 class Comparison:
     def __init__(self, entry_number, p_value):
@@ -76,11 +77,17 @@ def benjamini_hochberg(comparison_objects, sig_level):
 
 
 def bhFDR(pval_series):
-    """
+    """Returns the p-adjusted values for a series of p-values.
+
+    Note
+    ----
+    Make sure your p-values Series contain NO NaNs. If you DataFrame contains NaNs the p-adjusted values will be
+    incorrect.
 
     Parameters
     ----------
     pval_series : Series
+        Series must contain floats with no NaN values.
 
     Returns
     -------

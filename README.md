@@ -29,4 +29,4 @@ import omin
 
 ---
 # Omin state diagram
-![statediagram](images/omin.svg)
+![statediagram](images/omin.png)

@@ -26,3 +26,7 @@ modulocator("Notebook")
 import omin
 ```
  You can see an example of a omin in action [here](https://github.com/dmpio/StandardOut/blob/master/Development_of_standard_out.ipynb).
+
+---
+# Omin state diagram
+![statediagram](images/omin.svg)

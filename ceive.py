@@ -283,7 +283,7 @@ def modKindCheck(dataframe,modification):
     Returns
     -------
     out_dataframe : DataFrame
-    
+
     """
     series = dataframe.Modifications.str.contains(modification)
     out_dataframe = pd.DataFrame(series)
@@ -595,3 +595,64 @@ def treatmentSelect(peptide_abundance):
     remove_num = int(input("Enter the number of any element that need to be removed."))
     select_list.remove(select_list[remove_num])
     return select_list
+
+def listWasher(start_list,pattern = None,replace = None):
+    """Returns a list that has had the 'pattern' string replaced with the 'replace' string.
+
+    If no pattern or replace string are entered listWasher will ask the user if any of the elements in the
+    string should be replaced and what they should be replaced by.
+
+    Parameters
+    ----------
+    start_list : list
+    pattern : str
+    replace : str
+
+    Returns
+    -------
+    out_list : list
+
+    Notes
+    -----
+    FIXME: Add list support for this function eventually.
+
+    Examples
+    --------
+    >>>conditions = ['NonEx', 'Immediate Post', '60 min Post', 'n/a']
+    >>>new_list = listWasher(conditions,pattern="n/a",replace="Pool")
+    >>>print(new_list)
+    ['NonEx', 'Immediate Post', '60 min Post', 'Pool']
+
+    Okay let's try with user input.
+    >>>new_list = listWasher(conditions)
+    Would you like to replace any terms in the list? y/n
+    0 NonEx
+    1 Immediate Post
+    2 60 min Post
+    3 n/a
+    >>>y
+    Which term would you like to replace?
+    >>>3
+    Replace 'n/a' with?
+    >>>Pool
+    Would you like to replace any more terms in the list? y/n
+    >>>n
+
+    """
+    if replace != None:
+        out_list = [replace if x == pattern else x for x in start_list]
+        return out_list
+    else:
+        print(start_list)
+        contin = input("Would you like to replace any terms in the list? y/n ")
+        out_list = start_list
+        while contin == "y":
+            for n,element in enumerate(out_list):
+                print(n,element)
+            term_num = int(input("Which term would you like to replace? "))
+            pattern = out_list[term_num]
+            replace = input("Replace"+" '"+pattern+"' "+"with? ")
+            out_list = [replace if x == pattern else x for x in out_list]
+            contin = input("Would you like to replace any more terms in the list? y/n ")
+        while contin == "n":
+            return out_list

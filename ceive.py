@@ -373,6 +373,26 @@ def masterPep(peptide_df):
                                    index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
     return master_prot_acc
 
+def mpaParse(raw_peptides=None,master_uniprot_id = "Master",new_column_name="MPA"):
+    """Returns a DataFrame containing only the first master protein accession.
+
+    Parameters
+    ----------
+    raw_peptides : DataFrame
+    master_uniprot_id : str
+        The search term used in omin.sep(raw_peptides,master_prot_id).
+    new_column_name : str
+        Label your new dataframe
+
+    Returns
+    -------
+    mpa : DataFrame
+
+    """
+    mpa_list = [i.split(";")[0] if type(i) == str else np.nan for i in omin.sep(raw_peptides,master_uniprot_id).ix[:,0]]
+    mpa = pd.DataFrame(mpa_list,index=raw_peptides.index,columns = [new_column_name])
+    return mpa
+
 def vLook(peptides,proteins,mods):
     """Returns a tuple of selected peptides and proteins.
 

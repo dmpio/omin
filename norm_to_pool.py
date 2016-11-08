@@ -89,10 +89,17 @@ def ttester(numer, denom,new_column_name = ""):
     pvals : DataFrame
 
     """
+    #load boilerplate
     from scipy.stats import ttest_ind
     if len(new_column_name) > 0:
         new_column_name = " "+new_column_name
-    pvals = ttest_ind(numer, denom, axis=1).pvalue
+    # The loop below suppresses an irrelevent error message.
+    # For more details on this see:
+    # http://stackoverflow.com/questions/40452765/invalid-value-in-less-when-comparing-np-nan-in-an-array
+    with np.errstate(invalid='ignore'):
+        np.less([np.nan, 0], 1)
+        #ttest_ind implemented
+        pvals = ttest_ind(numer, denom, axis=1).pvalue
     pvals = pd.DataFrame(pvals, columns=["pval"+new_column_name], index=numer.index)
     return pvals
 

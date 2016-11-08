@@ -88,6 +88,11 @@ def ttester(numer, denom,new_column_name = ""):
     -------
     pvals : DataFrame
 
+    Examples
+    --------
+    Comparing two DataFrames of similar size.
+    >>>omin.ttester(KO_DataFrame,WT_DataFrame)
+
     """
     #load boilerplate
     from scipy.stats import ttest_ind

@@ -110,7 +110,7 @@ def sepCon(dataframe_in, separation_term):
     without_term = dataframe_in[dataframe_in.columns[~dataframe_in.columns.str.contains(separation_term, case=False)]]
     return with_term, without_term
 
-def betSep(dataframe_in, *args):
+def betSep(dataframe_in = None, *args):
     """A better version of the function sepCon.
 
     Parameters
@@ -130,7 +130,7 @@ def betSep(dataframe_in, *args):
     without_terms = dataframe_in[dataframe_in.columns[~sel]]
     return with_terms,without_terms
 
-def specSel(dataframe,include_list,exclude_list,case=True):
+def specSel(dataframe = None, include_list = None, exclude_list = None, case = True):
     """Select columns whose headers contain items just the items you want.
 
     Parameters
@@ -159,8 +159,8 @@ def specSel(dataframe,include_list,exclude_list,case=True):
         selected = np.nan
     return selected
 
-def manyModSel(pepdf, terms):
-    """Returns searched peptide a tuple of searched DataFrames with a given modifications or modifications.
+def manyModSel(pepdf = None, terms = None, verbose = False):
+    """Returns searched peptide a tuple of searched DataFrames with [a] given modification(s).
 
     Parameters
     ----------
@@ -182,9 +182,11 @@ def manyModSel(pepdf, terms):
         moddex = pepdf.Modifications.str.contains(pat=term, case=False)
         if moddex.sum() > 0:
             selected += (pepdf.ix[moddex],)
-            print(moddex.sum(), "peptides with", term, "modification found.")
+            if verbose:
+                print(moddex.sum(), "peptides with", term, "modification found.")
         else:
-            print("No peptides with", term, "modification were found.")
+            if verbose:
+                print("No peptides with", term, "modification were found.")
             pass
     if len(selected) > 1:
         all_select = np.bitwise_or.reduce([df.index for df in selected])
@@ -388,12 +390,16 @@ def mpaParse(raw_peptides=None,master_uniprot_id = "Master",new_column_name="MPA
     -------
     mpa : DataFrame
 
+    See Also
+    --------
+    omin.masterPep
+
     """
     mpa_list = [i.split(";")[0] if type(i) == str else np.nan for i in omin.sep(raw_peptides,master_uniprot_id).ix[:,0]]
     mpa = pd.DataFrame(mpa_list,index=raw_peptides.index,columns = [new_column_name])
     return mpa
 
-def vLook(peptides,proteins,mods):
+def vLook(peptides = None, proteins = None, mods = None,):
     """Returns a tuple of selected peptides and proteins.
 
     Takes raw peptides and protiens returns a tuple of selected peptides and proteins. The function can also select for a sigle
@@ -413,8 +419,8 @@ def vLook(peptides,proteins,mods):
     Examples
     --------
     >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins)
-    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,"hydroxy...methyl.glutaryl")
-    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,"Acetyl","Phospho")
+    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,["hydroxy...methyl.glutaryl"])
+    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,["Acetyl","Phospho"])
 
     See Also
     --------
@@ -436,7 +442,7 @@ def vLook(peptides,proteins,mods):
     protein_select = mpa.merge(fdrdf, on ="Accession",how="left",left_index=True)
     return peptide_select,protein_select
 
-def mitoCartaPepOut(raw_file,mods = ["Acetyl","Phospho"],dex = False):
+def mitoCartaPepOut(raw_file = None, mods = ["Acetyl","Phospho"], dex = False):
     """
     Parameters
     ----------
@@ -454,8 +460,11 @@ def mitoCartaPepOut(raw_file,mods = ["Acetyl","Phospho"],dex = False):
 
     Examples
     --------
-    >>>mitocarta_pep = mitoCartaPepOut(raw_object)# Grab the full MitoCarta2.0 call sheet as a dataframe.
-    >>>mitodex,nonmitodex = mitoCartaPepOut(raw_object,dex=True) #Grab the mito/non-mito peptides for plotting by setting dex to True
+    Grab all MitoCarta 2.0 calls for all peptides as a dataframe.
+    >>>mitocarta_pep = mitoCartaPepOut(raw_object)
+
+    Grab the mito/non-mito peptides for plotting by setting dex to True
+    >>>mitodex,nonmitodex = mitoCartaPepOut(raw_object,dex=True)
 
     See Also
     --------

@@ -202,8 +202,9 @@ class Experiment:
         These modification could be anything defined by the user. The defaults are Acetyl and Phospho
 
     """
-    def __init__(self, raw_file = None, modifications=["Acetyl", "Phospho"], genotypes=["ko", "wt"], compare_in_order=True,
-    treatments = None):
+    def __init__(self, raw_file = None, modifications = ["Acetyl", "Phospho"], genotypes = ["ko", "wt"],
+        compare_in_order = True, treatments = None):
+        
         """
 
         Parameters

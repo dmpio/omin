@@ -53,16 +53,18 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-class Window(QWidget):
+class TreeViewer(QWidget):
 
     def __init__(self):
 
         QWidget.__init__(self)
         self.treeView = QTreeView()
         self.model = QStandardItemModel()
+        #FIXME : change crat_exp below to generalizible object
         data = attForm(crat_exp)
-        self.addItems(self.model, data)
         self.treeView.setModel(self.model)
+        self.addItems(self.model, data)
+        # self.treeView.setModel(self.model)
 
         self.model.setHorizontalHeaderLabels([self.tr("Object")])
         layout = QVBoxLayout()
@@ -83,6 +85,6 @@ class Window(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = Window()
-    window.show()
+    TreeViewer = TreeViewer()
+    TreeViewer.show()
     sys.exit(app.exec_())

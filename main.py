@@ -23,13 +23,6 @@ class MainWindow(QMainWindow):
         #Set window TITLE
         self.setWindowTitle("omin-omics analytics")
 
-        # self.image = QImage()
-        # self.imageLabel = QLabel("Hello")
-        # self.imageLabel.setMinimumSize(200, 200)
-        # self.imageLabel.setAlignment(Qt.AlignCenter)
-        # self.imageLabel.setContextMenuPolicy(Qt.ActionsContextMenu)
-        # self.setCentralWidget(self.imageLabel)
-
         treeLabel = QLabel("Tre&e")
         self.treeWidget = QTreeWidget()
         treeLabel.setBuddy(self.treeWidget)
@@ -56,6 +49,8 @@ class MainWindow(QMainWindow):
         self.connect(self.fileMenu, SIGNAL("aboutToShow()"), self.updateFileMenu)
         self.populateTree()
         self.populateTable()
+        self.connect(self.treeWidget,SIGNAL('selectionChanged(QItemSelection, QItemSelection)'), self.test)
+        # self.connect(self.treeWidget,SIGNAL('clicked()'),self.updateSatus("hey"))
         # self.connect(self.treeWidget.currentItem(),SIGNAL('selectionChanged()'),self.updateSatus("hey"))
         # self.fileMenuActions.addActions(self.fileMenu,self.fileMenuActions)
 
@@ -120,6 +115,13 @@ class MainWindow(QMainWindow):
     def treeSelect(self):
         term = self.treeWidget.currentItem()
         self.updateSatus(term)
+
+    @pyqtSlot("QItemSelection, QItemSelection")
+    def test(self, selected, deselected):
+        print("hello!")
+        print(selected)
+        print(deselected)
+
 
 
 def main():

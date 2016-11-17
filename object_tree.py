@@ -63,10 +63,16 @@ class Window(QWidget):
         data = attForm(crat_exp)
         self.addItems(self.model, data)
         self.treeView.setModel(self.model)
+
         self.model.setHorizontalHeaderLabels([self.tr("Object")])
         layout = QVBoxLayout()
         layout.addWidget(self.treeView)
         self.setLayout(layout)
+        self.treeView.clicked.connect(self.on_tree_item_clicked)
+
+    @pyqtSlot(QModelIndex)
+    def on_tree_item_clicked(self, index):
+        print(index.data())
 
     def addItems(self, parent, elements):
         for text, children in elements:
@@ -74,7 +80,6 @@ class Window(QWidget):
             parent.appendRow(item)
             if children:
                 self.addItems(item, children)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

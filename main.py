@@ -3,14 +3,17 @@ import platform
 import stat
 import sys
 
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
+import file_select
+from DataFrameGUI import *
+
 import modulocator
 from modulocator import modulocator
 modulocator("Notebook")
 import omin
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-import file_select
 
 
 def myTypeCheck(mysterious_object):
@@ -66,7 +69,7 @@ class MainWindow(QMainWindow):
         tableDockWidget = QDockWidget("Table",self)
         tableDockWidget.setObjectName("TableDockWidget")
         tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
-        self.tableWidget = QTableWidget()
+        self.tableWidget = DataFrameWidget()
         tableDockWidget.setWidget(self.tableWidget)
         self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
         ### LOG WIDGET
@@ -143,15 +146,20 @@ class MainWindow(QMainWindow):
         else:
             pass
 
-    def populateTable(self):
-        selected = None
-        self.tableWidget.clear()
+    def populateTable(self,dataframe = None):
+        if dataframe is not None:
+            self.tableWidget.setDataFrame(dataframe)
+        else:
+            pass
+        # selected = None
+        # self.tableWidget.clear()
 
     @pyqtSlot(QModelIndex)
     def on_tree_item_clicked(self, index):
         selection = self.model.itemFromIndex(index)
         self.updateSatus(selection.text())
-        print(selection.data())
+        # print(selection.data())
+        self.populateTable(selection.data())
 
     def addItems(self, parent, elements):
         for text, children in elements:

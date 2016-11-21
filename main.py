@@ -7,15 +7,25 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 import file_select
+from dataframe_veiw import *
 # from DataFrameGUI import *
-from dataframeeditor import *
+# from dataframeeditor import *
 
 import modulocator
 from modulocator import modulocator
 modulocator("Notebook")
 import omin
 
-start_data = pd.DataFrame([None])
+###EXAMPLE SET FOR TABLE
+cratpepfile = "ExampleData/_E749_4154_010716_PeptideGroups.txt"
+cratprotfile = "ExampleData/_E749_4154_010716_Proteins.txt"
+modifications = ["Aceyl","Phospho"]
+treatments = ["NonEx","Immediate Post","60 min post"]
+crat_raw = omin.RawData(cratpepfile,cratprotfile)
+# crat_exp = omin.Experiment(crat_raw,modifications)
+crat_exp = omin.Experiment(crat_raw,modifications,treatments=treatments)
+start_data = crat_exp.peptides.raw
+# start_data = pd.DataFrame([None])
 
 def myTypeCheck(mysterious_object):
     """Returns type of object as string.
@@ -71,11 +81,15 @@ class MainWindow(QMainWindow):
         tableDockWidget = QDockWidget("Table",self)
         tableDockWidget.setObjectName("TableDockWidget")
         tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
+        self.pm =  PandasModel(start_data)
+        self.tv = TableView()
+        self.tv.setModel(self.pm)
         # self.tableWidget = DataFrameWidget()
-        self.dataModel = DataFrameModel(start_data,parent = self)
-        self.tableWidget = DataFrameView(self,self.dataModel)
+        # self.dataModel = DataFrameModel(start_data,parent = self)
+        # self.tableWidget = DataFrameView(self,self.dataModel)
 
-        tableDockWidget.setWidget(self.tableWidget)
+        # tableDockWidget.setWidget(self.tableWidget)
+        tableDockWidget.setWidget(self.tv)
         self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
         ### LOG WIDGET
         logDockWidget = QDockWidget("Log", self)
@@ -153,21 +167,17 @@ class MainWindow(QMainWindow):
 
     def populateTable(self,dataframe = None):
         if dataframe is not None:
-            tableDockWidget = QDockWidget("Table",self)
-            tableDockWidget.setObjectName("TableDockWidget")
-            tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
-            # self.tableWidget = DataFrameWidget()
-            self.dataModel = DataFrameModel(dataframe,parent = self)
-            self.tableWidget = DataFrameView(self,self.dataModel)
-    
-            tableDockWidget.setWidget(self.tableWidget)
-            self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
-#            self.dataModel.reset()
-#            self.dataModel.setDataFrame(dataframe)
-#            self.tableWidget.setModel(self.dataModel)
-#            self.tableWidget.resizeColumnsToContents()
-#            self.dataModel.fetch_more(columns=True)
-#            self.tableWidget.resizeColumnsToContents()
+            pass
+            # tableDockWidget = QDockWidget("Table",self)
+            # tableDockWidget.setObjectName("TableDockWidget")
+            # tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
+            # # self.tableWidget = DataFrameWidget()
+            # self.dataModel = DataFrameModel(dataframe,parent = self)
+            # self.tableWidget = DataFrameView(self,self.dataModel)
+            #
+            # tableDockWidget.setWidget(self.tableWidget)
+            # self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
+
 
 
     @pyqtSlot(QModelIndex)

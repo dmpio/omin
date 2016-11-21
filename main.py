@@ -2,19 +2,20 @@ import os
 import platform
 import stat
 import sys
-
+import pandas as pd
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 import file_select
-from DataFrameGUI import *
+# from DataFrameGUI import *
+from dataframeeditor import *
 
 import modulocator
 from modulocator import modulocator
 modulocator("Notebook")
 import omin
 
-
+start_data = pd.DataFrame([None])
 
 def myTypeCheck(mysterious_object):
     """Returns type of object as string.
@@ -66,10 +67,14 @@ class MainWindow(QMainWindow):
         self.model.setHorizontalHeaderLabels([self.tr("Object")])
 
         ### TABLE WIDGET
+        ### AKA DATAFRAME WIDGET
         tableDockWidget = QDockWidget("Table",self)
         tableDockWidget.setObjectName("TableDockWidget")
         tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
-        self.tableWidget = DataFrameWidget()
+        # self.tableWidget = DataFrameWidget()
+        self.dataModel = DataFrameModel(start_data,parent = self)
+        self.tableWidget = DataFrameView(self,self.dataModel)
+
         tableDockWidget.setWidget(self.tableWidget)
         self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
         ### LOG WIDGET
@@ -148,11 +153,22 @@ class MainWindow(QMainWindow):
 
     def populateTable(self,dataframe = None):
         if dataframe is not None:
-            self.tableWidget.setDataFrame(dataframe)
-        else:
-            pass
-        # selected = None
-        # self.tableWidget.clear()
+            tableDockWidget = QDockWidget("Table",self)
+            tableDockWidget.setObjectName("TableDockWidget")
+            tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
+            # self.tableWidget = DataFrameWidget()
+            self.dataModel = DataFrameModel(dataframe,parent = self)
+            self.tableWidget = DataFrameView(self,self.dataModel)
+    
+            tableDockWidget.setWidget(self.tableWidget)
+            self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
+#            self.dataModel.reset()
+#            self.dataModel.setDataFrame(dataframe)
+#            self.tableWidget.setModel(self.dataModel)
+#            self.tableWidget.resizeColumnsToContents()
+#            self.dataModel.fetch_more(columns=True)
+#            self.tableWidget.resizeColumnsToContents()
+
 
     @pyqtSlot(QModelIndex)
     def on_tree_item_clicked(self, index):

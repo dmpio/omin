@@ -34,6 +34,7 @@ class PandasModel(QAbstractTableModel):
                 return p_int
         return None
 
+
 class TableView(QTableView):
     """
     A simple implementation of QTableView.
@@ -58,11 +59,22 @@ if __name__=="__main__":
             self._tv=TableView(self)
             self._tv.setModel(self._tm)
             layout.addWidget(self._tv)
+            self.header = self._tv.horizontalHeader()
+            self.header.sectionClicked.connect(self.headerClicked)
 
         def get_data_frame(self):
             file_path = "ExampleData\_E749_4154_010716_PeptideGroups.txt"
             dataframe = pd.read_csv(file_path,delimiter="\t",low_memory=False)
             return dataframe
+
+        def headerClicked(self, logicalIndex):
+            self.order = self.header.sortIndicatorOrder()
+            self.pdata = self.get_data_frame()
+            self.pdata.sort_values(by=self.pdata.columns[logicalIndex],
+                            ascending=self.order,inplace=True,kind='mergesort')
+            self._tm = PandasModel(self.pdata)
+            self._tv.setModel(self._tm)
+            self._tv.update()
 
     app=QApplication(argv)
     w=TestWidget()

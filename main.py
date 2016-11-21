@@ -8,24 +8,12 @@ from PyQt4.QtGui import *
 
 import file_select
 from dataframe_veiw import *
-# from DataFrameGUI import *
-# from dataframeeditor import *
 
 import modulocator
 from modulocator import modulocator
 modulocator("Notebook")
 import omin
 
-###EXAMPLE SET FOR TABLE
-cratpepfile = "ExampleData/_E749_4154_010716_PeptideGroups.txt"
-cratprotfile = "ExampleData/_E749_4154_010716_Proteins.txt"
-modifications = ["Aceyl","Phospho"]
-treatments = ["NonEx","Immediate Post","60 min post"]
-crat_raw = omin.RawData(cratpepfile,cratprotfile)
-# crat_exp = omin.Experiment(crat_raw,modifications)
-crat_exp = omin.Experiment(crat_raw,modifications,treatments=treatments)
-start_data = crat_exp.peptides.raw
-# start_data = pd.DataFrame([None])
 
 def myTypeCheck(mysterious_object):
     """Returns type of object as string.
@@ -81,14 +69,7 @@ class MainWindow(QMainWindow):
         tableDockWidget = QDockWidget("Table",self)
         tableDockWidget.setObjectName("TableDockWidget")
         tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
-        self.pm =  PandasModel(start_data)
         self.tv = TableView()
-        self.tv.setModel(self.pm)
-        # self.tableWidget = DataFrameWidget()
-        # self.dataModel = DataFrameModel(start_data,parent = self)
-        # self.tableWidget = DataFrameView(self,self.dataModel)
-
-        # tableDockWidget.setWidget(self.tableWidget)
         tableDockWidget.setWidget(self.tv)
         self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
         ### LOG WIDGET
@@ -106,7 +87,7 @@ class MainWindow(QMainWindow):
         ### LOAD DATA
         self.populateTree()
         self.treeView.clicked.connect(self.on_tree_item_clicked)
-        self.populateTable()
+        # self.populateTable()
 
     def createAction(self, text, slot=None, shortcut=None, icon=None,
                      tip=None, checkable=False, signal="triggered()"):
@@ -161,24 +142,17 @@ class MainWindow(QMainWindow):
             # self.treeView.
             self.omin_object_data = attForm(self.omin_object)
             self.addItems(self.model, self.omin_object_data)
-            pass
         else:
             pass
 
     def populateTable(self,dataframe = None):
         if dataframe is not None:
+            self.tv.reset()
+            self.pm = PandasModel(dataframe)
+            self.tv.setModel(self.pm)
+            self.tv.update()
+        else:
             pass
-            # tableDockWidget = QDockWidget("Table",self)
-            # tableDockWidget.setObjectName("TableDockWidget")
-            # tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
-            # # self.tableWidget = DataFrameWidget()
-            # self.dataModel = DataFrameModel(dataframe,parent = self)
-            # self.tableWidget = DataFrameView(self,self.dataModel)
-            #
-            # tableDockWidget.setWidget(self.tableWidget)
-            # self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
-
-
 
     @pyqtSlot(QModelIndex)
     def on_tree_item_clicked(self, index):
@@ -198,7 +172,6 @@ class MainWindow(QMainWindow):
                     self.addItems(item, children)
                 else:
                     item.setData(children[0])
-
 
 def main():
     app = QApplication(sys.argv)

@@ -30,11 +30,12 @@ def myTypeCheck(mysterious_object):
     """
     import re
     type_as_string = str(type(mysterious_object))
-    #Define the search pattern. Here the the pattern is 'match all characters between single quotes'.
+    # Define Pattern; 'match all characters between single quotes'.
     search_pattern = "\\'.+\\'"
-    result = re.search(search_pattern,type_as_string)
+    result = re.search(search_pattern, type_as_string)
     result_formatted = result.group().strip("\\'")
     return result_formatted
+
 
 def attForm(my_object):
     object_list = []
@@ -42,49 +43,58 @@ def attForm(my_object):
         attr_list = my_object.__dict__.keys()
         for attr in attr_list:
             if "omin" in myTypeCheck(my_object.__dict__[attr]):
-                attr = [attr,attForm(my_object.__dict__[attr])]
+                attr = [attr, attForm(my_object.__dict__[attr])]
                 object_list.append(attr)
             else:
-                object_list.append([attr,[my_object.__dict__[attr]]])
+                object_list.append([attr, [my_object.__dict__[attr]]])
     return object_list
 
+
 class MainWindow(QMainWindow):
+
     def __init__(self):
         super(MainWindow, self).__init__(None)
         self.filename = None
         self.peptides_path = None
         self.proteins_path = None
         self.omin_object = None
-        #Set window TITLE
+        # Set window TITLE
         self.setWindowTitle("omin-omics analytics")
-        ### TREE WIDGET
+        # TREE WIDGET
         self.treeView = QTreeView()
         self.model = QStandardItemModel()
         self.setCentralWidget(self.treeView)
         self.treeView.setModel(self.model)
         self.model.setHorizontalHeaderLabels([self.tr("Object")])
-
-        ### TABLE WIDGET
-        ### AKA DATAFRAME WIDGET
-        tableDockWidget = QDockWidget("Table",self)
+        # TABLE WIDGET
+        # AKA DATAFRAME WIDGET
+        tableDockWidget = QDockWidget("Table", self)
         tableDockWidget.setObjectName("TableDockWidget")
-        tableDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
+        tableDockWidget.setAllowedAreas(
+            Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.tv = TableView()
         tableDockWidget.setWidget(self.tv)
-        self.addDockWidget(Qt.RightDockWidgetArea,tableDockWidget)
-        ### LOG WIDGET
+        self.addDockWidget(Qt.RightDockWidgetArea, tableDockWidget)
+        # LOG WIDGET
         logDockWidget = QDockWidget("Log", self)
         logDockWidget.setObjectName("LogDockWidget")
-        logDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea|Qt.TopDockWidgetArea|Qt.BottomDockWidgetArea)
+        # Set allowed areas for LogDockWidget
+        logDockWidget.setAllowedAreas(
+            Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea |
+            Qt.TopDockWidgetArea | Qt.BottomDockWidgetArea)
+        # Create listWidget for logDockWidget
         self.listWidget = QListWidget()
         logDockWidget.setWidget(self.listWidget)
         self.addDockWidget(Qt.BottomDockWidgetArea, logDockWidget)
-        ### FILE MENU
-        fileNewAction = self.createAction("&New...",self.fileNew,QKeySequence.New, "filenew", "Create an image file")
+        # FILE MENU
+        fileNewAction = self.createAction(
+            "&New...", self.fileNew, QKeySequence.New,
+            "filenew", "Create an image file")
         self.fileMenu = self.menuBar().addMenu("&File")
         self.fileMenuActions = (None, fileNewAction)
-        self.connect(self.fileMenu, SIGNAL("aboutToShow()"), self.updateFileMenu)
-        ### LOAD DATA
+        self.connect(self.fileMenu, SIGNAL(
+            "aboutToShow()"), self.updateFileMenu)
+        # LOAD DATA
         self.populateTree()
         self.treeView.clicked.connect(self.on_tree_item_clicked)
         # self.populateTable()
@@ -111,11 +121,13 @@ class MainWindow(QMainWindow):
         if dialog.exec_():
             self.peptides_path = dialog.peptides_path.text()
             self.proteins_path = dialog.proteins_path.text()
-            #FIXME : Make another dialog box that allows the user to select the modifications
-            modifications = ["Aceyl","Phospho"]
-            treatments = ["NonEx","Immediate Post","60 min post"]
-            omin_raw = omin.RawData(self.peptides_path,self.proteins_path)
-            self.omin_object = omin.Experiment(omin_raw,modifications,treatments=treatments)
+            # FIXME : Make another dialog box that allows the user to select
+            # the modifications
+            modifications = ["Aceyl", "Phospho"]
+            treatments = ["NonEx", "Immediate Post", "60 min post"]
+            omin_raw = omin.RawData(self.peptides_path, self.proteins_path)
+            self.omin_object = omin.Experiment(
+                omin_raw, modifications, treatments=treatments)
             self.updateSatus("omin project loaded.")
             self.populateTree()
             # self.imageLabel.setText(self.peptides_path)
@@ -127,7 +139,7 @@ class MainWindow(QMainWindow):
             else:
                 target.addAction(action)
 
-    def updateSatus(self,message):
+    def updateSatus(self, message):
         self.listWidget.addItem(message)
         # self.populateTree()
 
@@ -145,7 +157,7 @@ class MainWindow(QMainWindow):
         else:
             pass
 
-    def populateTable(self,dataframe = None):
+    def populateTable(self, dataframe=None):
         if dataframe is not None:
             self.tv.reset()
             self.pm = PandasModel(dataframe)
@@ -172,6 +184,7 @@ class MainWindow(QMainWindow):
                     self.addItems(item, children)
                 else:
                     item.setData(children[0])
+
 
 def main():
     app = QApplication(sys.argv)

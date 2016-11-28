@@ -38,14 +38,45 @@ def myTypeCheck(mysterious_object):
 
 
 def attForm(my_object):
+    """Takes a class instance and generates a list of all the attributes.
+
+    Intended use to aide in the display all of the attiributes of an object as
+    a PyQt QTreeView.
+
+    Parameters
+    ----------
+    my_object : instance of class
+
+    Returns
+    -------
+    object_list : list
+        Hierarchically structured as such [class_instance, attributes]
+
+    See Also
+    --------
+    omin.myTypeCheck
+
+    Examples
+    --------
+    >>>tree_view_list = attForm(omin_object)
+    """
+    # Create empty list
     object_list = []
+    # Check to see whether or not my_object is an instance of an omin class.
     if "omin" in myTypeCheck(my_object):
+        # Convert my_object to dict and copy keys as a list.
         attr_list = my_object.__dict__.keys()
+        # Iterate through attributes list
         for attr in attr_list:
+            # Check to see if the attribute itself is an omin object.
             if "omin" in myTypeCheck(my_object.__dict__[attr]):
+                # Create a new list with the attribute as the first member and
+                # a list of its attributes as the second member.
                 attr = [attr, attForm(my_object.__dict__[attr])]
+                # Add attr to object_list.
                 object_list.append(attr)
             else:
+                # If attr is not an omin object append it to the list.
                 object_list.append([attr, [my_object.__dict__[attr]]])
     return object_list
 

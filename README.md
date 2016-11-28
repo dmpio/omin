@@ -30,4 +30,4 @@ import omin
 
 ---
 # Omin state diagram
-![statediagram](images/omin.png)
+Check again later for indepth state diagram.

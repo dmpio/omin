@@ -2,9 +2,10 @@
 <img src="https://github.com/dmpio/omin/blob/master/images/logo.png" />
 
 # __omin__
-### Basically the Manhattan Project of Omics data analysis
+### Omics data analysis
 
- Welcome, to the vangard of bleeding edge of most new revolution in proteomics analysis.
+ Welcome!
+
 If you would like to run omin in your jupyter notebook directory then you will need to install modulocator.
 
 Here is how to launch Jupyter notebook open your terminal or command prompt and type in; jupyter notebook.

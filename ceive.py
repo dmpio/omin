@@ -470,9 +470,9 @@ def vLook(peptides=None, proteins=None, mods=None,):
 
     Examples
     --------
-    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins)
-    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,["hydroxy...methyl.glutaryl"])
-    >>>mpa_pep,fdr_prot = vLook(raw.peptides,raw.proteins,["Acetyl","Phospho"])
+    >>>peptide_select,protein_select = vLook(raw.peptides,raw.proteins)
+    >>>peptide_select,protein_select= vLook(raw.peptides,raw.proteins,["hydroxy...methyl.glutaryl"])
+    >>>peptide_select,protein_select= vLook(raw.peptides,raw.proteins,["Acetyl","Phospho"])
 
     See Also
     --------

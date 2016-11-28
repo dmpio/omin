@@ -104,7 +104,7 @@ class Trunch:
         ----------
         condlist : list
         control : str
-        
+
         """
         wtpho,wtace = omin.sepCon(self.wt,"Phospho")
         kopho,koace = omin.sepCon(self.ko,"Phospho")

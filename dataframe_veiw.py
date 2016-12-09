@@ -3,6 +3,9 @@ import pandas as pd
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+from spyder.utils.qthelpers import (add_actions, create_action,
+                                    keybinding, qapplication)
+
 
 class PandasModel(QAbstractTableModel):
     """
@@ -46,33 +49,53 @@ class TableView(QTableView):
     http://pyqt.sourceforge.net/Docs/PyQt4/qtableview.html
 
     """
-    def __init__(self, *args, **kwargs):
-        QTableView.__init__(self, *args, **kwargs)
+    def __init__(self, parent, model):
+        QTableView.__init__(self, parent)
+        self.setModel(model)
+        # RIGHT-CLICK CONTEXT MENU
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.openMenu)
+
         # Create defaults for column headers.
         # Documentation for qheaderview can be found at the following link;
         # http://pyqt.sourceforge.net/Docs/PyQt4/qheaderview.html
         self.header = self.horizontalHeader()
         self.header.setDefaultSectionSize(100)
         self.header.setDefaultAlignment(Qt.AlignLeft)
-        self.header.sectionClicked.connect(self.headerClicked)
+        #HEADER CLICK SORT FUNCTION CONNECTION
+        # self.header.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.header.customContextMenuRequested.connect(self.openMenu)
 
-    def headerClicked(self, logicalIndex):
-        """When a header is clicked corresponding column is sorted.
-
-        Parameters
-        ----------
-        logicalIndex : int
-
+    def openMenu(self, position):
+        """Right-click context menu.
         """
-        self.order = self.header.sortIndicatorOrder()
+        print(self.__dict__)
+        menu = QMenu()
+        menu.addAction("Edit")#self.tr("Edit"))
+        menu.exec_(self.viewport().mapToGlobal(position))
+
+    # def headerClicked(self, logicalIndex):
+    #     """When a header is clicked corresponding column is sorted.
+    #
+    #     Parameters
+    #     ----------
+    #     logicalIndex : int
+    #
+    #     """
+    #     menu = QMenu()
+    #     menu.addAction("Edit")#self.tr("Edit"))
+    #     menu.exec_(self.viewport().mapToGlobal(logicalIndex))
+        # print(logicalIndex)
+        # self.order = self.header.sortIndicatorOrder()
         # self.pdata = self.get_data_frame()
-        self.pdata.sort_values(by=self.pdata.columns[logicalIndex],
-                               ascending=self.order,
-                               inplace=True,
-                               kind='mergesort')
-        self._tm = PandasModel(self.pdata)
-        self._tv.setModel(self._tm)
-        self._tv.update()
+        # self.pdata.sort_values(by=self.pdata.columns[logicalIndex],
+        #                        ascending=self.order,
+        #                        inplace=True,
+        #                        kind='mergesort')
+        # self._tm = PandasModel(self.pdata)
+        # self._tv.setModel(self._tm)
+        # self._tv.update()
+
 
 
 if __name__ == "__main__":
@@ -83,17 +106,16 @@ if __name__ == "__main__":
         A widget to test the classes above.
         """
         def __init__(self, parent=None):
-            QWidget.__init__(self, parent)
+            super(TestWidget, self).__init__(parent)
+            # QWidget.__init__(self, parent)
 
             layout = QVBoxLayout(self)
             cdf = self.get_data_frame()
             self._tm = PandasModel(cdf)
             # self._tm.update(cdf)
-            self._tv = TableView(self)
-            self._tv.setModel(self._tm)
-            layout.addWidget(self._tv)
-            # self.header = self._tv.horizontalHeader()
-            # self.header.sectionClicked.connect(self.headerClicked)
+            self.tv = TableView(self,PandasModel(cdf))
+            # self.tv.setModel(self._tm)
+            layout.addWidget(self.tv)
 
         def get_data_frame(self):
             file_path = "ExampleData\_E749_4154_010716_PeptideGroups.txt"
@@ -101,24 +123,6 @@ if __name__ == "__main__":
                                     delimiter="\t",
                                     low_memory=False)
             return dataframe
-
-        # def headerClicked(self, logicalIndex):
-        #     """When a header is clicked corresponding column is sorted.
-        #
-        #     Parameters
-        #     ----------
-        #     logicalIndex : int
-        #
-        #     """
-        #     self.order = self.header.sortIndicatorOrder()
-        #     self.pdata = self.get_data_frame()
-        #     self.pdata.sort_values(by=self.pdata.columns[logicalIndex],
-        #                            ascending=self.order,
-        #                            inplace=True,
-        #                            kind='mergesort')
-        #     self._tm = PandasModel(self.pdata)
-        #     self._tv.setModel(self._tm)
-        #     self._tv.update()
 
     app = QApplication(argv)
     w = TestWidget()

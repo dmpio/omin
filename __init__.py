@@ -1,5 +1,7 @@
-__all__ = ["norm","up","excellor","vis","trunch","replicate","ceive","mitoCartaCall","fdr","experiment","norm_to_pool",
-"norm_to_input","transform","comparison"]
+__all__ = ["norm", "up", "excellor", "vis", "trunch", "replicate", "ceive",
+           "mitoCartaCall", "fdr", "experiment", "norm_to_pool",
+           "norm_to_input", "transform", "comparison"]
+
 
 __docformat__ = 'restructuredtext'
 

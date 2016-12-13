@@ -1,11 +1,12 @@
+
+# FILETYPES
+
+*.pyc
+*.xml
+dataframeeditor.py
+
+# DIRECTORIES
+
 __pycache__/
 .idea/
-*.pyc
-<<<<<<< HEAD
-.idea/workspace.xml
-*.xml
-*.xml
-=======
-*.xml
->>>>>>> origin/master
-dataframeeditor.py
+.ipynb_checkpoints

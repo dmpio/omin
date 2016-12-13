@@ -1,4 +1,4 @@
-__all__ = ["norm", "up", "excellor", "vis", "trunch", "replicate", "ceive",
+__all__ = ["norm", "excellor", "vis", "trunch", "replicate", "ceive",
            "mitoCartaCall", "fdr", "experiment", "norm_to_pool",
            "norm_to_input", "transform", "comparison"]
 
@@ -6,7 +6,7 @@ __all__ = ["norm", "up", "excellor", "vis", "trunch", "replicate", "ceive",
 __docformat__ = 'restructuredtext'
 
 from omin.info import __doc__
-from omin.up import *
+# from omin.up import *
 from omin.ceive import *
 from omin.norm import *
 from omin.trunch import *

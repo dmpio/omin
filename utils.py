@@ -171,7 +171,7 @@ class StringTools(object):
         new_phrase = []
         for i in phrase.split():
             if i.isnumeric():
-                phrase_part = int2word(int(i), number_separator)
+                phrase_part = cls.int2word(int(i), number_separator)
                 new_phrase.append(phrase_part)
             else:
                 phrase_part = i

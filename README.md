@@ -3,31 +3,32 @@
 
 # __omin__
 ### Omics data analysis
+---
 
- Welcome!
+## Requirements
 
-If you would like to run omin in your jupyter notebook directory then you will need to install modulocator.
+> Anaconda -> Python 3.x
 
-Here is how to launch Jupyter notebook open your terminal or command prompt and type in; jupyter notebook.
+---
 
-![launching](images/launch_jupyter_notebook.gif)
+## Install
+
+### Windows
 
 
+Through the commandline;
 ```
-pip install modulocator
+cd Anaconda3\lib\site-packages
+git clone https://github.com/dmpio/omin
 ```
 
-![installing](images/install_modulocator.gif)
+Through the GitHub GUI (provides tracking support through Github GUI);
+- 1. Find the plus icon on the left-side of the application.
+- 2. Click it and select clone this repo.
+- 3. Prompted for a location add it here; `Anaconda3\lib\site-packages`
 
-Once that has been installed download and unzip the omin package. Cut and paste the unzipped files into your Jupyter notebook directory. Once you have done that then create a separate folder at the same level as the omin folder, put the data you would like to work on in this new folder then create a jupyter notebook file in the new folder. Indside your notebook import the following allongside other imports.
-
-```
-from modulocator import modulocator
-modulocator("Notebook")
-import omin
-```
  You can see an example of a omin in action [here](https://github.com/dmpio/StandardOut/blob/master/Development_of_standard_out.ipynb).
 
 ---
-# Omin state diagram
+## Omin state diagram
 Check again later for indepth state diagram.

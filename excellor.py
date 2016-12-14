@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
 
-"""
 import numpy as np
 import pandas as pd
 import string
 from omin.norm import *
+
 
 def excellor(compob, venn_list, parent_file, file_name):
     """Takes objects containing DataFrames and outputs those as Excel files.
@@ -62,6 +61,7 @@ def xLc(let):
         out = (alph.index(let[0])+1)*26 + alph.index(let[1])
     return out
 
+
 def cLx(number):
     """Essentially the opposite of the xLc function.
 
@@ -77,18 +77,20 @@ def cLx(number):
     alpha = alpha[alpha.index("A"):]
     if number > 25:
         isel = int(number/25)-1
-        letter = alpha[isel]+alpha[(number-1)%25]
+        letter = alpha[isel]+alpha[(number-1) % 25]
         return letter
     else:
         letter = alpha[i]
         return letter
 
+
 def rgb2hex(rgb_tuple):
-    """Takes a tuple of RGB values e.g. (253,253,245) and returns a hexidecimal value for that color.
+    """Takes a tuple of RGB values e.g. (253,253,245) and returns a hexidecimal
+    value for that color.
     """
     hexcolor = '#%02x%02x%02x' % rgb_tuple
-    g = np.array(rgb_tuple)>256
-    if g.any() == True:
+    g = np.array(rgb_tuple) > 256
+    if g.any() is True:
         print("Please enter only values between 0 and 256")
     else:
         hexcolor = '#%02x%02x%02x' % rgb_tuple

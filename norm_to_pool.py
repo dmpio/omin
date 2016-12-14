@@ -4,7 +4,9 @@ import pandas as pd
 import numpy as np
 import re
 import omin
-from omin.transform import *
+# from omin.transform import *
+from omin.utils import StringTools
+
 
 def logNormToAve(pepdf):
     """Takes a DataFrame composed of a fraction of peptide abundances and then subtracts each element in each row by the sum of it's row.
@@ -133,7 +135,9 @@ class FracParse:
 
         for select in treatment:
             #Remove numbers and spaces from selected term
-            term = phraseWasher(select,number_separator="_",word_separator="_").lower()
+            # term = phraseWasher(select,number_separator="_",word_separator="_").lower()
+            term = StringTools.phraseWasher(select, number_separator="_",
+                                word_separator="_").lower()
             #term = re.sub(" ", "_", select)
             self.__dict__[term] = omin.sep(self.pool_normalized,select)
 

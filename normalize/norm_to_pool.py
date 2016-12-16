@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 import re
-import omin
+# import omin
 # from omin.transform import *
 from omin.utils import StringTools
 
@@ -110,8 +110,8 @@ def ttester(numer, denom,new_column_name = ""):
     pvals = pd.DataFrame(pvals, columns=["pval"+new_column_name], index=numer.index)
     return pvals
 
-###CLASSES DEFINED HERE###
-#----------------------------------------------------------------------------------------------------------------------
+# === CLASSES DEFINED HERE ===
+
 class FracParse:
     """
     Attributes
@@ -167,8 +167,7 @@ class PoolMod:
     def __repr__(self):
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
-###MAINCLASS###
-#----------------------------------------------------------------------------------------------------------------------
+# === MAINCLASS ===
 class WithPool:
     """
     Attributes
@@ -179,7 +178,8 @@ class WithPool:
         Abundance columns from raw DataFrame.
     """
 
-    def __init__(self, raw,modifications,genotypes,treatment):
+    def __init__(self, raw, modifications, genotypes, treatment):
+
         """
 
         Parameters

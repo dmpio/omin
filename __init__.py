@@ -3,8 +3,9 @@ __all__ = ["norm", "excellor", "vis", "trunch", "replicate", "ceive",
            "norm_to_input", "comparison"]
 
 
+from .normalize import *
 __docformat__ = 'restructuredtext'
-from .normalize import Normalize
+
 from omin.info import __doc__
 from omin.ceive import *
 from omin.norm import *

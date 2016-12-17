@@ -45,8 +45,7 @@ def normToPool(log2_div_ave):
     lda_div_pool.columns = [re.sub("Log2-AVE", "Log2-AVE-Pool", i) for i in lda_div_pool.columns]
     return lda_div_pool
 
-###COMPARISON TOOLS###
-#======================================================================================================================
+### === COMPARISON TOOLS ===
 
 def log2FC(numer, denom, new_column_name = ""):
     """Takes the log2 fold change of normalized DataFrames of simillar size.

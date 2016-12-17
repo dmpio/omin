@@ -9,7 +9,8 @@ from omin.utils import StringTools
 
 
 def logNormToAve(pepdf):
-    """Takes a DataFrame composed of a fraction of peptide abundances and then subtracts each element in each row by the sum of it's row.
+    """Takes a DataFrame composed of a fraction of peptide abundances and then
+    subtracts each element in each row by the sum of it's row.
 
     Notes
     -----
@@ -28,7 +29,8 @@ def logNormToAve(pepdf):
     return log2_div_ave
 
 def normToPool(log2_div_ave):
-    """Normalizes a DataFrame composed of a single fraction of peptide data that contains a single 'Control' or 'Pool' column.
+    """Normalizes a DataFrame composed of a single fraction of peptide data
+    that contains a single 'Control' or 'Pool' column.
 
     Notes
     -----

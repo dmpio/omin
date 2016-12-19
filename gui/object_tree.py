@@ -3,9 +3,9 @@
 import pandas as pd
 import numpy as np
 
-from modulocator import modulocator
-modulocator("Notebook")
-import omin
+# from modulocator import modulocator
+# modulocator("Notebook")
+# import omin
 
 # CrAT Normalization to Pool with omin's Experiment class.
 cratpepfile = "ExampleData/_E749_4154_010716_PeptideGroups.txt"

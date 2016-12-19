@@ -90,8 +90,9 @@ class UniprotTools(object):
 
 class StringTools(object):
 
-    @classmethod
-    def int2word(cls, num, separator="-"):
+    # @classmethod
+    @staticmethod
+    def int2word(num, separator="-"):
         """Transforms integers =< 999 into english words
 
         Parameters

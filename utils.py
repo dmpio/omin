@@ -29,7 +29,7 @@ class FastaTools(object):
         one_string = "".join(fasta[1:])
         return one_string
 
-    @classmethod
+    @staticmethod
     def seqNum(cls, seq):
         """Takes a sequence and returns the number for each amino acid (I think).
 
@@ -179,3 +179,63 @@ class StringTools(object):
                 new_phrase.append(phrase_part)
         washed = word_separator.join(new_phrase)
         return washed
+
+# === Selection tools ===
+class SelectionTools(object):
+    """
+    """
+    @staticmethod
+    def sep(dataframe_in, search_term, strict=False, match=False):
+        """Takes DataFrame and search_term and returns a new DataFrame that contains
+         columns that contain that search_term.
+
+        Parameters
+        ----------
+        dataframe_in : DataFrame
+        search_term : str
+            What kind of columns do you want to find.
+        strict : bool
+            Defaults to False. FIXME : Annotate this.
+        match : bool
+            Defaults to False. If the function will use pandas
+            dataframe.columns.str.match which is more strict than
+            dataframe.columns.str.search.
+        Returns
+        -------
+        dataframe_out : DataFrame
+            A DataFrame that with columns contain just search_term.
+
+        Examples
+        --------
+        >>>omin.sep(mydataframe,"Search Term")
+        dataframe_out
+        >>>omin.sep(mydataframe,"Search Term",match=True)
+        Scricter dataframe_out
+
+        See Also
+        --------
+        omin.sepCon
+        omin.betSep
+        omin.modSel
+        omin.manyModSel
+
+        """
+        dataframe_out = None
+        if match:
+            dataframe_out = dataframe_in[dataframe_in.columns[
+                dataframe_in.columns.str.match(search_term)]].copy()
+            return dataframe_out
+
+        if dataframe_in.columns[
+                    dataframe_in.columns.str.contains(search_term,
+                                                      case=False)].any():
+            if strict:
+
+                dataframe_out = dataframe_in[dataframe_in.columns[
+                    np.array([search_term in set(re.sub(" ", "", i).split(",")) for i in dataframe_in.columns])]]
+            else:
+                dataframe_out = dataframe_in[
+                    dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)]].copy()
+        else:
+            print("The DataFrame has no columns that contain:", search_term)
+        return dataframe_out

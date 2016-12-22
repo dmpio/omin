@@ -7,7 +7,6 @@ import re
 # Selection Functions###
 # -----------------------------------------------------------------------------
 
-
 def sep(dataframe_in, search_term, strict=False, match=False):
     """Takes DataFrame and search_term and returns a new DataFrame that contains
      columns that contain that search_term.

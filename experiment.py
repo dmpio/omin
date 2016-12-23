@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-experiment.py contains a number of functions that are designed to normalize proteomics data to an input fraction.
-FIXME : Beef up this documentation. Look for other sample python and R scripts published we can use as template.
+experiment.py contains a number of functions that are designed to normalize
+proteomics data to an input fraction.
+
+FIXME : Beef up this documentation. Look for other sample python and R scripts
+published we can use as template.
+
 Author: James Draper
 Email: james.drape@duke.edu
 Date: October 12, 2016
@@ -9,14 +13,14 @@ Date: October 12, 2016
 
 # FIXME : Remove deprecated classes below.
 
-#Load boilerplate modules.
+# Load boilerplate modules.
+
 import omin
 import re
 import pandas as pd
 import numpy as np
 import pickle
 
-#----------------------------------------------------------------------------------------------------------------------
 
 class RawData:
     """Converts Proteome Discoverer .txt files into pandas DataFrames
@@ -204,7 +208,7 @@ class Experiment:
     """
     def __init__(self, raw_file = None, modifications = ["Acetyl", "Phospho"], genotypes = ["ko", "wt"],
         compare_in_order = True, treatments = None):
-        
+
         """
 
         Parameters

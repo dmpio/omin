@@ -7,7 +7,7 @@ import sys
 
 this_dir, this_filename = os.path.split(__file__)
 
-DATABASE_PATH = os.path.join(this_dir, "DataBases")
+DATABASE_PATH = os.path.join(this_dir, "databases")
 
 def mitodf():
     """Locate your local mitocarta2.0 database and loads it as a DataFrame.

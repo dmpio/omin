@@ -11,71 +11,13 @@ Email: james.drape@duke.edu
 Date: October 12, 2016
 """
 
-# FIXME : Remove deprecated classes below.
-
 # Load boilerplate modules.
-
-# import omin
 import re
 import pandas as pd
 import numpy as np
 import pickle
 
-from utils import SelectionTools
-
-
-class RawData:
-    """Converts Proteome Discoverer .txt files into pandas DataFrames
-
-    Attributes
-    ----------
-    peptides :  DataFrame
-        Raw data from Proteome Discoverer peptides data.
-    proteins : DataFrame
-        Raw data Proteome Discoverer corresponding proteins data.
-    """
-    def __init__(self, peptides_file, proteins_file):
-        """Loads the raw data for peptides_file and proteins_file as DataFrames
-        that are contained as attributes.
-
-        Note
-        ----
-            Please make sure that your files are in your current working
-            directory. If you are working in jupyter notebook please put the a
-            copy of the peptides and proteins in the same directory as the
-            notebook file.
-
-        Parameters
-        ----------
-        peptides_file : str
-            Name of Proteome Discoverer Peptides file as string.
-        proteins_file : str
-            Name of Proteome Discoverer Proteins file as string.
-
-        Examples
-        --------
-        Load file strings:
-        >>>peptides_file = "mydatafolder/peptides.txt"
-        >>>proteins_file = "mydatafolder/proteins.txt"
-
-        Create RawData object:
-        >>>raw_data = omin.RawData(peptides_file,proteins_file)
-
-        """
-        self.peptides = pd.read_csv(peptides_file,
-                                    delimiter="\t",
-                                    low_memory=False)
-
-        print("number of peptides:", self.peptides.shape[0])
-
-        self.proteins = pd.read_csv(proteins_file,
-                                    delimiter="\t",
-                                    low_memory=False)
-
-        print("number of proteins:", self.proteins.shape[0])
-
-    def __repr__(self):
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+from omin.utils import SelectionTools
 
 # === MAIN CLASS ===
 

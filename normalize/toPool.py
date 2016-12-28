@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import re
 import pandas as pd
 import numpy as np
-import re
 from scipy.stats import ttest_ind
 from omin.utils import StringTools
 
@@ -27,6 +27,7 @@ def logNormToAve(pepdf):
     log2_div_ave.columns = "Log2-AVE: " + log2_div_ave.columns
     return log2_div_ave
 
+
 def normToPool(log2_div_ave):
     """Normalizes a DataFrame composed of a single fraction of peptide data
     that contains a single 'Control' or 'Pool' column.
@@ -48,7 +49,8 @@ def normToPool(log2_div_ave):
 
 # === COMPARISON TOOLS ===
 
-def log2FC(numer, denom, new_column_name = ""):
+
+def log2FC(numer, denom, new_column_name=""):
     """Takes the log2 fold change of normalized DataFrames of simillar size.
 
     Parameters
@@ -70,6 +72,7 @@ def log2FC(numer, denom, new_column_name = ""):
     lfc = numer.mean(axis=1) - denom.mean(axis=1)
     lfc = pd.DataFrame(lfc, columns=["LFC"+new_column_name],index=numer.index)
     return lfc
+
 
 def ttester(numer, denom, new_column_name=""):
     """For pvalue comparision of types of DataFrames of similar shape.
@@ -146,6 +149,7 @@ class FracParse:
     def __repr__(self):
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
+
 class PoolMod:
     """
 
@@ -155,18 +159,21 @@ class PoolMod:
     [genotype] : (:obj)
         FracParse object.
     """
-    def __init__(self,abundance,mod,genotypes,treatment):
-        self.abundance = omin.sep(abundance,mod)
+    def __init__(self, abundance, mod, genotypes, treatment):
+        self.abundance = omin.sep(abundance, mod)
         for geno in genotypes:
-            self.__dict__[geno] = FracParse(omin.sep(self.abundance,geno),treatment)
+            self.__dict__[geno] = FracParse(omin.sep(self.abundance, geno),
+                                            treatment)
 
-    def addAttribute(self,attribute_name,attribute_data):
+    def addAttribute(self, attribute_name, attribute_data):
         self.__dict__[attribute_name] = attribute_data
 
     def __repr__(self):
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 # === MAINCLASS ===
+
+
 class WithPool:
     """
     Attributes
@@ -190,9 +197,10 @@ class WithPool:
         self.abundance = omin.sep(raw, "Abundance:")
 
         for mod in modifications:
-            self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance,mod,genotypes,treatment)
+            self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance, mod,
+                                                        genotypes, treatment)
 
-    def addAttribute(self,attribute_name,attribute_data):
+    def addAttribute(self,attribute_name, attribute_data):
         self.__dict__[attribute_name] = attribute_data
 
     def __repr__(self):

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+import re
 import pandas as pd
 import numpy as np
-import re
-from methods import *
+
+from omin.normalize.methods import *
 
 
 class ModificationDelinate:

@@ -3,8 +3,7 @@
 import pandas as pd
 import numpy as np
 import re
-# import omin
-# from omin.transform import *
+from scipy.stats import ttest_ind
 from omin.utils import StringTools
 
 
@@ -47,8 +46,7 @@ def normToPool(log2_div_ave):
     lda_div_pool.columns = [re.sub("Log2-AVE", "Log2-AVE-Pool", i) for i in lda_div_pool.columns]
     return lda_div_pool
 
-###COMPARISON TOOLS###
-#======================================================================================================================
+# === COMPARISON TOOLS ===
 
 def log2FC(numer, denom, new_column_name = ""):
     """Takes the log2 fold change of normalized DataFrames of simillar size.
@@ -73,7 +71,7 @@ def log2FC(numer, denom, new_column_name = ""):
     lfc = pd.DataFrame(lfc, columns=["LFC"+new_column_name],index=numer.index)
     return lfc
 
-def ttester(numer, denom,new_column_name = ""):
+def ttester(numer, denom, new_column_name=""):
     """For pvalue comparision of types of DataFrames of similar shape.
 
     Notes
@@ -98,8 +96,7 @@ def ttester(numer, denom,new_column_name = ""):
     >>>omin.ttester(KO_DataFrame,WT_DataFrame)
 
     """
-    #load boilerplate
-    from scipy.stats import ttest_ind
+
     if len(new_column_name) > 0:
         new_column_name = " "+new_column_name
     # The loop below suppresses an irrelevent error message.

@@ -3,32 +3,8 @@ import re
 import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind
-import omin.ceive
+# import omin.ceive
 
-class logspace:
-    """
-    Notes
-    -----
-    This class is deprecated in favor of the class Logger.
-
-    Attributes
-    ----------
-    log : DataFrame
-    ave : DataFrame
-    com : DataFrame
-    """
-    def __init__(self, d, ave):
-        """
-        Parameters
-        ----------
-        d : DataFrame
-        ave : DataFrame
-
-        """
-        self.log = d
-        self.ave = ave
-        # Combine the DataFrames
-        self.com = pd.concat([self.log, self.ave], axis=1)
 
 def logger(d):
     """ Takes a DataFrame and returns a logspace object.

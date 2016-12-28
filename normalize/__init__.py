@@ -2,3 +2,4 @@
 
 from . import toInput
 from . import toPool
+from . import methods

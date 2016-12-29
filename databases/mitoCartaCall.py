@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-from . import sep
 import pandas as pd
 import numpy as np
-import os
-import sys
+from .utils.SelectionTools import sep
 
-this_dir, this_filename = os.path.split(__file__)
+# this_dir, this_filename = os.path.split(__file__)
+# DATABASE_PATH = os.path.join(this_dir, "databases")
 
-DATABASE_PATH = os.path.join(this_dir, "databases")
 
 def mitodf():
     """Locate your local mitocarta2.0 database and loads it as a DataFrame.
@@ -17,7 +15,7 @@ def mitodf():
     mitodf : DataFrame
     """
     # Load MitoCarta2
-    mitodf = pd.read_excel(DATABASE_PATH+"\MitoCarta2.0_Mouse.xlsx")
+    mitodf = pd.read_excel("MitoCarta2.0_Mouse.xlsx")
     return mitodf
 
 # load MitoCarta2

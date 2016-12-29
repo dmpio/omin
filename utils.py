@@ -51,6 +51,7 @@ class FastaTools(object):
 
 # === UNIPROT TOOLS ===
 
+
 class UniprotTools(object):
 
     @classmethod
@@ -180,13 +181,15 @@ class StringTools(object):
         return washed
 
 # === Selection tools ===
+
+
 class SelectionTools(object):
     """
     """
     @staticmethod
     def sep(dataframe_in, search_term, strict=False, match=False):
-        """Takes DataFrame and search_term and returns a new DataFrame that contains
-         columns that contain that search_term.
+        """Takes DataFrame and search_term and returns a new DataFrame that
+        contains columns that contain that search_term.
 
         Parameters
         ----------
@@ -503,16 +506,15 @@ class SelectionTools(object):
         out_dataframe.columns = [modification + "-peptide?"]
         return out_dataframe
 
-    # FILTERING FUNCTIONS##
-    # -----------------------------------------------------------------------------
+    # === FILTERING FUNCTIONS ===
 
-    @staticmethod
-    def masterCleanse(protein_df):
+    @classmethod
+    def masterCleanse(cls, protein_df):
         """Filters raw protein DataFrame for master proteins.
 
-        The raw protein data from Proteome Discoverer there is a column with the
-        title 'Master' this funtion scans through that column and selects only the
-        proteins that end with the string "IsMasterProtein".
+        The raw protein data from Proteome Discoverer there is a column with
+        the title 'Master' this funtion scans through that column and selects
+        only the proteins that end with the string "IsMasterProtein".
 
         Parameters
         ----------
@@ -522,19 +524,19 @@ class SelectionTools(object):
         Returns
         -------
         clean : DataFrame
-            Protein DataFrame that contains only proteins with 'IsMasterProtein' in
-            'Master' column of protein_df
+            DataFrame that contains only proteins with 'IsMasterProtein' in
+            'Master' column of protein_df.
         """
         clean = protein_df.ix[protein_df.Master.str.endswith("IsMasterProtein")]
         return clean
 
-    @staticmethod
-    def onePerQ(protein_df):
+    @classmethod
+    def onePerQ(cls, protein_df):
         """Filters raw protein DataFrame for proteins that are less than 1% the
         expected q-value.
 
-        Scans through the protein DataFrame selecting only the proteins with less
-        than 1% of the expected q-value.
+        Scans through the protein DataFrame selecting only the proteins with
+        less than 1% of the expected q-value.
 
         Parameters
         ----------
@@ -544,15 +546,16 @@ class SelectionTools(object):
         Returns
         -------
         clean : DataFrame
-            Protein data that contains only proteins with proteins only less than
-            1% of the expected q-value.
+            Protein data that contains only proteins with proteins only less
+            than 1% of the expected q-value.
         """
         one_per = protein_df["Exp. q-value"] < .01
         one_per = protein_df.ix[one_per]
         return one_per
 
-    @staticmethod
-    def masterOne(protein_df):
+    @classmethod
+    def masterOne(cls, protein_df):
+
         """Takes a raw protein DataFrame and filters it using first the
         'masterCleanse' function and 'onePerQ' function.
 
@@ -566,11 +569,11 @@ class SelectionTools(object):
         master_one : DataFrame
             Of master proteins with exp. q-value <1%
         """
-        master = masterCleanse(protein_df)
-        master_one = onePerQ(master)
+        master = cls.masterCleanse(protein_df)
+        master_one = cls.onePerQ(master)
         return master_one
 
-    @staticmethod
+    @classmethod
     def masterPep(peptide_df):
         """Takes a peptide DataFrame and returns just the first master protein
         accession for each peptide.
@@ -597,8 +600,8 @@ class SelectionTools(object):
                                        index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
         return master_prot_acc
 
-    @staticmethod
-    def mpaParse(raw_peptides=None, master_uniprot_id="Master",
+    @classmethod
+    def mpaParse(cls, raw_peptides=None, master_uniprot_id="Master",
                  new_column_name="MPA"):
         """Returns a DataFrame containing only the first master protein accession.
 
@@ -619,14 +622,12 @@ class SelectionTools(object):
         omin.masterPep
 
         """
-        mpa_list = [i.split(";")[0] if type(i) == str else np.nan for i in omin.sep(
-            raw_peptides, master_uniprot_id).ix[:, 0]]
-        mpa = pd.DataFrame(mpa_list, index=raw_peptides.index,
-                           columns=[new_column_name])
+        mpa_list = [i.split(";")[0] if type(i) == str else np.nan for i in omin.sep(raw_peptides, master_uniprot_id).ix[:, 0]]
+        mpa = pd.DataFrame(mpa_list, index=raw_peptides.index, columns=[new_column_name])
         return mpa
 
-    @staticmethod
-    def vLook(peptides=None, proteins=None, mods=None,):
+    @classmethod
+    def vLook(cls, peptides=None, proteins=None, mods=None,):
         """Returns a tuple of selected peptides and proteins.
 
         Takes raw peptides and protiens returns a tuple of selected peptides and
@@ -658,22 +659,27 @@ class SelectionTools(object):
 
         """
 
-        fdr = masterOne(proteins)
+        fdr = cls.masterOne(proteins)
         if len(mods) == 0:
-            mpa = masterPep(peptides)
+            mpa = cls.masterPep(peptides)
         if len(mods) == 1:
-            mpa = masterPep(manyModSel(peptides, mods)[0])
+            mpa = cls.masterPep(manyModSel(peptides, mods)[0])
         else:
-            mpa = masterPep(manyModSel(peptides, mods)[-1])
+            mpa = cls.masterPep(manyModSel(peptides, mods)[-1])
+
         fdrdf = pd.DataFrame(fdr.Accession, index=fdr.index)
-        peptide_select = mpa.merge(
-            fdrdf, on="Accession", how="left", right_index=True)
-        protein_select = mpa.merge(
-            fdrdf, on="Accession", how="left", left_index=True)
+
+        peptide_select = mpa.merge(fdrdf, on="Accession",
+                                   how="left", right_index=True)
+
+        protein_select = mpa.merge(fdrdf, on="Accession",
+                                   how="left", left_index=True)
+
         return peptide_select, protein_select
 
-    @staticmethod
-    def mitoCartaPepOut(raw_file=None, mods=["Acetyl", "Phospho"], dex=False):
+    @classmethod
+    def mitoCartaPepOut(cls, raw_file=None, mods=["Acetyl", "Phospho"],
+                        dex=False):
         """
         Parameters
         ----------
@@ -706,6 +712,7 @@ class SelectionTools(object):
         """
         peptides = raw_file.peptides
         proteins = raw_file.proteins
+        
         carta = omin.mitoCartaCall.mitoProt(proteins)
         pepsel, prosel = omin.vLook(peptides, proteins, mods)
         mitocarta_pep = pepsel.merge(carta, on="Accession", how="left")

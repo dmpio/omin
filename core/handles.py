@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from ..utils import SelectionTools
+from omin.utils import SelectionTools
 
 class RawData(object):
     """Converts Proteome Discoverer .txt files into pandas DataFrames
@@ -67,7 +67,8 @@ class Process(object):
     def __init__(self, peptides_file, proteins_file, modifications=None):
         """
         """
+        modifications = modifications or ["Acetyl", "Phospho"]
         self.raw_data = RawData(peptides_file, proteins_file)
-        # pep_sel, prot_sel = SelectionTools.vLook(raw_file.peptides,
-        #                                          raw_file.proteins,
-        #                                          modifications)
+        pep_sel, prot_sel = SelectionTools.vLook(self.raw_data.peptides,
+                                                 self.raw_data.proteins,
+                                                 modifications)

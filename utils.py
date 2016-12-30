@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
 import re
+import pickle
+import numpy as np
+import pandas as pd
+
 from urllib.request import urlopen
 from urllib.error import HTTPError
 
+from omin.databases.routines import SkyNet
+
 # FIXME: Create tools to search against against databases the user specifies.
+
+# Load the modifications dictionary.
+skynet = SkyNet()
+skynet.begin()
+# print(skynet.modification_terms)
 
 # === UNIPROT TOOLS ===
 
@@ -378,7 +389,8 @@ class SelectionTools(object):
         """
         selected = ()
         for term in terms:
-            term = omin.mod_dict[term]
+            # term = omin.mod_dict[term]
+            term = skynet.modification_terms[term]
             moddex = pepdf.Modifications.str.contains(pat=term, case=False)
             if moddex.sum() > 0:
                 selected += (pepdf.ix[moddex],)
@@ -574,7 +586,7 @@ class SelectionTools(object):
         return master_one
 
     @classmethod
-    def masterPep(peptide_df):
+    def masterPep(cls, peptide_df):
         """Takes a peptide DataFrame and returns just the first master protein
         accession for each peptide.
 
@@ -663,9 +675,9 @@ class SelectionTools(object):
         if len(mods) == 0:
             mpa = cls.masterPep(peptides)
         if len(mods) == 1:
-            mpa = cls.masterPep(manyModSel(peptides, mods)[0])
+            mpa = cls.masterPep(cls.manyModSel(peptides, mods)[0])
         else:
-            mpa = cls.masterPep(manyModSel(peptides, mods)[-1])
+            mpa = cls.masterPep(cls.manyModSel(peptides, mods)[-1])
 
         fdrdf = pd.DataFrame(fdr.Accession, index=fdr.index)
 
@@ -712,7 +724,7 @@ class SelectionTools(object):
         """
         peptides = raw_file.peptides
         proteins = raw_file.proteins
-        
+
         carta = omin.mitoCartaCall.mitoProt(proteins)
         pepsel, prosel = omin.vLook(peptides, proteins, mods)
         mitocarta_pep = pepsel.merge(carta, on="Accession", how="left")

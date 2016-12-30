@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import pickle
+import os
+
+this_dir, _ = os.path.split(__file__)
+
+# print(this_dir)
 
 
 class SkyNet(object):
@@ -15,12 +20,12 @@ class SkyNet(object):
     def begin(self):
         """Load attributes from pickled file sources.
         """
-        self.modification_terms = pickle.load(open("databases\mod_dict.p", "rb"))
+        self.modification_terms = pickle.load(open(this_dir+"\mod_dict.p", "rb"))
 
     def stop(self):
         """Save attributes as pickle files.
         """
-        pickle.dump(self.modification_terms, open("databases\mod_dict.p", "wb"))
+        pickle.dump(self.modification_terms, open(this_dir+"\mod_dict.p", "wb"))
 
     def learn(self, term, meaning):
         self.modification_terms[term] = meaning

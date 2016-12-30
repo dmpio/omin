@@ -80,9 +80,16 @@ class Experiment:
         # NORMALIZE TO INPUT
         if raw_file.peptides.columns.str.contains("Input", case=False).any():
             print("Normalizing to: Input...")
-            pep_sel,prot_sel = SelectionTools.vLook(raw_file.peptides,raw_file.proteins,modifications)
-            self.peptides = omin.PeptidesWithInput(raw_file.peptides,modifications,pep_sel)
-            self.proteins = omin.ProteinsWithInput(raw_file.proteins,modifications)
+            pep_sel, prot_sel = SelectionTools.vLook(raw_file.peptides,
+                                                     raw_file.proteins,
+                                                     modifications)
+
+            self.peptides = omin.PeptidesWithInput(raw_file.peptides,
+                                                   modifications, pep_sel)
+
+            self.proteins = omin.ProteinsWithInput(raw_file.proteins,
+                                                   modifications)
+
         else:
             # NORMALIZE TO POOL
             print("Normalizing to: Pool...")

@@ -72,3 +72,6 @@ class Process(object):
         pep_sel, prot_sel = SelectionTools.vLook(self.raw_data.peptides,
                                                  self.raw_data.proteins,
                                                  modifications)
+        self.pep_sel = pep_sel
+        self.prot_sel = prot_sel
+        

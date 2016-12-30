@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import utils
 from . import core
 from . import normalize
 from . import stats

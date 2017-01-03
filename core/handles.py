@@ -2,6 +2,7 @@
 import pandas as pd
 from omin.utils import SelectionTools
 
+
 class RawData(object):
     """Converts Proteome Discoverer .txt files into pandas DataFrames
 
@@ -40,15 +41,15 @@ class RawData(object):
         >>>raw_data = RawData(peptides_file,proteins_file)
 
         """
-        self.peptides = pd.read_csv(peptides_file,
-                                    delimiter="\t",
-                                    low_memory=False)
+        self.raw_peptides = pd.read_csv(peptides_file,
+                                        delimiter="\t",
+                                        low_memory=False)
 
-        self.proteins = pd.read_csv(proteins_file,
-                                    delimiter="\t",
-                                    low_memory=False)
+        self.raw_proteins = pd.read_csv(proteins_file,
+                                        delimiter="\t",
+                                        low_memory=False)
 
-        self._numbers = (self.peptides.shape, self.proteins.shape)
+        self._numbers = (self.raw_peptides.shape, self.raw_proteins.shape)
 
     def __repr__(self):
         """Show all attributes.
@@ -61,17 +62,32 @@ class RawData(object):
         return self._numbers
 
 
-class Process(object):
+class Process(RawData):
     """Formerly omin.Experiment
     """
     def __init__(self, peptides_file, proteins_file, modifications=None):
         """
         """
         modifications = modifications or ["Acetyl", "Phospho"]
-        self.raw_data = RawData(peptides_file, proteins_file)
-        pep_sel, prot_sel = SelectionTools.vLook(self.raw_data.peptides,
-                                                 self.raw_data.proteins,
+        # Initalize the RawData base class.
+        super(Process, self).__init__(peptides_file, proteins_file)
+        # Create 2 Dataframes that map specific peptide or protien uniprot ID
+        # to it's relevent mitocarta index. Simillar to vlookup in excel
+        pep_sel, prot_sel = SelectionTools.vLook(self.raw_peptides,
+                                                 self.raw_proteins,
                                                  modifications)
         self.pep_sel = pep_sel
         self.prot_sel = prot_sel
-        
+
+        # FIXME: Make the selection more specifically target abundance columns
+        if self.raw_peptides.columns.str.contains("Input", case=False).any():
+
+            print("Input fraction found. omin will attempt to normalize the data to it.")
+
+        elif self.raw_peptides.columns.str.contains("pool|control", case=False).any():
+
+            print("Pool or control columns found. omin will attempt to normalize the data to it.")
+
+        else:
+            # FIXME: Make this a place where the use could specify what coulumns they would like to normalize against.
+            print("Cannot find anything to normalize to. Check to see that your data fits omins conventions.")

@@ -101,6 +101,34 @@ class UniprotTools(object):
 
 
 class StringTools(object):
+
+    @staticmethod
+    def multiRegExOr(term_list):
+        """Returns a singles string of "OR"ed regex terms from a given list.
+
+        Parameters
+        ----------
+        term_list: list
+            List of regular expressions.
+
+        Returns
+        -------
+        all_exp: str
+            A string pattern ready for use with re methods.
+
+        Exaples
+        -------
+        >>>re.search(multiRegExOr(skynet.modification_terms.values()),
+        >>>                       'Phospho (fraction)')
+
+        See Also
+        --------
+        re.search
+        re.match
+        """
+        all_exp = "|".join(["(%s)" % (term) for term in term_list])
+        return all_exp
+
     # @classmethod
     @staticmethod
     def int2word(num, separator="-"):

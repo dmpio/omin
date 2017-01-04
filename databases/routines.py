@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+# FIXME: Add a "forget" function.
+# FIXME: Make learn and forget fuzzy find.
+# FIXME: Intergrate phrasewasher
+# FIXME: Add transgenic conventions to genotype_terms.
+# FIXME: Refactor for dynamic adding of dictionaries.
+# FIXME: Force this to correllate to study factors.
+# FIXME: See if we can make this ship with MACHINE LEARNING ALGO!!!
+
 import pickle
 import os
 
@@ -43,13 +51,20 @@ class SkyNet(object):
         """
         Make any dict attribute learn a new term with given meaning.
         """
-        self.__dict__[attribute][term] = meaning
+        try:
+            self.__dict__[attribute][term] = meaning
+
+        except Exception:
+            print("I don't understand?")
+
 
 
 if __name__ == "__main__":
+    import re
     skynet = SkyNet()
     skynet.begin()
     # print(skynet.treatment_terms)
     # skynet.learn("treatment_terms", "10 Post", "ten_post")
     # print(skynet.treatment_terms)
-    skynet.stop()
+    # print(re.findall(skynet.genotype_terms["ko"], "WT, Wt, wT, wt, KO, Ko, kO, ko"))
+    # skynet.stop()

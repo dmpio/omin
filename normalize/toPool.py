@@ -4,7 +4,8 @@ import re
 import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind
-from omin.utils import StringTools
+from ..utils import StringTools
+from ..utils import SelectionTools
 
 
 def logNormToAve(pepdf):
@@ -41,78 +42,15 @@ def normToPool(log2_div_ave):
     log2_div_ave : DataFrame
 
     """
-    pool = omin.betSep(log2_div_ave, "control", "pool")[0]
+    # pool = omin.betSep(log2_div_ave, "control", "pool")[0]
+    pool = SelectionTools.sep(log2_div_ave, "[Cc]ontrol|[Pp]ool")
     lda_div_pool = log2_div_ave.sub(pool.ix[:, 0], axis=0)
     # Rename the columns to reflect the operations on them.
     lda_div_pool.columns = [re.sub("Log2-AVE", "Log2-AVE-Pool", i) for i in lda_div_pool.columns]
     return lda_div_pool
 
-# === COMPARISON TOOLS ===
-
-
-def log2FC(numer, denom, new_column_name=""):
-    """Takes the log2 fold change of normalized DataFrames of simillar size.
-
-    Parameters
-    ----------
-    numer : DataFrame
-        The numerator DataFrame
-    denom : DataFrame
-        The denominator DataFrame
-    new_column_name : str
-        Include your the name of your comparison here. Defaults to a blank string.
-
-    Returns
-    -------
-    lfc : DataFrame
-
-    """
-    if len(new_column_name) > 0:
-        new_column_name = " "+new_column_name
-    lfc = numer.mean(axis=1) - denom.mean(axis=1)
-    lfc = pd.DataFrame(lfc, columns=["LFC"+new_column_name],index=numer.index)
-    return lfc
-
-
-def ttester(numer, denom, new_column_name=""):
-    """For pvalue comparision of types of DataFrames of similar shape.
-
-    Notes
-    -----
-    Make sure that your DataFrames are the same size. Future versions
-    Should rely on this method as a base for pvalue comparison.
-
-    Parameters
-    ----------
-    numer : DataFrame
-        The numerator DataFrame
-    denom : DataFrame
-        The denominator DataFrame
-
-    Returns
-    -------
-    pvals : DataFrame
-
-    Examples
-    --------
-    Comparing two DataFrames of similar size.
-    >>>omin.ttester(KO_DataFrame,WT_DataFrame)
-
-    """
-
-    if len(new_column_name) > 0:
-        new_column_name = " "+new_column_name
-    # The loop below suppresses an irrelevent error message.
-    # For more details on this see:
-    # http://stackoverflow.com/questions/40452765/invalid-value-in-less-when-comparing-np-nan-in-an-array
-    with np.errstate(invalid='ignore'):
-        np.less([np.nan, 0], 1)
-        #ttest_ind implemented
-        pvals = ttest_ind(numer, denom, axis=1).pvalue
-    pvals = pd.DataFrame(pvals, columns=["pval"+new_column_name], index=numer.index)
-    return pvals
-
 # === CLASSES DEFINED HERE ===
+
 
 class FracParse:
     """
@@ -124,7 +62,8 @@ class FracParse:
     [selected conditions] : DataFrame
         These are created dynamically from the list the user selects.
     """
-    def __init__(self,abundance,treatment):
+
+    def __init__(self, abundance, treatment):
         """
         Parameters
         ----------
@@ -136,14 +75,14 @@ class FracParse:
         self.pool_normalized = normToPool(self.log_div_ave)
 
         for select in treatment:
-            #Remove numbers and spaces from selected term
+            # Remove numbers and spaces from selected term
             # term = phraseWasher(select,number_separator="_",word_separator="_").lower()
             term = StringTools.phraseWasher(select, number_separator="_",
-                                word_separator="_").lower()
-            #term = re.sub(" ", "_", select)
-            self.__dict__[term] = omin.sep(self.pool_normalized,select)
+                                            word_separator="_").lower()
+            # term = re.sub(" ", "_", select)
+            self.__dict__[term] = omin.sep(self.pool_normalized, select)
 
-    def addAttribute(self,attribute_name,attribute_data):
+    def addAttribute(self, attribute_name, attribute_data):
         self.__dict__[attribute_name] = attribute_data
 
     def __repr__(self):
@@ -171,10 +110,10 @@ class PoolMod:
     def __repr__(self):
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
-# === MAINCLASS ===
+# === OLD MAINCLASS ===
 
 
-class WithPool:
+class WithPool(object):
     """
     Attributes
     ----------
@@ -200,8 +139,56 @@ class WithPool:
             self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance, mod,
                                                         genotypes, treatment)
 
-    def addAttribute(self,attribute_name, attribute_data):
+    def addAttribute(self, attribute_name, attribute_data):
         self.__dict__[attribute_name] = attribute_data
 
     def __repr__(self):
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+# === NEW MAIN CLASS ===
+
+
+class NormalizedToPool(object):
+    """
+    Attributes
+    ----------
+    raw_abundance: DataFrame
+    """
+    def __init__(self, raw_peptides=None, modifications=None,
+                 genotypes=None, treatments=None):
+        """
+        Parameters
+        ----------
+        raw_peptides: DataFrame
+        modifications: list
+        genotypes: list
+        treatments: list
+        """
+        self.raw_abundance = SelectionTools.sep(raw_peptides, "Abundance:")
+
+        fraction_set = None
+        try:
+            # Find all "Fn:" in the raw_abundance where is the fraction number.
+            flist = self.raw_abundance.columns.str.findall("F\d").tolist()
+            # Reduce list of all "Fn:" to set of all "Fn:"
+            fraction_set = set([i[0] for i in flist])
+            self.fraction_set = fraction_set
+            # For each "Fn" in the set of all "Fn:"s
+            for fraction in fraction_set:
+                # Separate the given fraction.
+                fract_abundance = SelectionTools.sep(self.raw_abundance, fraction)
+                # Log2 normalize
+                fract_log = logNormToAve(fract_abundance)
+                # Normalize to the pool of the given fraction.
+                fract_norm = normToPool(fract_log)
+                # Create one large dataframe:
+                # raw_abundance + log2(raw_abundance)/AVE(raw_abundance) + log2(raw_abundance)/AVE(raw_abundance)/Pool
+                self.__dict__[fraction] = fract_abundance.join(fract_log).join(fract_norm)
+
+        except Exception:
+            print("No abundance columns contained 'F(number)'.")
+
+    def __repr__(self):
+        """Show all attributes.
+        """
         return "Attributes: "+", ".join(list(self.__dict__.keys()))

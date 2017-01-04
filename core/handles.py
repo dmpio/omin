@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from omin.utils import SelectionTools
+from ..utils import SelectionTools
+from ..normalize.toPool import NormalizedToPool
 
 
 class RawData(object):
@@ -65,9 +66,11 @@ class RawData(object):
 class Process(RawData):
     """Formerly omin.Experiment
     """
-    def __init__(self, peptides_file, proteins_file, modifications=None):
+    def __init__(self, peptides_file, proteins_file, modifications=None,
+                 genotype=None, treatments=None):
         """
         """
+
         modifications = modifications or ["Acetyl", "Phospho"]
         # Initalize the RawData base class.
         super(Process, self).__init__(peptides_file, proteins_file)
@@ -88,6 +91,13 @@ class Process(RawData):
 
             print("Pool or control columns found. omin will attempt to normalize the data to it.")
 
+            try:
+                self.normalized = NormalizedToPool(self.raw_peptides)
+
+            except Exception:
+                print("Something went wrong. Please check to make sure you data is formatted correctly.")
         else:
-            # FIXME: Make this a place where the use could specify what coulumns they would like to normalize against.
+            # FIXME: Make this a place where the use could specify.
             print("Cannot find anything to normalize to. Check to see that your data fits omins conventions.")
+
+            self.normalized = None

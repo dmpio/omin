@@ -3,6 +3,72 @@ import omin
 import pandas as pd
 
 
+# === COMPARISON TOOLS ===
+
+def log2FC(numer, denom, new_column_name=""):
+    """Takes the log2 fold change of normalized DataFrames of simillar size.
+
+    Parameters
+    ----------
+    numer : DataFrame
+        The numerator DataFrame
+    denom : DataFrame
+        The denominator DataFrame
+    new_column_name : str
+        Include your the name of comparison. Defaults to a blank string.
+
+    Returns
+    -------
+    lfc : DataFrame
+
+    """
+    if len(new_column_name) > 0:
+        new_column_name = " "+new_column_name
+    lfc = numer.mean(axis=1) - denom.mean(axis=1)
+    lfc = pd.DataFrame(lfc, columns=["LFC"+new_column_name], index=numer.index)
+    return lfc
+
+
+def ttester(numer, denom, new_column_name=""):
+    """For pvalue comparision of types of DataFrames of similar shape.
+
+    Notes
+    -----
+    Make sure that your DataFrames are the same size. Future versions
+    Should rely on this method as a base for pvalue comparison.
+
+    Parameters
+    ----------
+    numer : DataFrame
+        The numerator DataFrame
+    denom : DataFrame
+        The denominator DataFrame
+
+    Returns
+    -------
+    pvals : DataFrame
+
+    Examples
+    --------
+    Comparing two DataFrames of similar size.
+    >>>omin.ttester(KO_DataFrame,WT_DataFrame)
+
+    """
+
+    if len(new_column_name) > 0:
+        new_column_name = " "+new_column_name
+    # The loop below suppresses an irrelevent error message.
+    # For more details on this see:
+    # http://stackoverflow.com/questions/40452765/invalid-value-in-less-when-comparing-np-nan-in-an-array
+    with np.errstate(invalid='ignore'):
+        np.less([np.nan, 0], 1)
+        #ttest_ind implemented
+        pvals = ttest_ind(numer, denom, axis=1).pvalue
+    pvals = pd.DataFrame(pvals, columns=["pval"+new_column_name], index=numer.index)
+    return pvals
+
+
+
 def methodChoice(dataframe, method, axis=1):
     """Returns a dataframe that has been operated on by a given method.
 

@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 import re
+import os
 import pickle
 import numpy as np
 import pandas as pd
 
+from datetime import datetime
 from urllib.request import urlopen
 from urllib.error import HTTPError
 
-from omin.databases.routines import SkyNet
-
-# FIXME: Create tools to search against against databases the user specifies.
+this_dir, _ = os.path.split(__file__)
 
 # Load the modifications dictionary.
-skynet = SkyNet()
-skynet.begin()
-# print(skynet.modification_terms)
+modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
 
+
+# FIXME: Create tools to search against against databases the user specifies.
 # === UNIPROT TOOLS ===
 
 
@@ -101,6 +101,22 @@ class UniprotTools(object):
 
 
 class StringTools(object):
+
+    @staticmethod
+    def time_stamp():
+        """Takes no arguments and returns datetime timestamp as string.
+
+        Returns
+        -------
+        ts : str
+
+        Examples
+        --------
+        >>>StingTools.time_stamp()
+        '1483631005_38507'
+        """
+        ts = str(datetime.timestamp(datetime.now())).replace(".", "_")
+        return ts
 
     @staticmethod
     def multiRegExOr(term_list):
@@ -418,7 +434,7 @@ class SelectionTools(object):
         selected = ()
         for term in terms:
             # term = omin.mod_dict[term]
-            term = skynet.modification_terms[term]
+            term = modification_terms[term]
             moddex = pepdf.Modifications.str.contains(pat=term, case=False)
             if moddex.sum() > 0:
                 selected += (pepdf.ix[moddex],)

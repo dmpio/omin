@@ -31,12 +31,16 @@ def inspectObject(obj):
     obj_ids: list
         A list of lists to be specific.
     """
+    obj_ids = []
     # Make list of builtins
     bi_list = dir(__builtins__)
     # Try to make a list of the types of things inside obj.
     try:
         # Make list all things inside of an object
-        obj_ids = [[name, type(thing).__name__] for name, thing in obj.__dict__.items()]
+        # obj_ids = [[name, type(thing).__name__] for name, thing in obj.__dict__.items()]
+
+        for name, thing in obj.__dict__.items():
+            obj_ids.append([name, type(thing).__name__, thing])
 
         return obj_ids
 

@@ -36,7 +36,7 @@ def inspectObject(obj):
     # Try to make a list of the types of things inside obj.
     try:
         # Make list all things inside of an object
-        obj_ids = [[name, type(thing).__name__, type(thing).__name__ in bi_list] for name, thing in obj.__dict__.items()]
+        obj_ids = [[name, type(thing).__name__] for name, thing in obj.__dict__.items()]
 
         return obj_ids
 
@@ -44,8 +44,25 @@ def inspectObject(obj):
         pass
 
 
-def objectWalker(obj, desired_type=None):
+def objectWalker(obj, desired_type=None, att_list=None):
+    """Recursively walks through an object an genrates a list of its attributes.
 
+    Parameters
+    ----------
+    obj: :obj:
+
+    desired_type: str
+
+    Returns
+    -------
+    att_list: list
+
+    """
+    # Create an attributes list if none has been asigned.
+    if att_list is None:
+        att_list = []
+
+    # Create list of types that we do not want yo serch through
     no_list = dir(__builtins__)
     no_list.append("DataFrame")
     # desired_type = desired_type or "DataFrame"
@@ -55,16 +72,18 @@ def objectWalker(obj, desired_type=None):
     for i in obj_inspect:
 
         # Test if object attribute is desired_type.
-        if len(i[1]) == len(desired_type):
-            print(i)
+        if re.search(desired_type, i[1], re.I) is not None:
+
+            att_list.append(i)
 
         # If the object attribute is not the desired_type then...
-        if i[1] not in no_list:
+        elif i[1] not in no_list:
             # Try to use recursively objectWalker on the object.
             try:
-                objectWalker(obj.__dict__[i[0]], desired_type)
+                objectWalker(obj.__dict__[i[0]], desired_type, att_list)
             except:
                 pass
+    return att_list
 
 
 class FastaTools(object):

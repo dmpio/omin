@@ -18,6 +18,54 @@ modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
 # FIXME: Create tools to search against against databases the user specifies.
 # === UNIPROT TOOLS ===
 
+def inspectObject(obj):
+    """Returns a list of object attributes and their types.
+
+    Parameters
+    ----------
+    obj: :obj:
+        Any kind of object that is not a builtin.
+
+    Returns
+    -------
+    obj_ids: list
+        A list of lists to be specific.
+    """
+    # Make list of builtins
+    bi_list = dir(__builtins__)
+    # Try to make a list of the types of things inside obj.
+    try:
+        # Make list all things inside of an object
+        obj_ids = [[name, type(thing).__name__, type(thing).__name__ in bi_list] for name, thing in obj.__dict__.items()]
+
+        return obj_ids
+
+    except Exception:
+        pass
+
+
+def objectWalker(obj, desired_type=None):
+
+    no_list = dir(__builtins__)
+    no_list.append("DataFrame")
+    # desired_type = desired_type or "DataFrame"
+
+    obj_inspect = inspectObject(obj)
+
+    for i in obj_inspect:
+
+        # Test if object attribute is desired_type.
+        if len(i[1]) == len(desired_type):
+            print(i)
+
+        # If the object attribute is not the desired_type then...
+        if i[1] not in no_list:
+            # Try to use recursively objectWalker on the object.
+            try:
+                objectWalker(obj.__dict__[i[0]], desired_type)
+            except:
+                pass
+
 
 class FastaTools(object):
     """A collection of tools for handling FASTA formatted strings.

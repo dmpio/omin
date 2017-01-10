@@ -61,6 +61,22 @@ class SkyNet(object):
         except Exception:
             print("I don't understand?")
 
+    def train(self, attribute, term, new_def=None):
+        """
+        Parameters
+        ----------
+        attribute: str
+        term: str
+        new_def: str
+
+        """
+        if new_def is None:
+            new_def = term
+
+        rx = re.compile(term)
+        newlist = list(filter(rx.findall, self.__dict__[attribute].keys()))
+        [self.learn(attribute, i, new_def) for i in newlist]
+
 
 def tagStudyFactors(abundance, ignore_phrases=None):
     """Returns a dict of tagged study factors.

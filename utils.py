@@ -804,53 +804,6 @@ class SelectionTools(object):
 
         return peptide_select, protein_select
 
-    @classmethod
-    def mitoCartaPepOut(cls, raw_file=None, mods=["Acetyl", "Phospho"],
-                        dex=False):
-        """
-        Parameters
-        ----------
-        raw_file : (:obj)
-            An instance of the class omin.experiment.RawData
-        mods : list
-            Defaults to ["Acetyl","Phospho"].
-        dex : bool
-            Defaults to False. When False output is mitocarta_pep if True
-            output is a tuple containing mitodex and nonmitodex
-
-        Returns
-        -------
-        (mitodex, nonmitodex) : tuple(DataFrame,DataFrame)
-        mitocarta_pep : Dataframe
-
-        Examples
-        --------
-        Grab all MitoCarta 2.0 calls for all peptides as a dataframe.
-        >>>mitocarta_pep = mitoCartaPepOut(raw_object)
-
-        Grab the mito/non-mito peptides for plotting by setting dex to True
-        >>>mitodex,nonmitodex = mitoCartaPepOut(raw_object,dex=True)
-
-        See Also
-        --------
-        omin.experiment.RawData
-        omin.vis.plotByMito
-
-        """
-        peptides = raw_file.peptides
-        proteins = raw_file.proteins
-
-        carta = omin.mitoCartaCall.mitoProt(proteins)
-        pepsel, prosel = omin.vLook(peptides, proteins, mods)
-        mitocarta_pep = pepsel.merge(carta, on="Accession", how="left")
-        mitocarta_pep.index = pepsel.index
-        if dex:
-            nonmitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List != 1]
-            mitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List == 1]
-            return mitodex, nonmitodex
-        else:
-            return mitocarta_pep
-
     # === VENN DIAGRAM FUNCTIONS ===
 
     @staticmethod

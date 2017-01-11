@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import pandas as pd
 import numpy as np
-from omin.utils import SelectionTools
+from ..utils import SelectionTools
 
 # Load this directory
 this_dir, _ = os.path.split(__file__)
@@ -51,3 +52,56 @@ def mitoProt(protdata):
     uni2ent.columns = ["MouseGeneID", "MGI", "Accession"]
     mitoprot = uni2ent.merge(cmitodf, on="MouseGeneID", how="left").dropna()
     return mitoprot
+
+
+def mitoCartaPepOut(obj=None, mods=None, dex=False):
+    """
+    Parameters
+    ----------
+    obj : (:obj)
+        Any object that has a attribute that is named peptides and proteins.
+    mods : list
+        Defaults to ["Acetyl","Phospho"].
+    dex : bool
+        Defaults to False. When False output is mitocarta_pep if True
+        output is a tuple containing mitodex and nonmitodex
+
+    Returns
+    -------
+    (mitodex, nonmitodex) : tuple(DataFrame,DataFrame)
+    mitocarta_pep : Dataframe
+
+    Examples
+    --------
+    Grab all MitoCarta 2.0 calls for all peptides as a dataframe.
+    >>>mitocarta_pep = mitoCartaPepOut(raw_object)
+
+    Grab the mito/non-mito peptides for plotting by setting dex to True
+    >>>mitodex,nonmitodex = mitoCartaPepOut(raw_object,dex=True)
+
+    """
+    mods = mods or ["Acetyl", "Phospho"]
+
+    try:
+        rx = re.compile("[Pp]eptides")
+        peptides = list(filter(rx.findall, obj.__dict__.keys()))[0]
+        rx = re.compile("[Pp]roteins")
+        proteins = list(filter(rx.findall, obj.__dict__.keys()))[0]
+
+    except Exception:
+        peptides = "peptides"
+        proteins = "proteins"
+
+    peptides = obj.__dict__[peptides]
+    proteins = obj.__dict__[proteins]
+
+    carta = mitoProt(proteins)
+    pepsel, prosel = SelectionTools.vLook(peptides, proteins, mods)
+    mitocarta_pep = pepsel.merge(carta, on="Accession", how="left")
+    mitocarta_pep.index = pepsel.index
+    if dex:
+        nonmitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List != 1]
+        mitodex = mitocarta_pep.ix[mitocarta_pep.MitoCarta2_List == 1]
+        return mitodex, nonmitodex
+    else:
+        return mitocarta_pep

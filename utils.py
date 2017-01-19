@@ -720,8 +720,7 @@ class SelectionTools(object):
         master_prot_acc : DataFrame
 
         """
-        master_prot_acc = [i.split(';')[0] for i in peptide_df[
-            'Master Protein Accessions'].dropna()]
+        master_prot_acc = [i.split(';')[0] for i in peptide_df['Master Protein Accessions'].dropna()]
 
         master_prot_acc = pd.DataFrame(master_prot_acc,
                                        index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])

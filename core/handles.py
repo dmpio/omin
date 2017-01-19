@@ -2,6 +2,7 @@
 import pandas as pd
 from ..utils import SelectionTools
 from ..normalize.toPool import NormalizedToPool
+from ..normalize.toInput import NormalizedToInput
 
 
 class RawData(object):
@@ -86,6 +87,12 @@ class Process(RawData):
         if self.raw_peptides.columns.str.contains("Input", case=False).any():
 
             print("Input fraction found. omin will attempt to normalize the data to it.")
+
+            try:
+                self.normalized = NormalizedToInput(self.raw_peptides, self.raw_proteins)
+
+            except Exception:
+                print("Something went wrong. Please check to make sure you data is formatted correctly.")
 
         elif self.raw_peptides.columns.str.contains("pool|control", case=False).any():
 

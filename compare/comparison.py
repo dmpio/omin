@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import omin
+import numpy as np
 import pandas as pd
+from scipy.stats import ttest_ind
 
 
 # === COMPARISON TOOLS ===

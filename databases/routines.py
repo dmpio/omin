@@ -61,6 +61,22 @@ class SkyNet(object):
         except Exception:
             print("I don't understand?")
 
+    def train(self, attribute, term, new_def=None):
+        """
+        Parameters
+        ----------
+        attribute: str
+        term: str
+        new_def: str
+
+        """
+        if new_def is None:
+            new_def = term
+
+        rx = re.compile(term)
+        newlist = list(filter(rx.findall, self.__dict__[attribute].keys()))
+        [self.learn(attribute, i, new_def) for i in newlist]
+
 
 def tagStudyFactors(abundance, ignore_phrases=None):
     """Returns a dict of tagged study factors.
@@ -79,7 +95,10 @@ def tagStudyFactors(abundance, ignore_phrases=None):
     study_factors: dict
         With types of study factors as keys and different types of values.
     """
-    ignore_phrases = ignore_phrases or "([Cc]ontrol)|([Pp]ool)"
+
+    ignore_phrases = ignore_phrases or "[Pp]ool"
+    # If control needs to be ignored then it has to be added to the ignore phrases
+    # ignore_phrases = ignore_phrases or "([Cc]ontrol)|([Pp]ool)"
 
     if not np.all(abundance.columns.str.contains("Abundance:")):
         print("One or more of these is not an abundance column.")
@@ -90,7 +109,8 @@ def tagStudyFactors(abundance, ignore_phrases=None):
     # Create list of lists for study factors
     factors = []
     for i in range(len(geno_treat[0])):
-        factors.append(set([j[i] for j in geno_treat]))
+        # Capture study factors as a list.
+        factors.append(list(set([j[i] for j in geno_treat])))
 
     # Create a list of all the dicts in skynet
     skynet = SkyNet()

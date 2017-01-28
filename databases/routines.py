@@ -95,7 +95,10 @@ def tagStudyFactors(abundance, ignore_phrases=None):
     study_factors: dict
         With types of study factors as keys and different types of values.
     """
-    ignore_phrases = ignore_phrases or "([Cc]ontrol)|([Pp]ool)"
+
+    ignore_phrases = ignore_phrases or "[Pp]ool"
+    # If control needs to be ignored then it has to be added to the ignore phrases
+    # ignore_phrases = ignore_phrases or "([Cc]ontrol)|([Pp]ool)"
 
     if not np.all(abundance.columns.str.contains("Abundance:")):
         print("One or more of these is not an abundance column.")
@@ -106,7 +109,8 @@ def tagStudyFactors(abundance, ignore_phrases=None):
     # Create list of lists for study factors
     factors = []
     for i in range(len(geno_treat[0])):
-        factors.append(set([j[i] for j in geno_treat]))
+        # Capture study factors as a list.
+        factors.append(list(set([j[i] for j in geno_treat])))
 
     # Create a list of all the dicts in skynet
     skynet = SkyNet()

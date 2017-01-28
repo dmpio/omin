@@ -108,3 +108,4 @@ class Process(RawData):
             print("Cannot find anything to normalize to. Check to see that your data fits omins conventions.")
 
             self.normalized = None
+            

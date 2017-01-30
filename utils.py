@@ -216,6 +216,28 @@ class StringTools(object):
         all_exp = "|".join(["(%s)" % (term) for term in term_list])
         return all_exp
 
+    @staticmethod
+    def rxAndGen(ex_list):
+        """Returns a regex psuedo "AND" formatted string from list of strings.
+
+        Parameters
+        ----------
+        ex_list: list
+
+        Returns
+        -------
+        formatted_list: str
+        """
+
+        rxAnd = lambda x: "(?=.*\\b{}\\b)".format(x)
+
+        andList = list(map(rxAnd, ex_list))
+
+        formatted_list = "^"+"".join(andList)+".*$"
+
+        return formatted_list
+
+
     # @classmethod
     @staticmethod
     def int2word(num, separator="-"):

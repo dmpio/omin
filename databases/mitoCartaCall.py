@@ -47,6 +47,7 @@ def mitoProt(protdata):
     uni2ent = uni2ent.dropna()
     # create list for DataFrame
     list_df = [np.int64(i.split(";")[0]) for i in uni2ent[uni2ent.columns[0]]]
+    # Try to replace the following with ent.to_frame()
     ent = pd.DataFrame(list_df, index=uni2ent.index)
     uni2ent = pd.concat([ent, uni2ent], axis=1)
     uni2ent.columns = ["MouseGeneID", "MGI", "Accession"]

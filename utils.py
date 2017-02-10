@@ -698,9 +698,13 @@ class SelectionTools(object):
             Protein data that contains only proteins with proteins only less
             than 1% of the expected q-value.
         """
-        one_per = protein_df["Exp. q-value"] < .01
-        one_per = protein_df.ix[one_per]
-        return one_per
+        try:
+            one_per = protein_df["Exp. q-value"] < .01
+            one_per = protein_df.ix[one_per]
+            return one_per
+        except KeyError:
+            print("No 'Exp. q-value' column found. Data has not NOT been filtered at 1% FDR.")
+            return protein_df
 
     @classmethod
     def masterOne(cls, protein_df):

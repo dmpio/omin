@@ -1050,3 +1050,23 @@ class SelectionTools(object):
                     "Would you like to replace any more terms in the list? y/n ")
             while contin == "n":
                 return out_list
+
+# Testing
+if __name__ == "__main__":
+    print("Testing utils.py ...")
+    import pandas as pd
+    from omin.core.handles import RawData
+
+    try:
+        data = RawData("ExampleData\crat_ex\_E749_4154_010716_PeptideGroups.txt",
+                       "ExampleData\crat_ex\_E749_4154_010716_Proteins.txt")
+        if data.raw_peptides.shape == (8712, 277):
+            print("ExampleData has loaded correctly.")
+    except:
+        print("Loading ExampleData failed.")
+    try:
+        if type(inspectObject(data)) == list:
+            print("inspectObject works!")
+    except:
+        print("inspectObject has failed.")
+

@@ -370,7 +370,8 @@ def vennRepVsRep(ob1, ob2, bdex, condlist, cut=None):
     return plt
 
 
-def vennConditionsWithInGeno(trunch_object, modification_object,
+def vennConditionsWithInGeno(trunch_object,
+                             modification_object,
                              condition_list):
     """
     Parameters

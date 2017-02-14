@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
-import re
+"""omin utils.
+
+Utilites for the omin module.
+
+"""
+
 import os
 import pickle
+import re
+from datetime import datetime
+from urllib.error import HTTPError
+from urllib.request import urlopen
+
 import numpy as np
 import pandas as pd
-
-from datetime import datetime
-from urllib.request import urlopen
-from urllib.error import HTTPError
 
 this_dir, _ = os.path.split(__file__)
 
@@ -19,7 +25,7 @@ modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
 # === UNIPROT TOOLS ===
 
 def inspectObject(obj):
-    """Returns a list of object attributes and their types.
+    """Return list of object attributes and their types.
 
     Parameters
     ----------
@@ -33,12 +39,10 @@ def inspectObject(obj):
     """
     obj_ids = []
     # Make list of builtins
-    bi_list = dir(__builtins__)
+    # bi_list = dir(__builtins__)
     # Try to make a list of the types of things inside obj.
     try:
         # Make list all things inside of an object
-        # obj_ids = [[name, type(thing).__name__] for name, thing in obj.__dict__.items()]
-
         for name, thing in obj.__dict__.items():
             obj_ids.append([name, type(thing).__name__, thing])
 
@@ -85,20 +89,17 @@ def objectWalker(obj, desired_type=None, att_list=None):
             # Try to use recursively objectWalker on the object.
             try:
                 objectWalker(obj.__dict__[i[0]], desired_type, att_list)
-            except:
+            except Exception:
                 pass
     return att_list
 
 
 class FastaTools(object):
-    """A collection of tools for handling FASTA formatted strings.
-    """
+    """A collection of tools for handling FASTA formatted strings."""
 
     @classmethod
     def fasta2Seq(cls, fasta):
-
-        """ Joins strings in list into one string. Neglecting the first which is
-        generally the annotation.
+        """Join strings in list into one string.
 
         Parameters
         ----------
@@ -113,7 +114,7 @@ class FastaTools(object):
 
     @staticmethod
     def seqNum(cls, seq):
-        """Takes a sequence and returns the number for each amino acid (I think).
+        """Take a sequence and returns the number for each amino acid.
 
         Notes
         -----
@@ -991,9 +992,9 @@ class SelectionTools(object):
         """Returns a list that has had the 'pattern' string replaced with the
         'replace' string.
 
-        If no pattern or replace string are entered listWasher will ask the user if
-        any of the elements in the string should be replaced and what they should
-        be replaced by.
+        If no pattern or replace string are entered listWasher will ask the
+        user if any of the elements in the string should be replaced and what
+        they should be replaced by.
 
         Parameters
         ----------
@@ -1037,7 +1038,9 @@ class SelectionTools(object):
             return out_list
         else:
             print(start_list)
-            contin = input("Would you like to replace any terms in the list? y/n ")
+            contin = input(
+                "Would you like to replace any terms in the list? y/n "
+                )
             out_list = start_list
             while contin == "y":
                 for n, element in enumerate(out_list):
@@ -1047,26 +1050,27 @@ class SelectionTools(object):
                 replace = input("Replace" + " '" + pattern + "' " + "with? ")
                 out_list = [replace if x == pattern else x for x in out_list]
                 contin = input(
-                    "Would you like to replace any more terms in the list? y/n ")
+                    "Would you like to replace any more terms in the list? y/n"
+                    )
             while contin == "n":
                 return out_list
-
 # Testing
+
 if __name__ == "__main__":
     print("Testing utils.py ...")
-    import pandas as pd
     from omin.core.handles import RawData
 
     try:
-        data = RawData("ExampleData\crat_ex\_E749_4154_010716_PeptideGroups.txt",
-                       "ExampleData\crat_ex\_E749_4154_010716_Proteins.txt")
+        data = RawData(
+            "ExampleData\crat_ex\_E749_4154_010716_PeptideGroups.txt",
+            "ExampleData\crat_ex\_E749_4154_010716_Proteins.txt"
+            )
         if data.raw_peptides.shape == (8712, 277):
             print("ExampleData has loaded correctly.")
-    except:
+    except Exception:
         print("Loading ExampleData failed.")
     try:
         if type(inspectObject(data)) == list:
             print("inspectObject works!")
-    except:
+    except Exception:
         print("inspectObject has failed.")
-

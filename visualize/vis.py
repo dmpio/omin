@@ -76,12 +76,16 @@ def plotByMito(lfc, pval, bdex, wdex, cutoff=-np.log10(.05), aspect=None):
               "opti-black": (0.10, 0.05, 0.15)}
 
     # PLOT 1
-    plt.scatter(x1, y1, c=swatch["gray"],
-                color=swatch["opti-black"],
+    plt.scatter(x1, y1,
+                c=swatch["gray"],
+                edgecolors=swatch["opti-black"],
+                # color=swatch["opti-black"],
                 zorder=10)
     # PLOT2
-    plt.scatter(x2, y2, c="w",
-                color=swatch["opti-black"],
+    plt.scatter(x2, y2,
+                c="w",
+                edgecolors=swatch["opti-black"],
+                # color=swatch["opti-black"],
                 zorder=9)
 
     # Show cutoff

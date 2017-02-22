@@ -3,6 +3,7 @@ import pandas as pd
 from ..utils import SelectionTools
 from ..normalize.toPool import NormalizedToPool
 from ..normalize.toInput import NormalizedToInput
+from ..databases import mitoCartaCall
 
 
 class RawData(object):
@@ -64,6 +65,28 @@ class RawData(object):
         return self._numbers
 
 
+class PreProcess(RawData):
+    """
+    """
+    def __init__(self, peptides_file, proteins_file, modifications=None,
+                 genotype=None, treatments=None):
+        modifications = modifications or ["Acetyl", "Phospho"]
+        # Initalize the RawData base class.
+        super(PreProcess, self).__init__(peptides_file, proteins_file)
+        # Create 2 Dataframes that map specific peptide or protien uniprot ID
+        # to it's relevent mitocarta index. Simillar to vlookup in excel
+        pep_sel, prot_sel = SelectionTools.vLook(self.raw_peptides,
+                                                 self.raw_proteins,
+                                                 modifications)
+        self.pep_sel = pep_sel
+        self.prot_sel = prot_sel
+
+        mito, nonmito = mitoCartaCall.mitoCartaPepOut(self,
+                                                      mods=modifications,
+                                                      dex=True)
+        self.mitodex = mito
+        self.nonmitodex = nonmito
+
 class Process(RawData):
     """Formerly omin.Experiment
     """
@@ -108,4 +131,3 @@ class Process(RawData):
             print("Cannot find anything to normalize to. Check to see that your data fits omins conventions.")
 
             self.normalized = None
-            

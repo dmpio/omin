@@ -192,6 +192,7 @@ class StringTools(object):
 
     @staticmethod
     def multiRegExOr(term_list):
+
         """Returns a singles string of "OR"ed regex terms from a given list.
 
         Parameters
@@ -218,7 +219,7 @@ class StringTools(object):
         return all_exp
 
     @staticmethod
-    def rxAndGen(ex_list):
+    def multiRegExAnd(ex_list):
         """Returns a regex psuedo "AND" formatted string from list of strings.
 
         Parameters

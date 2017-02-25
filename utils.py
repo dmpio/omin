@@ -8,6 +8,7 @@ Utilites for the omin module.
 import os
 import pickle
 import re
+import itertools
 from datetime import datetime
 from urllib.error import HTTPError
 from urllib.request import urlopen
@@ -594,13 +595,69 @@ class SelectionTools(object):
                 selected_col = dataframe[term]
                 df_list.append(selected_col)
 
-            except:
+            except Exception:
                 selected_col = omin.sep(dataframe, term)
                 df_list.append(selected_col)
 
         out_dataframe = pd.concat(df_list, axis=1)
         return out_dataframe
 
+# === MODIFICATION ISOLATION/CLASSIFICATION TOOLS ===
+
+    @classmethod
+    def simplifyModifications(cls, df):
+        """Return a series of simplifed modifications.
+
+        Parameters
+        ----------
+        df : DataFrame
+
+        Returns
+        -------
+        simplified : Series
+        """
+        rx = re.compile("x(\w+)\s")
+        simplified = df.Modifications.apply(rx.findall)
+        return simplified
+
+    @classmethod
+    def findModifications(cls, df):
+        """Return set of ALL of TYPES of modifications found.
+
+        Parameters
+        ----------
+        df : Dataframe
+
+        Returns
+        -------
+        found : set
+        """
+        found = set(
+            itertools.chain.from_iterable(cls.simplifyModifications(df))
+            )
+
+        return found
+
+    @classmethod
+    def findInVivoModifications(cls, df):
+        """Return list of the in vivo modifications.
+
+        Parameters
+        ----------
+        df : Dataframe
+
+        Returns
+        -------
+        invivo_modifications : set
+        """
+
+        present_modifications = cls.findModifications(df)
+        chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
+        invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
+        return invivo_modifications
+
+
+# === MultiIndex method ===
     @staticmethod
     def superGroup(dataframe=None, new_level=None):
         """Returns a multiindexed DataFrame with the top index named new_level.

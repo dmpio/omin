@@ -34,26 +34,38 @@ class SkyNet(object):
     def begin(self):
         """Load attributes from pickled file sources.
         """
-        self.modification_terms = pickle.load(open(this_dir+"\mod_dict.p", "rb"))
-        self.genotype_terms = pickle.load(open(this_dir+"\\genotype_terms.p", "rb"))
-        self.treatment_terms = pickle.load(open(this_dir+"\\treatment_terms.p", "rb"))
+        self.modification_terms = pickle.load(open(this_dir+"\mod_dict.p",
+                                                   "rb"))
+        self.genotype_terms = pickle.load(open(this_dir+"\\genotype_terms.p",
+                                               "rb"))
+        self.treatment_terms = pickle.load(open(this_dir+"\\treatment_terms.p",
+                                                "rb"))
 
     def stop(self):
         """Save attributes as pickle files.
         """
 
         if type(self.modification_terms) is dict:
-            pickle.dump(self.modification_terms, open(this_dir+"\mod_dict.p", "wb"))
+            pickle.dump(self.modification_terms,
+                        open(this_dir+"\mod_dict.p", "wb"))
 
         if type(self.genotype_terms) is dict:
-            pickle.dump(self.genotype_terms, open(this_dir+"\\genotype_terms.p", "wb"))
+            pickle.dump(self.genotype_terms,
+                        open(this_dir+"\\genotype_terms.p", "wb"))
 
         if type(self.treatment_terms) is dict:
-            pickle.dump(self.treatment_terms, open(this_dir+"\\treatment_terms.p", "wb"))
+            pickle.dump(self.treatment_terms,
+                        open(this_dir+"\\treatment_terms.p", "wb"))
 
     def learn(self, attribute, term, meaning):
-        """
-        Make any dict attribute learn a new term with given meaning.
+        """Make any dict attribute learn a new term with given meaning.
+
+        Parameters
+        ----------
+        attribute : str
+        term : str
+        meaning : str
+
         """
         try:
             self.__dict__[attribute][term] = meaning
@@ -97,7 +109,7 @@ def tagStudyFactors(abundance, ignore_phrases=None):
     """
 
     ignore_phrases = ignore_phrases or "[Pp]ool"
-    # If control needs to be ignored then it has to be added to the ignore phrases
+    # If "control" needs to be ignored then it has to be added to the ignore phrases
     # ignore_phrases = ignore_phrases or "([Cc]ontrol)|([Pp]ool)"
 
     if not np.all(abundance.columns.str.contains("Abundance:")):
@@ -121,7 +133,7 @@ def tagStudyFactors(abundance, ignore_phrases=None):
     for fact in factors:
         # Filter out study factors that have 10 or more elements.
         if len(fact) < 10:
-            # Filter out study factors that have just one or fewer elements.
+            # Filter out study factors that have one or fewer elements.
             if len(fact)>1:
                 # In each of the dicts in skynet.
                 for term_dict in term_dict_list:
@@ -129,7 +141,7 @@ def tagStudyFactors(abundance, ignore_phrases=None):
                     tl_name = term_dict.split("_")[0]
                     # Create the regex string of all of the terms in the term dict.
                     regex = StringTools.multiRegExOr(skynet.__dict__[term_dict].values())
-                    # Test the study factor set for the prescence of one of the terms.
+                    # Test the study factor set for the presence of one of the terms.
                     if re.search(regex," ".join(fact)) is not None:
                         # If any of the terms is present add the study factor set to the dict.
                         study_factors[tl_name] = fact

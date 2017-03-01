@@ -5,26 +5,25 @@ import numpy as np
 # === Pool Methods ===
 
 
-def logNormToAve(pepdf):
-    """Takes a DataFrame composed of a fraction of peptide abundances and then
-    subtracts each element in each row by the sum of it's row.
-
-    Notes
-    -----
-    FIXME : Make sure this method could possibly handle protein data aswell.
+def logNormToAve(dataframe, add_to_header=None):
+    """Return log2(datafame)-mean(log2(datafame)).
 
     Parameters
     ----------
-    pepdf : DataFrame
-        Limit to a single fraction of peptide abundance data.
+    datafame : DataFrame
+
+    Returns
+    -------
+    log2_div_ave : DataFrame
 
     """
-    log2 = pepdf.copy().apply(np.log2)
+    add_to_header = add_to_header or "Log2-Mean(Log2): "
+
+    log2 = dataframe.copy().apply(np.log2)
     ave = log2.mean(axis=1)
     log2_div_ave = log2.sub(ave, axis=0)
-    log2_div_ave.columns = "Log2-AVE: " + log2_div_ave.columns
+    log2_div_ave.columns = add_to_header + log2_div_ave.columns
     return log2_div_ave
-
 
 def normToPool(log2_div_ave):
     """Normalizes a DataFrame composed of a single fraction of peptide data

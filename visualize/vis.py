@@ -98,7 +98,8 @@ def plotByMito(lfc, pval, bdex, wdex, cutoff=-np.log10(.05), aspect=None):
     # Set aspect
     if aspect is not None:
         plt.axes().set_aspect(aspect)
-    return plt
+    # return plt
+    return
 
 
 def trePlot(trunob):

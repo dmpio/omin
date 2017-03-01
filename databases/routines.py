@@ -93,6 +93,12 @@ class SkyNet(object):
 def tagStudyFactors(abundance, ignore_phrases=None):
     """Returns a dict of tagged study factors.
 
+    Notes
+    -----
+    FIXME : Make tagStudyFactors fail notification more robust.
+    If column headers are not formated correctly however it says no abundance
+    column is found.
+
     Parameters
     ----------
     abundance: DataFrame

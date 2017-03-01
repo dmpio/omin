@@ -70,9 +70,12 @@ class PreProcess(RawData):
     """
     def __init__(self, peptides_file, proteins_file, modifications=None,
                  genotype=None, treatments=None):
-        modifications = modifications or ["Acetyl", "Phospho"]
+
         # Initalize the RawData base class.
         super(PreProcess, self).__init__(peptides_file, proteins_file)
+
+        # modifications = modifications or ["Acetyl", "Phospho"]
+        modifications = modifications or SelectionTools.findInVivoModifications(self.raw_peptides)
         # Create 2 Dataframes that map specific peptide or protien uniprot ID
         # to it's relevent mitocarta index. Simillar to vlookup in excel
         pep_sel, prot_sel = SelectionTools.vLook(self.raw_peptides,
@@ -86,6 +89,7 @@ class PreProcess(RawData):
                                                       dex=True)
         self.mitodex = mito
         self.nonmitodex = nonmito
+
 
 class Process(RawData):
     """Formerly omin.Experiment

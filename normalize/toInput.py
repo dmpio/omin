@@ -77,7 +77,8 @@ class NormalizedToInput(object):
     Attributes
     ----------
     """
-    def __init__(self, raw_peptides=None, raw_proteins=None, modifications=None, genotypes=None, treatments=None):
+    def __init__(self, raw_peptides=None, raw_proteins=None,
+                 modifications=None, genotypes=None, treatments=None):
 
         self.peptides_raw_abundance = SelectionTools.sep(raw_peptides,
                                                          "Abundance:")

@@ -22,9 +22,13 @@ this_dir, _ = os.path.split(__file__)
 # Load the modifications dictionary.
 modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
 
-
+# FIXME: DEPRECATE USELESS FUNCTIONS
 # FIXME: Create tools to search against against databases the user specifies.
+
 # === UNIPROT TOOLS ===
+
+# Check the following link for code review of inspectObject and objectWalker:
+# http://codereview.stackexchange.com/questions/157283/recursively-walk-through-an-object-and-genrate-a-list-of-its-attributes
 
 def inspectObject(obj):
     """Return list of object attributes and their types.
@@ -72,10 +76,10 @@ def objectWalker(obj, desired_type=None, att_list=None):
     if att_list is None:
         att_list = []
 
-    # Create list of types that we do not want yo serch through
+    # Create list of types that we do not want you serch through
     no_list = dir(__builtins__)
     no_list.append("DataFrame")
-    # desired_type = desired_type or "DataFrame"
+    desired_type = desired_type or "DataFrame"
 
     obj_inspect = inspectObject(obj)
 

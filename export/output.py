@@ -56,6 +56,7 @@ class StdOut(object):
 
         # Create writer.
         self.writer = pd.ExcelWriter(full_path, engine='xlsxwriter')
+        # Create a workbook object.
         self.workbook = self.writer.book
         self.obj = the_object
 
@@ -77,11 +78,13 @@ class StdOut(object):
         head_format.set_align("top")
         head_format.set_text_wrap()
 
-        pd.core.format.header_style = None
+        # pd.core.format.header_style = None
+        pd.formats.format.header_style = None
 
         df_list = objectWalker(self.obj, "dataframe")
 
         for i in df_list:
+            print("writing:",i[0])
             # Exclude dataframes with single column
             if i[-1].shape[1] > 1:
                 i[-1].to_excel(self.writer,
@@ -97,4 +100,5 @@ class StdOut(object):
                 worksheet.set_column('A1:'+end, 20)
         # Save the xlsx file
         self.writer.save()
+        print("Your file is ready.")
         return

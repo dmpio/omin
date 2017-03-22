@@ -1,6 +1,8 @@
+
 import re
 # All handles from core need to be imported.
 from ..core.handles import *
+from .select_process import select_process
 from tkinter import Tk, filedialog
 
 def select():
@@ -29,7 +31,7 @@ def select():
     return selected_files
 
 
-def selectInputPD(process_type):
+def selectInputPD(process_type = None):
     """
     Parameters
     ----------
@@ -40,6 +42,9 @@ def selectInputPD(process_type):
     output : obj
         Whatever type of object that the user defines.
     """
+
+    if process_type == None:
+        process_type = select_process()
 
     pd_result_files = select()
 

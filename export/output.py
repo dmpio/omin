@@ -8,6 +8,7 @@ from pandas import ExcelWriter
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
 
+from ..gui import save
 from ..utils import objectWalker
 from ..utils import StringTools
 
@@ -45,7 +46,8 @@ class StdOut(object):
         parent_file = parent_file or cwd
 
         # If No file name is give then timestamp is used.
-        file_name = file_name or StringTools.time_stamp()
+        # file_name = file_name or StringTools.time_stamp()
+        file_name = file_name or save.select()
 
         # Make sure the string has the file extension added on
         if not file_name.endswith(".xlsx"):

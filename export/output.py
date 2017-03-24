@@ -26,8 +26,7 @@ class StdOut(object):
     """
     def __init__(self,
                  the_object=None,
-                 file_name=None,
-                 parent_file=None):
+                 file_name=None):
         """
         Parameters
         ----------
@@ -39,25 +38,14 @@ class StdOut(object):
         parent_file: str
         """
 
-        # Get the current working directory
-        cwd = os.getcwd()
-
-        # If no parent file is given then current working directory is used.
-        parent_file = parent_file or cwd
-
-        # If No file name is give then timestamp is used.
-        # file_name = file_name or StringTools.time_stamp()
         file_name = file_name or save.select()
 
         # Make sure the string has the file extension added on
         if not file_name.endswith(".xlsx"):
             file_name = ".".join([file_name, 'xlsx'])
 
-        # Create save location file path variable
-        full_path = "\\".join([parent_file, file_name])
-
         # Create writer.
-        self.writer = pd.ExcelWriter(full_path, engine='xlsxwriter')
+        self.writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
         # Create a workbook object.
         self.workbook = self.writer.book
         self.obj = the_object

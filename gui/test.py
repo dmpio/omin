@@ -1,28 +1,37 @@
 from tkinter import *
-from tkinter.messagebox import *
 
-def show_answer():
-    Ans = int(num1.get()) + int(num2.get())
-    blank.insert(0, Ans)
+class App(Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.pack()
+
+        self.entrythingy = Entry()
+        self.entrythingy.pack(padx=10,pady=10)
+
+        # here is the application variable
+        self.contents = StringVar()
+        # set it to some value
+        self.contents.set("this is a variable")
+        # tell the entry widget to watch this variable
+        self.entrythingy["textvariable"] = self.contents
+
+        # and here we get a callback when the user hits return.
+        # we will have the program print out the value of the
+        # application variable when the user hits return
+        self.entrythingy.bind('<Key-Return>',
+                              self.print_contents)
+
+        self.label = Label()
+        self.label.pack()
+#        self.label["textvariable"] = self.contents
+
+    def print_contents(self, event):
+        print("hi. contents of entry is now ---->",
+              self.contents.get())
+        self.label["textvariable"] = self.contents
 
 
-main = Tk()
-Label(main, text = "Enter Num 1:").grid(row=0)
-Label(main, text = "Enter Num 2:").grid(row=1)
-Label(main, text = "The Sum is:").grid(row=2)
-
-
-num1 = Entry(main)
-num2 = Entry(main)
-blank = Entry(main)
-
-
-num1.grid(row=0, column=1)
-num2.grid(row=1, column=1)
-blank.grid(row=2, column=1)
-
-
-Button(main, text='Quit', command=main.destroy).grid(row=4, column=0, sticky=W, pady=4)
-Button(main, text='Show', command=show_answer).grid(row=4, column=1, sticky=W, pady=4)
-
-mainloop()
+if __name__ == "__main__":
+    root = Tk()
+    app = App(master=root)
+    app.mainloop()

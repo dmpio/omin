@@ -285,7 +285,8 @@ class SelectionTools(object):
     """
     """
     @staticmethod
-    def sep(dataframe_in, search_term, strict=False, match=False):
+    def sep(dataframe_in, search_term, strict=False,
+            match=False, reverse=False):
         """DEPRICATED in favor of pandas df.filter
         Takes DataFrame and search_term and returns a new DataFrame that
         contains columns that contain that search_term.
@@ -339,6 +340,10 @@ class SelectionTools(object):
                     dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)]].copy()
         else:
             print("The DataFrame has no columns that contain:", search_term)
+
+        if reverse:
+            dataframe_out = dataframe_in[
+                dataframe_in.columns[~dataframe_in.columns.str.contains(search_term,)]].copy()
         return dataframe_out
 
     @staticmethod
@@ -707,7 +712,7 @@ class SelectionTools(object):
             one_per = protein_df.ix[one_per]
             return one_per
         except KeyError:
-            print("No 'Exp. q-value' column found. Data has not NOT been filtered at 1% FDR.")
+            print("No 'Exp. q-value' column found.")
             return protein_df
 
     @classmethod

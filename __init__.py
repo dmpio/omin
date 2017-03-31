@@ -8,5 +8,6 @@ from . import visualize
 from . import export
 from . import databases
 from . import compare
+from . import gui
 
 __docformat__ = 'restructuredtext'

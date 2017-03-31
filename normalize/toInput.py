@@ -47,30 +47,6 @@ def normalizeTo(different, normal):
     normalized = different / normFactors(normal).as_matrix()
     return normalized
 
-
-class Fractions:
-
-    def __init__(self, modifications, abundance, pepsel):
-
-        modifications.append("Input")
-        for mod in modifications:
-            notlist = list(np.array(modifications)[np.array([mod != i for i in modifications])])
-            self.__dict__[mod] = omin.ModificationDelinate(abundance, mod, notlist)
-
-        modifications.remove("Input")
-
-        for mod in modifications:
-            self.__dict__[mod].addAttribute("load_normalized", normalizeTo(self.__dict__[mod].abundance, self.Input.abundance))
-            self.__dict__[mod].addAttribute("load_norm_log", Logger(self.__dict__[mod].load_normalized))
-            self.__dict__[mod].addAttribute("filtered",self.__dict__[mod].load_norm_log.log_div_ave.ix[pepsel.index])
-
-    def addAttribute(self, attribute_name, attribute_data):
-        self.__dict__[attribute_name] = attribute_data
-
-    def __repr__(self):
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
-
 # === NEW MAIN CLASS ===
 class NormalizedToInput(object):
     """
@@ -99,9 +75,9 @@ class NormalizedToInput(object):
             # For each "Fn" in the set of all "Fn:"s
             for fraction in fraction_set:
                 # Separate the given fraction.
-                peptides_fract = SelectionTools.sep(self.peptides_raw_abundance, fraction)
-
-                normal_fract = normalizeTo(peptides_fract, self.proteins_input_fract)
+                peptides_fract = self.peptides_raw_abundance.filter(regex=fraction)
+                normal_fract = normalizeTo(peptides_fract,
+                                           self.proteins_input_fract)
                 normal_fract.columns = "Normalized to Protein Input Fraction, " + normal_fract.columns
                 # Create one large dataframe:
                 self.__dict__[fraction] = peptides_fract.join(normal_fract)

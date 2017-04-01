@@ -197,9 +197,23 @@ class StringTools(object):
         return ts
 
     @staticmethod
-    def multiRegExOr(term_list):
+    def regexNot(term):
+        """Return a string that has been formatted to negate a given term.
 
-        """Returns a singles string of "OR"ed regex terms from a given list.
+        Parameters
+        ----------
+        term : str
+
+        Returns
+        -------
+        results : str
+        """
+        results = "^(?!.*"+term+").*$"
+        return results
+
+    @staticmethod
+    def multiRegExOr(term_list):
+        """Return a singles string of "OR"ed regex terms from a given list.
 
         Parameters
         ----------
@@ -226,7 +240,7 @@ class StringTools(object):
 
     @staticmethod
     def multiRegExAnd(ex_list):
-        """Returns a regex psuedo "AND" formatted string from list of strings.
+        """Return a regex psuedo "AND" formatted string from list of strings.
 
         Parameters
         ----------
@@ -236,10 +250,7 @@ class StringTools(object):
         -------
         formatted_list: str
         """
-
-        rxAnd = lambda x: "(?=.*\\b{}\\b)".format(x)
-
-        andList = list(map(rxAnd, ex_list))
+        andList = list(map(lambda x: "(?=.*\\b{}\\b)".format(x), ex_list))
 
         formatted_list = "^"+"".join(andList)+".*$"
 
@@ -248,7 +259,7 @@ class StringTools(object):
     # @classmethod
     @staticmethod
     def phraseWasher(phrase, word_separator=" "):
-        """Replaces numerical portions of strings with words.
+        """Replace numerical portions of strings with words.
 
         Parameters
         ----------
@@ -625,6 +636,38 @@ class SelectionTools(object):
         invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
         return invivo_modifications
 
+    @staticmethod
+    def find_fractions(dataframe):
+        """Return list of fractions numbers from a given DataFrame.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        Returns
+        -------
+        res = set
+        """
+        res = set([i[0] for i in dataframe.columns.str.findall("F\d").tolist()])
+        return res
+
+    @classmethod
+    def find_plex_number(cls, dataframe):
+        """Return the TMT plex number as an int.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        Returns
+        -------
+        plex_number : int
+        """
+        mods = cls.findModifications(dataframe)
+        tmt_type = list(filter(lambda x: x.startswith("TMT"), mods))
+        plex_number = list(filter(lambda x: x.isdigit(), tmt_type[0]))
+        plex_number = int(plex_number[0])
+        return plex_number
 
 # === MultiIndex method ===
     @staticmethod

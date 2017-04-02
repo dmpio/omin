@@ -669,6 +669,23 @@ class SelectionTools(object):
         plex_number = int(plex_number[0])
         return plex_number
 
+    @classmethod
+    def find_number_input(cls, dataframe):
+        """Return number of inputs as a float.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        Returns
+        -------
+        number_input : float
+        """
+        plex_number = cls.find_plex_number(dataframe)
+        input_abundance = dataframe.filter(regex="Abundance:").filter(regex="[Ii]nput")
+        number_input = input_abundance.shape[1]/plex_number
+        return number_input
+
 # === MultiIndex method ===
     @staticmethod
     def superGroup(dataframe=None, new_level=None):

@@ -19,41 +19,63 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import numpy as np
-import pandas as pd
-import string
-# from omin.norm import *
+import re
+# All handles from core need to be imported.
+from ..core.handles import *
+from .select_process import select_process
+from tkinter import Tk, filedialog
 
-
-def excellor(compob, venn_list, parent_file, file_name):
-    """Takes objects containing DataFrames and outputs those as Excel files.
+def select():
+    """Generate instance of tkinter.filedialog.
 
     Parameters
     ----------
-    compob : (:obj)
-    venn_list : list
-    parent_file : str
-    file_name : str
+    None
 
     Returns
     -------
-    excel file
+    selected_files: tuple
+
     """
-    from pandas import ExcelWriter
-    import re
 
-    # Make sure the string has the file extension added on
-    if not file_name.endswith(".xlsx"):
-        file_name = file_name + '.xlsx'
+    # Create Tk root
+    root = Tk()
 
-    fn = re.sub('[^0-9a-zA-Z]+',  # regex pattern
-                '_',  # replacement
-                file_name.split(".")[0])  # input string
+    # Hide the main window
+    root.withdraw()
 
-    file_name = fn + "." + file_name.split(".")[1]
+    # Raise the root to the top of all windows.
+    root.call('wm', 'attributes', '.', '-topmost', True)
 
-    writer = ExcelWriter(parent_file + '/' + file_name)
-    for i in venn_list:
-        compob.__dict__[i].to_excel(writer, i)
-    writer.save()
-    print("Your file has been saved:", parent_file, "/", file_name)
+    selected_files = filedialog.askopenfilename(multiple=True)
+    return selected_files
+
+
+def selectInputPD(process_type = None):
+    """
+    Parameters
+    ----------
+    process_type : str
+
+    Returns
+    -------
+    output : obj
+        Whatever type of object that the user defines.
+    """
+
+    if process_type == None:
+        process_type = select_process()
+
+    pd_result_files = select()
+
+    rx = re.compile("[Pp]eptide")
+
+    peptide_file = list(filter(rx.findall, pd_result_files))[0]
+
+    rx = re.compile("[Pp]roteins")
+    protein_file = list(filter(rx.findall, pd_result_files))[0]
+
+    function = eval(process_type)
+    output = function(peptide_file, protein_file)
+
+    return output

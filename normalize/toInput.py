@@ -1,4 +1,24 @@
 # -*- coding: utf-8 -*-
+"""
+LICENSE:
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files, Omics Modeling Integrating
+Normalization (OMIN), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 
 import re
 import pandas as pd
@@ -10,7 +30,7 @@ from ..utils import SelectionTools
 from omin.normalize.methods import *
 
 
-def normFactors(peptide_data):
+def normFactors(abundance):
     """Takes peptide abundance data and returns normalization factors.
 
     Normalization factors are derived by the taking the sum of each column in
@@ -18,14 +38,14 @@ def normFactors(peptide_data):
 
     Parameters
     ----------
-    peptide_data : DataFrame
+    abundance : DataFrame
 
     Returns
     -------
     norm_factors: DataFrame
 
     """
-    norm_factors = peptide_data.sum() / peptide_data.sum().mean()
+    norm_factors = abundance.sum() / abundance.sum().mean()
     return norm_factors
 
 
@@ -45,31 +65,8 @@ def normalizeTo(different, normal):
     normalized : DataFrame
     """
     normalized = different / normFactors(normal).as_matrix()
+    normalized.columns = different.columns + ": Normalized to: " + normal.columns
     return normalized
-
-
-class Fractions:
-
-    def __init__(self, modifications, abundance, pepsel):
-
-        modifications.append("Input")
-        for mod in modifications:
-            notlist = list(np.array(modifications)[np.array([mod != i for i in modifications])])
-            self.__dict__[mod] = omin.ModificationDelinate(abundance, mod, notlist)
-
-        modifications.remove("Input")
-
-        for mod in modifications:
-            self.__dict__[mod].addAttribute("load_normalized", normalizeTo(self.__dict__[mod].abundance, self.Input.abundance))
-            self.__dict__[mod].addAttribute("load_norm_log", Logger(self.__dict__[mod].load_normalized))
-            self.__dict__[mod].addAttribute("filtered",self.__dict__[mod].load_norm_log.log_div_ave.ix[pepsel.index])
-
-    def addAttribute(self, attribute_name, attribute_data):
-        self.__dict__[attribute_name] = attribute_data
-
-    def __repr__(self):
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
 
 # === NEW MAIN CLASS ===
 class NormalizedToInput(object):
@@ -77,36 +74,34 @@ class NormalizedToInput(object):
     Attributes
     ----------
     """
-    def __init__(self, raw_peptides=None, raw_proteins=None, modifications=None, genotypes=None, treatments=None):
+    def __init__(self, raw_peptides=None, raw_proteins=None,
+                 modifications=None, genotypes=None, treatments=None):
 
-        self.peptides_raw_abundance = SelectionTools.sep(raw_peptides,
-                                                         "Abundance:")
-
-        self.proteins_raw_abundance = SelectionTools.sep(raw_proteins,
-                                                         "Abundance:")
-
-        fraction_set = None
+        self.peptide_groups = None
         try:
-            proteins_input_fract = SelectionTools.sep(self.proteins_raw_abundance, "[Ii]nput")
-            self.proteins_input_fract = proteins_input_fract
-
-            #Find all "Fn:" in the raw_abundance where is the fraction number.
-            flist = self.peptides_raw_abundance.columns.str.findall("F\d").tolist()
-            # Reduce list of all "Fn:" to set of all "Fn:"
-            fraction_set = set([i[0] for i in flist])
-            self.fraction_set = fraction_set
-            # For each "Fn" in the set of all "Fn:"s
-            for fraction in fraction_set:
-                # Separate the given fraction.
-                peptides_fract = SelectionTools.sep(self.peptides_raw_abundance, fraction)
-
-                normal_fract = normalizeTo(peptides_fract, self.proteins_input_fract)
-                normal_fract.columns = "Normalized to Protein Input Fraction, " + normal_fract.columns
-                # Create one large dataframe:
-                self.__dict__[fraction] = peptides_fract.join(normal_fract)
-
+            self.peptide_groups = PeptideGroups(raw_peptides)
         except Exception:
-            print("No abundance columns contained 'F(number)'.")
+            print("Couldn't initialize PeptideGroups class.")
+        try:
+        except Exception:
+            print("Something went wrong with processing the peptide_groups class.")
+
+
+    def __repr__(self):
+        """Show all attributes.
+        """
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+
+class PeptideGroups(object):
+    def __init__(self, raw_peptides=None):
+        self.input_fraction_numbers = SelectionTools.find_number_input(raw_peptides)
+        self.abundance = raw_peptides.filter(regex="Abundance:")
+        self.input = self.abundance.filter(regex="[Ii]nput")
+        negate_term = StringTools.regexNot("[Ii]nput")
+        self.other_fractions = self.abundance.filter(regex=negate_term)
+        self.other_fraction_numbers = list(SelectionTools.find_fractions(self.other_fractions))
+
 
     def __repr__(self):
         """Show all attributes.

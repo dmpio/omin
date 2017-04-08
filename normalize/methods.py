@@ -1,30 +1,49 @@
 # -*- coding: utf-8 -*-
+"""
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files, Omics Modeling Integrating
+Normalization (OMIN), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import pandas as pd
 import numpy as np
 
 # === Pool Methods ===
 
 
-def logNormToAve(pepdf):
-    """Takes a DataFrame composed of a fraction of peptide abundances and then
-    subtracts each element in each row by the sum of it's row.
-
-    Notes
-    -----
-    FIXME : Make sure this method could possibly handle protein data aswell.
+def logNormToAve(dataframe, add_to_header=None):
+    """Return log2(datafame)-mean(log2(datafame)).
 
     Parameters
     ----------
-    pepdf : DataFrame
-        Limit to a single fraction of peptide abundance data.
+    datafame : DataFrame
+
+    Returns
+    -------
+    log2_div_ave : DataFrame
 
     """
-    log2 = pepdf.copy().apply(np.log2)
+    add_to_header = add_to_header or "Log2-Mean(Log2): "
+
+    log2 = dataframe.copy().apply(np.log2)
     ave = log2.mean(axis=1)
     log2_div_ave = log2.sub(ave, axis=0)
-    log2_div_ave.columns = "Log2-AVE: " + log2_div_ave.columns
+    log2_div_ave.columns = add_to_header + log2_div_ave.columns
     return log2_div_ave
-
 
 def normToPool(log2_div_ave):
     """Normalizes a DataFrame composed of a single fraction of peptide data

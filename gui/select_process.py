@@ -19,5 +19,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from . import output
-from . import excellor
+import easygui as eg
+
+# FIXME: CHANGE THIS TO TKINTER
+
+def select_process():
+    selected = eg.choicebox("Please pick a process:",
+                            "Select Process",
+                            ["RawData","PreProcess","Process"])
+    return selected

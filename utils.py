@@ -1,25 +1,55 @@
 # -*- coding: utf-8 -*-
-import re
+"""
+LICENSE:
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files, Omics Modeling Integrating
+Normalization (OMIN), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Utilites for the omin module.
+
+"""
+
 import os
 import pickle
+import re
+import itertools
+import num2words
+from datetime import datetime
+from urllib.error import HTTPError
+from urllib.request import urlopen
+
 import numpy as np
 import pandas as pd
-
-from datetime import datetime
-from urllib.request import urlopen
-from urllib.error import HTTPError
 
 this_dir, _ = os.path.split(__file__)
 
 # Load the modifications dictionary.
 modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
 
-
+# FIXME: DEPRECATE USELESS FUNCTIONS
 # FIXME: Create tools to search against against databases the user specifies.
+
 # === UNIPROT TOOLS ===
 
+# Check the following link for code review of inspectObject and objectWalker:
+# http://codereview.stackexchange.com/questions/157283/recursively-walk-through-an-object-and-genrate-a-list-of-its-attributes
+
 def inspectObject(obj):
-    """Returns a list of object attributes and their types.
+    """Return list of object attributes and their types.
 
     Parameters
     ----------
@@ -33,12 +63,10 @@ def inspectObject(obj):
     """
     obj_ids = []
     # Make list of builtins
-    bi_list = dir(__builtins__)
+    # bi_list = dir(__builtins__)
     # Try to make a list of the types of things inside obj.
     try:
         # Make list all things inside of an object
-        # obj_ids = [[name, type(thing).__name__] for name, thing in obj.__dict__.items()]
-
         for name, thing in obj.__dict__.items():
             obj_ids.append([name, type(thing).__name__, thing])
 
@@ -66,10 +94,10 @@ def objectWalker(obj, desired_type=None, att_list=None):
     if att_list is None:
         att_list = []
 
-    # Create list of types that we do not want yo serch through
+    # Create list of types that we do not want you serch through
     no_list = dir(__builtins__)
     no_list.append("DataFrame")
-    # desired_type = desired_type or "DataFrame"
+    desired_type = desired_type or "DataFrame"
 
     obj_inspect = inspectObject(obj)
 
@@ -85,20 +113,17 @@ def objectWalker(obj, desired_type=None, att_list=None):
             # Try to use recursively objectWalker on the object.
             try:
                 objectWalker(obj.__dict__[i[0]], desired_type, att_list)
-            except:
+            except Exception:
                 pass
     return att_list
 
 
 class FastaTools(object):
-    """A collection of tools for handling FASTA formatted strings.
-    """
+    """A collection of tools for handling FASTA formatted strings."""
 
     @classmethod
     def fasta2Seq(cls, fasta):
-
-        """ Joins strings in list into one string. Neglecting the first which is
-        generally the annotation.
+        """Join strings in list into one string.
 
         Parameters
         ----------
@@ -113,7 +138,7 @@ class FastaTools(object):
 
     @staticmethod
     def seqNum(cls, seq):
-        """Takes a sequence and returns the number for each amino acid (I think).
+        """Take a sequence and returns the number for each amino acid.
 
         Notes
         -----
@@ -190,8 +215,23 @@ class StringTools(object):
         return ts
 
     @staticmethod
+    def regexNot(term):
+        """Return a string that has been formatted to negate a given term.
+
+        Parameters
+        ----------
+        term : str
+
+        Returns
+        -------
+        results : str
+        """
+        results = "^(?!.*"+term+").*$"
+        return results
+
+    @staticmethod
     def multiRegExOr(term_list):
-        """Returns a singles string of "OR"ed regex terms from a given list.
+        """Return a singles string of "OR"ed regex terms from a given list.
 
         Parameters
         ----------
@@ -217,8 +257,8 @@ class StringTools(object):
         return all_exp
 
     @staticmethod
-    def rxAndGen(ex_list):
-        """Returns a regex psuedo "AND" formatted string from list of strings.
+    def multiRegExAnd(ex_list):
+        """Return a regex psuedo "AND" formatted string from list of strings.
 
         Parameters
         ----------
@@ -228,103 +268,42 @@ class StringTools(object):
         -------
         formatted_list: str
         """
-
-        rxAnd = lambda x: "(?=.*\\b{}\\b)".format(x)
-
-        andList = list(map(rxAnd, ex_list))
+        andList = list(map(lambda x: "(?=.*\\b{}\\b)".format(x), ex_list))
 
         formatted_list = "^"+"".join(andList)+".*$"
 
         return formatted_list
 
-
     # @classmethod
     @staticmethod
-    def int2word(num, separator="-"):
-        """Transforms integers =< 999 into english words
-
-        Parameters
-        ----------
-        num : int
-        separator : str
-
-        Returns
-        -------
-        words : str
-        """
-        ones_and_teens = {0: "Zero", 1: 'One', 2: 'Two', 3: 'Three',
-                          4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven',
-                          8: 'Eight', 9: 'Nine', 10: 'Ten', 11: 'Eleven',
-                          12: 'Twelve', 13: 'Thirteen', 14: 'Fourteen',
-                          15: 'Fifteen', 16: 'Sixteen', 17: 'Seventeen',
-                          18: 'Eighteen', 19: 'Nineteen'}
-        twenty2ninety = {2: 'Twenty', 3: 'Thirty', 4: 'Forty', 5: 'Fifty',
-                         6: 'Sixty', 7: 'Seventy', 8: 'Eighty', 9: 'Ninety', 0: ""}
-
-        if 0 <= num < 19:
-            return ones_and_teens[num]
-        elif 20 <= num <= 99:
-            tens, below_ten = divmod(num, 10)
-            if below_ten > 0:
-                words = twenty2ninety[tens] + separator + \
-                    ones_and_teens[below_ten].lower()
-            else:
-                words = twenty2ninety[tens]
-            return words
-
-        elif 100 <= num <= 999:
-            hundreds, below_hundred = divmod(num, 100)
-            tens, below_ten = divmod(below_hundred, 10)
-            if below_hundred == 0:
-                words = ones_and_teens[hundreds] + separator + "hundred"
-            elif below_ten == 0:
-                words = ones_and_teens[hundreds] + separator + \
-                    "hundred" + separator + twenty2ninety[tens].lower()
-            else:
-                if tens > 0:
-                    words = ones_and_teens[hundreds] + separator + "hundred" + separator + twenty2ninety[
-                        tens].lower() + separator + ones_and_teens[below_ten].lower()
-                else:
-                    words = ones_and_teens[
-                        hundreds] + separator + "hundred" + separator + ones_and_teens[below_ten].lower()
-            return words
-
-        else:
-            print("num out of range")
-
-
-    @classmethod
-    def phraseWasher(cls, phrase, number_separator="_", word_separator=" "):
-        """Replaces numerical portions of strings with words.
+    def phraseWasher(phrase, word_separator=" "):
+        """Replace numerical portions of strings with words.
 
         Parameters
         ----------
         phrase : str
-        number_separator : str
-            separator to be used with int2word function.
         word_separator : str
             Defaults to " " but you can put in whatever you like.
 
         See Also
         --------
-        int2word
+        num2words.num2words
 
         Examples
         --------
-        >>>phraseWasher("10 min post",word_separator = "_")
-        "Ten_min_post"
-        >>>phraseWasher("65 min post",number_separator = "_", word_separator = "_")
-        "Sixty_five_min_post"
+        >>>phraseWasher("10 min post", word_separator = "_")
+        "ten_min_post"
+        >>>phraseWasher("65 min post", word_separator = "_")
+        "sixty-five_min_post"
 
         """
         new_phrase = []
         for i in phrase.split():
             if i.isnumeric():
-                phrase_part = cls.int2word(int(i), number_separator)
+                phrase_part = num2words.num2words(int(i))
                 new_phrase.append(phrase_part)
             else:
-                phrase_part = i
-                new_phrase.append(phrase_part)
+                new_phrase.append(i)
         washed = word_separator.join(new_phrase)
         return washed
 
@@ -335,8 +314,10 @@ class SelectionTools(object):
     """
     """
     @staticmethod
-    def sep(dataframe_in, search_term, strict=False, match=False):
-        """Takes DataFrame and search_term and returns a new DataFrame that
+    def sep(dataframe_in, search_term, strict=False,
+            match=False, reverse=False):
+        """DEPRICATED in favor of pandas df.filter
+        Takes DataFrame and search_term and returns a new DataFrame that
         contains columns that contain that search_term.
 
         Parameters
@@ -388,7 +369,27 @@ class SelectionTools(object):
                     dataframe_in.columns[dataframe_in.columns.str.contains(search_term, case=False)]].copy()
         else:
             print("The DataFrame has no columns that contain:", search_term)
+
+        if reverse:
+            dataframe_out = dataframe_in[
+                dataframe_in.columns[~dataframe_in.columns.str.contains(search_term,)]].copy()
         return dataframe_out
+
+    @staticmethod
+    def filterRow(dataframe_in=None, on=None, term=None):
+        """Return DataFrame that contains a given term on specific column.
+        Parameters
+        ----------
+        dataframe : DataFrame
+        term : str
+        on : str
+
+        Returns
+        -------
+        filtered : DataFrame
+        """
+        filtered = dataframe_in[dataframe_in[on].str.contains(term)]
+        return filtered
 
     @staticmethod
     def modSel(dataframe_in, mod1, mod2):
@@ -592,13 +593,118 @@ class SelectionTools(object):
                 selected_col = dataframe[term]
                 df_list.append(selected_col)
 
-            except:
+            except Exception:
                 selected_col = omin.sep(dataframe, term)
                 df_list.append(selected_col)
 
         out_dataframe = pd.concat(df_list, axis=1)
         return out_dataframe
 
+# === MODIFICATION ISOLATION/CLASSIFICATION TOOLS ===
+
+    @classmethod
+    def simplifyModifications(cls, df):
+        """Return a series of simplifed modifications.
+
+        Parameters
+        ----------
+        df : DataFrame
+
+        Returns
+        -------
+        simplified : Series
+        """
+        rx = re.compile("x(\w+)\s")
+        simplified = df.Modifications.apply(rx.findall)
+        return simplified
+
+    @classmethod
+    def findModifications(cls, df):
+        """Return set of ALL of TYPES of modifications found.
+
+        Parameters
+        ----------
+        df : Dataframe
+
+        Returns
+        -------
+        found : set
+        """
+        found = set(
+            itertools.chain.from_iterable(cls.simplifyModifications(df))
+            )
+
+        return found
+
+    @classmethod
+    def findInVivoModifications(cls, df):
+        """Return list of the in vivo modifications.
+
+        Parameters
+        ----------
+        df : Dataframe
+
+        Returns
+        -------
+        invivo_modifications : set
+        """
+
+        present_modifications = cls.findModifications(df)
+        chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
+        invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
+        return invivo_modifications
+
+    @staticmethod
+    def find_fractions(dataframe):
+        """Return list of fractions numbers from a given DataFrame.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        Returns
+        -------
+        res = set
+        """
+        res = set([i[0] for i in dataframe.columns.str.findall("F\d").tolist()])
+        return res
+
+    @classmethod
+    def find_plex_number(cls, dataframe):
+        """Return the TMT plex number as an int.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        Returns
+        -------
+        plex_number : int
+        """
+        mods = cls.findModifications(dataframe)
+        tmt_type = list(filter(lambda x: x.startswith("TMT"), mods))
+        plex_number = list(filter(lambda x: x.isdigit(), tmt_type[0]))
+        plex_number = int(plex_number[0])
+        return plex_number
+
+    @classmethod
+    def find_number_input(cls, dataframe):
+        """Return number of inputs as a float.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        Returns
+        -------
+        number_input : float
+        """
+        plex_number = cls.find_plex_number(dataframe)
+        input_abundance = dataframe.filter(regex="Abundance:").filter(regex="[Ii]nput")
+        number_input = input_abundance.shape[1]/plex_number
+        return number_input
+
+# === MultiIndex method ===
     @staticmethod
     def superGroup(dataframe=None, new_level=None):
         """Returns a multiindexed DataFrame with the top index named new_level.
@@ -635,25 +741,6 @@ class SelectionTools(object):
                 out_df = pd.DataFrame(
                     dataframe.values, index=dataframe.index, columns=multi)
                 return out_df
-
-    @staticmethod
-    def modKindCheck(dataframe, modification):
-        """Returns a boolean dataframe True if the given mod is found.
-
-        Parameters
-        ----------
-        dataframe : DataFrame
-        modification : str
-
-        Returns
-        -------
-        out_dataframe : DataFrame
-
-        """
-        series = dataframe.Modifications.str.contains(modification)
-        out_dataframe = pd.DataFrame(series)
-        out_dataframe.columns = [modification + "-peptide?"]
-        return out_dataframe
 
     # === FILTERING FUNCTIONS ===
 
@@ -703,7 +790,7 @@ class SelectionTools(object):
             one_per = protein_df.ix[one_per]
             return one_per
         except KeyError:
-            print("No 'Exp. q-value' column found. Data has not NOT been filtered at 1% FDR.")
+            print("No 'Exp. q-value' column found.")
             return protein_df
 
     @classmethod
@@ -756,6 +843,10 @@ class SelectionTools(object):
     def mpaParse(cls, raw_peptides=None, master_uniprot_id="Master",
                  new_column_name="MPA"):
         """Returns a DataFrame containing only the first master protein accession.
+
+        Notes
+        -----
+        FIXME: Use try dropna() and reindex instead of else statement in loop.
 
         Parameters
         ----------
@@ -991,9 +1082,9 @@ class SelectionTools(object):
         """Returns a list that has had the 'pattern' string replaced with the
         'replace' string.
 
-        If no pattern or replace string are entered listWasher will ask the user if
-        any of the elements in the string should be replaced and what they should
-        be replaced by.
+        If no pattern or replace string are entered listWasher will ask the
+        user if any of the elements in the string should be replaced and what
+        they should be replaced by.
 
         Parameters
         ----------
@@ -1037,7 +1128,9 @@ class SelectionTools(object):
             return out_list
         else:
             print(start_list)
-            contin = input("Would you like to replace any terms in the list? y/n ")
+            contin = input(
+                "Would you like to replace any terms in the list? y/n "
+                )
             out_list = start_list
             while contin == "y":
                 for n, element in enumerate(out_list):
@@ -1047,6 +1140,27 @@ class SelectionTools(object):
                 replace = input("Replace" + " '" + pattern + "' " + "with? ")
                 out_list = [replace if x == pattern else x for x in out_list]
                 contin = input(
-                    "Would you like to replace any more terms in the list? y/n ")
+                    "Would you like to replace any more terms in the list? y/n"
+                    )
             while contin == "n":
                 return out_list
+# Testing
+
+if __name__ == "__main__":
+    print("Testing utils.py ...")
+    from omin.core.handles import RawData
+
+    try:
+        data = RawData(
+            "ExampleData\crat_ex\_E749_4154_010716_PeptideGroups.txt",
+            "ExampleData\crat_ex\_E749_4154_010716_Proteins.txt"
+            )
+        if data.raw_peptides.shape == (8712, 277):
+            print("ExampleData has loaded correctly.")
+    except Exception:
+        print("Loading ExampleData failed.")
+    try:
+        if type(inspectObject(data)) == list:
+            print("inspectObject works!")
+    except Exception:
+        print("inspectObject has failed.")

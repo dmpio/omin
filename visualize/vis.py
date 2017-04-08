@@ -1,4 +1,24 @@
 # -*- coding: utf-8 -*-
+"""
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files, Omics Modeling Integrating
+Normalization (OMIN), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 # import omin
 import pandas as pd
 import re
@@ -7,8 +27,52 @@ from matplotlib import pyplot as plt
 from matplotlib_venn import venn2, venn3, venn2_circles, venn3_circles
 import numpy as np
 
-# FIXME : merge the volcan and plotByMito function
 
+class Volcano(object):
+
+    swatch = {"gray": (0.35, 0.3, 0.3),
+              "opti-black": (0.10, 0.05, 0.15)}
+
+    @classmethod
+    def simple(cls, FC, pvals, cutoff=-np.log10(.05), aspect=None,
+               c=None, edgecolors=None):
+
+        """Takes p-values and log2 fold changes and returns a basic volcano plot
+        figure.
+
+        Parameters
+        ----------
+        pvals : DataFrame
+        FC : DataFrame
+        aspect : int
+        cutoff : float
+
+        Returns
+        -------
+        [Matplotlib Figure]
+
+        """
+        if c is None:
+            # c = (.3, .3, .3)
+            c = cls.swatch["gray"]
+        if edgecolors is None:
+            # edgecolors = (.1, .1, .1)
+            edgecolors = cls.swatch["opti-black"]
+        y1 = -np.log10(pvals)
+        x1 = FC
+        # PLOT
+        plt.scatter(x1, y1, c=c, edgecolors=edgecolors, zorder=10)
+        plt.axhspan(cutoff, -np.log10(pvals.min()) + 2, facecolor='y', alpha=0.25)
+        plt.ylim([0, int(y1.max()) + 2])
+        plt.xlim([-5, 5])
+        plt.grid(True)
+        # LABELS
+        plt.xlabel("Log2 Fold Change", fontname="arial")
+        plt.ylabel('-Log10 of P-Value', fontname="arial")
+
+        if aspect is not None:
+            plt.axes().set_aspect(aspect)
+        return plt
 
 def volcan(FC, pvals, cutoff=-np.log10(.05), aspect=None):
     """Takes p-values and log2 fold changes and returns a basic volcano plot
@@ -29,7 +93,7 @@ def volcan(FC, pvals, cutoff=-np.log10(.05), aspect=None):
     y1 = -np.log10(pvals)
     x1 = FC
     # PLOT
-    plt.scatter(x1, y1, c=(.3, .3, .3), zorder=10)
+    plt.scatter(x1, y1, c=(.3, .3, .3), edgecolors=(.1, .1, .1), zorder=10)
     plt.axhspan(cutoff, -np.log10(pvals.min()) + 2, facecolor='y', alpha=0.25)
     plt.ylim([0, int(y1.max()) + 2])
     plt.xlim([-5, 5])

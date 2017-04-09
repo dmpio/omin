@@ -83,6 +83,7 @@ class NormalizedToInput(object):
         except Exception:
             print("Couldn't initialize PeptideGroups class.")
         try:
+            self.proteins = Proteins(raw_proteins)
         except Exception:
             print("Something went wrong with processing the peptide_groups class.")
 
@@ -102,6 +103,12 @@ class PeptideGroups(object):
         self.other_fractions = self.abundance.filter(regex=negate_term)
         self.other_fraction_numbers = list(SelectionTools.find_fractions(self.other_fractions))
 
+class Proteins(object):
+    def __init__(self, raw_proteins=None):
+
+        self.input_fraction_numbers = None
+
+        # self.input_fraction_numbers = SelectionTools.find_number_input(raw_proteins)
 
     def __repr__(self):
         """Show all attributes.

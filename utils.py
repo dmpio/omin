@@ -31,6 +31,8 @@ import num2words
 from datetime import datetime
 from urllib.error import HTTPError
 from urllib.request import urlopen
+from difflib import SequenceMatcher
+from operator import itemgetter
 
 import numpy as np
 import pandas as pd
@@ -919,6 +921,46 @@ class SelectionTools(object):
                                    how="left", left_index=True)
 
         return peptide_select, protein_select
+
+    @staticmethod
+    def alike(string_one, string_two):
+        """Return difflib.SequnceMatcher.ratio results for two strings.
+
+        Parameters
+        ----------
+        srting_one : str
+
+        string_two : str
+
+        Returns
+        -------
+        results : float
+        """
+        results = SequenceMatcher(None, string_one, string_two).ratio()
+        return results
+
+    @classmethod
+    def alikeness(cls, dataframe_a, dataframe_b, term_a, term_b):
+        """Return a list of alikenes coffients.
+
+        Parameters
+        ----------
+        dataframe_a : DataFrame
+
+        dataframe_b : DataFrame
+
+        term_a : str
+
+        term_b : str
+
+        Returns
+        -------
+        cof : list
+        """
+        cof = list(set(itertools.starmap(cls.alike,
+                                         zip(dataframe_a.filter(regex=term_a).columns,
+                                             dataframe_b.filter(regex=term_b).columns))))
+        return cof
 
     # === VENN DIAGRAM FUNCTIONS ===
 

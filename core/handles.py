@@ -130,12 +130,13 @@ class Process(PreProcess):
         # self.pep_sel = pep_sel
         # self.prot_sel = prot_sel
 
-        # FIXME: Make the selection more specifically target abundance columns
+        # NORMALIZING TO INPUT
         if self.raw_peptides.columns.str.contains("Input", case=False).any():
 
             print("Input fraction found. omin will attempt to normalize the data to it.")
 
             try:
+                self.input_fraction_numbers = SelectionTools.find_number_input(raw_peptides)
                 self.normalized = NormalizedToInput(self.raw_peptides, self.raw_proteins)
 
             except Exception:

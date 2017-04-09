@@ -27,4 +27,5 @@ def select_process():
     selected = eg.choicebox("Please pick a process:",
                             "Select Process",
                             ["RawData","PreProcess","Process"])
+    print(selected)
     return selected

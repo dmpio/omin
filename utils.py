@@ -42,13 +42,12 @@ this_dir, _ = os.path.split(__file__)
 # Load the modifications dictionary.
 modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
 
-# FIXME: DEPRECATE USELESS FUNCTIONS
+# FIXME: Add try and except to most if not all functions. NO MORE QUITE FAILS!
+# FIXME: DEPRECATE OLD FUNCTIONS
 # FIXME: Create tools to search against against databases the user specifies.
 
-# === UNIPROT TOOLS ===
 
-# Check the following link for code review of inspectObject and objectWalker:
-# http://codereview.stackexchange.com/questions/157283/recursively-walk-through-an-object-and-genrate-a-list-of-its-attributes
+# === UNIPROT TOOLS ===
 
 def inspectObject(obj):
     """Return list of object attributes and their types.
@@ -666,9 +665,15 @@ class SelectionTools(object):
 
         Returns
         -------
-        res = set
+        res : set
         """
-        res = set([i[0] for i in dataframe.columns.str.findall("F\d").tolist()])
+        res = None
+        try:
+            abundance = dataframe.filter(regex="Abundance:")
+            res = set([i[0] for i in abundance.columns.str.findall("F\d").tolist()])
+
+        except Exception:
+            print("Omin failed to find fraction numbers.")
         return res
 
     @classmethod
@@ -701,9 +706,14 @@ class SelectionTools(object):
         -------
         number_input : float
         """
-        plex_number = cls.find_plex_number(dataframe)
-        input_abundance = dataframe.filter(regex="Abundance:").filter(regex="[Ii]nput")
-        number_input = input_abundance.shape[1]/plex_number
+        number_input = None
+        try:
+            plex_number = cls.find_plex_number(dataframe)
+            # FIXME: Proof this against Inputase ect.
+            input_abundance = dataframe.filter(regex="Abundance:").filter(regex="[Ii]nput")
+            number_input = input_abundance.shape[1]/plex_number
+        except Exception:
+            print("utils.SelectionTools.find_number_input failed")
         return number_input
 
 # === MultiIndex method ===

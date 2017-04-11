@@ -113,6 +113,7 @@ class PreProcess(RawData):
         self.mitodex = mito
         self.nonmitodex = nonmito
         self._input_number = SelectionTools.find_number_input(self.raw_peptides)
+        self._ptm_fraction_numbers = SelectionTools.find_fractions(self.raw_peptides)
 
 
 class Process(PreProcess):
@@ -129,7 +130,8 @@ class Process(PreProcess):
             print("Input fraction found. omin will attempt to normalize the data to it.")
 
             try:
-                self.normalized = NormalizedToInput(self.raw_peptides, self.raw_proteins)
+                self.normalized = NormalizedToInput(self.raw_peptides,
+                                                    self.raw_proteins)
 
             except Exception:
                 print("Something went wrong. Please check to make sure you data is formatted correctly.")

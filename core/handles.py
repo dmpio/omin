@@ -116,6 +116,8 @@ class PreProcess(RawData):
     omin.utils.SelectionTools.masterCleanse
     """
 
+    """Handles Proteome Discoverer search results.
+    """
     def __init__(self, peptides_file, proteins_file, modifications=None,
                  genotype=None, treatments=None):
         """Initalize instance of PreProcess class.
@@ -144,6 +146,9 @@ class PreProcess(RawData):
         pep_sel, prot_sel = SelectionTools.vLook(self.raw_peptides,
                                                  self.raw_proteins,
                                                  modifications)
+
+        # These DataFrames can be used to index filter to statistically relevent
+        # PeptideGroups and Proteins
         self.pep_sel = pep_sel
         self.prot_sel = prot_sel
 
@@ -152,6 +157,8 @@ class PreProcess(RawData):
                                                       dex=True)
         self.mitodex = mito
         self.nonmitodex = nonmito
+        self._input_number = SelectionTools.find_number_input(self.raw_peptides)
+        self._ptm_fraction_numbers = SelectionTools.find_fractions(self.raw_peptides)
 
 
 class Process(PreProcess):
@@ -188,7 +195,8 @@ class Process(PreProcess):
         if self.raw_peptides.columns.str.contains("Input", case=False).any():
             print("Input fraction(s) found. omin is attempting to normalize")
             try:
-                self.normalized = NormalizedToInput(self.raw_peptides, self.raw_proteins)
+                self.normalized = NormalizedToInput(self.raw_peptides,
+                                                    self.raw_proteins)
 
             except Exception:
                 print("Something went wrong. Please check to make sure you data is formatted correctly.")
@@ -207,3 +215,8 @@ class Process(PreProcess):
             print("Cannot find anything to normalize to. Check to see that your data fits omins conventions.")
 
             self.normalized = None
+
+# if __name__ == "__main__":
+#     print("Omin Handles Test")
+#     RawData
+    # print(help(RawData))

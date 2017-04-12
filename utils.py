@@ -33,6 +33,8 @@ import num2words
 from datetime import datetime
 from urllib.error import HTTPError
 from urllib.request import urlopen
+from difflib import SequenceMatcher
+from operator import itemgetter
 
 import numpy as np
 import pandas as pd
@@ -42,13 +44,12 @@ this_dir, _ = os.path.split(__file__)
 # Load the modifications dictionary.
 modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
 
-# FIXME: DEPRECATE USELESS FUNCTIONS
+# FIXME: Add try and except to most if not all functions. NO MORE QUITE FAILS!
+# FIXME: DEPRECATE OLD FUNCTIONS
 # FIXME: Create tools to search against against databases the user specifies.
 
-# === UNIPROT TOOLS ===
 
-# Check the following link for code review of inspectObject and objectWalker:
-# http://codereview.stackexchange.com/questions/157283/recursively-walk-through-an-object-and-genrate-a-list-of-its-attributes
+# === UNIPROT TOOLS ===
 
 def inspectObject(obj):
     """Return list of object attributes and their types.
@@ -681,6 +682,7 @@ class SelectionTools(object):
             res = set([i[0] for i in abundance.columns.str.findall("F\d").tolist()])
         else:
             print("No columns in this DataFrame begin with; Abundance:")
+
         return res
 
     @classmethod
@@ -713,9 +715,14 @@ class SelectionTools(object):
         -------
         number_input : float
         """
-        plex_number = cls.find_plex_number(dataframe)
-        input_abundance = dataframe.filter(regex="Abundance:").filter(regex="[Ii]nput")
-        number_input = input_abundance.shape[1]/plex_number
+        number_input = None
+        try:
+            plex_number = cls.find_plex_number(dataframe)
+            # FIXME: Proof this against Inputase ect.
+            input_abundance = dataframe.filter(regex="Abundance:").filter(regex="[Ii]nput")
+            number_input = input_abundance.shape[1]/plex_number
+        except Exception:
+            print("utils.SelectionTools.find_number_input failed")
         return number_input
 
 # === MultiIndex method ===
@@ -933,6 +940,46 @@ class SelectionTools(object):
                                    how="left", left_index=True)
 
         return peptide_select, protein_select
+
+    @staticmethod
+    def alike(string_one, string_two):
+        """Return difflib.SequnceMatcher.ratio results for two strings.
+
+        Parameters
+        ----------
+        srting_one : str
+
+        string_two : str
+
+        Returns
+        -------
+        results : float
+        """
+        results = SequenceMatcher(None, string_one, string_two).ratio()
+        return results
+
+    @classmethod
+    def alikeness(cls, dataframe_a, dataframe_b, term_a, term_b):
+        """Return a list of alikenes coffients.
+
+        Parameters
+        ----------
+        dataframe_a : DataFrame
+
+        dataframe_b : DataFrame
+
+        term_a : str
+
+        term_b : str
+
+        Returns
+        -------
+        cof : list
+        """
+        cof = list(set(itertools.starmap(cls.alike,
+                                         zip(dataframe_a.filter(regex=term_a).columns,
+                                             dataframe_b.filter(regex=term_b).columns))))
+        return cof
 
     # === VENN DIAGRAM FUNCTIONS ===
 

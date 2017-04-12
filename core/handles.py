@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
-"""
+"""handles
+
+Omin core handles.
+
+Handle in this context is a class composed of several pandas DataFrames, and
+other varibles that are either derived from the DataFrames or provided by the
+user.
+
+
+
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -25,6 +34,7 @@ from ..normalize.toPool import NormalizedToPool
 from ..normalize.toInput import NormalizedToInput
 from ..databases import mitoCartaCall
 
+# FIXME: Define varibles used at the hhighest possible class level.
 
 class RawData(object):
     """Converts Proteome Discoverer .txt files into pandas DataFrames

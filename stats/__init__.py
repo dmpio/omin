@@ -1,4 +1,6 @@
 """
+stats
+
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of

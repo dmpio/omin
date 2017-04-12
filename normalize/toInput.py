@@ -78,6 +78,7 @@ class NormalizedToInput(object):
                  modifications=None, genotypes=None, treatments=None):
 
         self.peptide_groups = None
+        self.proteins = None
         try:
             self.peptide_groups = PeptideGroups(raw_peptides)
         except Exception:
@@ -86,7 +87,6 @@ class NormalizedToInput(object):
             self.proteins = Proteins(raw_proteins)
         except Exception:
             print("Something went wrong with processing the peptide_groups class.")
-
 
     def __repr__(self):
         """Show all attributes.

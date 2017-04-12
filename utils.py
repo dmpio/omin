@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-LICENSE:
+
+LICENSE
+-------
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -604,7 +606,7 @@ class SelectionTools(object):
 # === MODIFICATION ISOLATION/CLASSIFICATION TOOLS ===
 
     @classmethod
-    def simplifyModifications(cls, df):
+    def simplifyModifications(cls, dataframe):
         """Return a series of simplifed modifications.
 
         Parameters
@@ -615,8 +617,13 @@ class SelectionTools(object):
         -------
         simplified : Series
         """
-        rx = re.compile("x(\w+)\s")
-        simplified = df.Modifications.apply(rx.findall)
+        simplified = None
+        if any(dataframe.columns == "Modifications"):
+            # Compile the regular expression to be used in findall
+            rx = re.compile("x(\w+)\s")
+            simplified = dataframe.Modifications.apply(rx.findall)
+        else:
+            print("omin.utils.SelectionTools.simplifyModifications FAILED")
         return simplified
 
     @classmethod
@@ -651,7 +658,8 @@ class SelectionTools(object):
         """
 
         present_modifications = cls.findModifications(df)
-        chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
+        chemical_modifications = {'Oxidation', 'Carbamidomethyl',
+                                  'TMT6plex', 'TMT10plex'}
         invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
         return invivo_modifications
 
@@ -667,13 +675,14 @@ class SelectionTools(object):
         -------
         res : set
         """
-        res = None
-        try:
+        # Declare res as empty set.
+        res = {}
+        if any(dataframe.columns.str.contains("Abundance:")):
             abundance = dataframe.filter(regex="Abundance:")
             res = set([i[0] for i in abundance.columns.str.findall("F\d").tolist()])
+        else:
+            print("No columns in this DataFrame begin with; Abundance:")
 
-        except Exception:
-            print("Omin failed to find fraction numbers.")
         return res
 
     @classmethod

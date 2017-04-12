@@ -1,5 +1,7 @@
 # omin - Omics Modeling Integrating and Normalization
 
+![logo](https://github.com/dmpio/omin/blob/master/images/omin_lil_horns_logo.png)
+
 Using python to squeeze the biomarkers out of your big data.
 
 ## Requirements

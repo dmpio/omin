@@ -48,6 +48,7 @@ def select():
     root.call('wm', 'attributes', '.', '-topmost', True)
 
     selected_files = filedialog.askopenfilename(multiple=True)
+    # print(selected_files)
     return selected_files
 
 

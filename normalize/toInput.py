@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
+"""Normalization to input classes and functions
+
 LICENSE:
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
@@ -24,8 +25,8 @@ import re
 import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind
-from ..utils import StringTools
-from ..utils import SelectionTools
+from omin.utils import StringTools
+from omin.utils import SelectionTools
 
 from omin.normalize.methods import *
 
@@ -68,12 +69,13 @@ def normalizeTo(different, normal):
     normalized.columns = different.columns + ": Normalized to: " + normal.columns
     return normalized
 
-# === NEW MAIN CLASS ===
+
 class NormalizedToInput(object):
     """
     Attributes
     ----------
     """
+
     def __init__(self, raw_peptides=None, raw_proteins=None,
                  modifications=None, genotypes=None, treatments=None):
 
@@ -82,11 +84,11 @@ class NormalizedToInput(object):
         try:
             self.peptide_groups = PeptideGroups(raw_peptides)
         except Exception:
-            print("Couldn't initialize PeptideGroups class.")
+            print("omin.normalize.toInput.Proteins FAILED")
         try:
             self.proteins = Proteins(raw_proteins)
         except Exception:
-            print("Something went wrong with processing the peptide_groups class.")
+            print("omin.normalize.toInput.Proteins FAILED")
 
     def __repr__(self):
         """Show all attributes.

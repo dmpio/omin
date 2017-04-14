@@ -7,16 +7,15 @@ funding permit.
 
 """
 from __future__ import division, print_function
+# import os
+import sys
+# import subprocess
+# import textwrap
 
 # FIXME: Create standard issue python setup install
 # FIXME: Make base compatible with Python 2.7 and up.
 
 DOCLINES = (__doc__ or '').split("\n")
-
-import os
-import sys
-import subprocess
-import textwrap
 
 if sys.version_info[:2] < (2, 7) or (3, 0) <= sys.version_info[:2] < (3, 4):
     raise RuntimeError("Python version 2.7 or >= 3.4 required.")

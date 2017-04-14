@@ -25,15 +25,18 @@ SOFTWARE.
 """
 
 import pandas as pd
-from ..utils import SelectionTools
-from ..normalize.toPool import NormalizedToPool
-from ..normalize.toInput import NormalizedToInput
-from ..databases import mitoCartaCall
+from omin.utils import SelectionTools
+from omin.normalize.toPool import NormalizedToPool
+from omin.normalize.toInput import NormalizedToInput
+from omin.databases import mitoCartaCall
 
-# FIXME: Define varibles used at the hhighest possible class level.
+
+# FIXME: Define varibles used at the highest possible class level.
+# FIXME: Store each handle class as SQLite database in same parent dir.
 
 class RawData(object):
-    """Converts Proteome Discoverer .txt files into pandas DataFrames
+    """
+    Converts Proteome Discoverer .txt files into pandas DataFrames.
 
     Attributes
     ----------
@@ -41,10 +44,11 @@ class RawData(object):
         Raw data from Proteome Discoverer peptides data.
     proteins : DataFrame
         Raw data Proteome Discoverer corresponding proteins data.
+    _numbers : tuple
     """
+
     def __init__(self, peptides_file, proteins_file):
-        """Loads the raw data for peptides_file and proteins_file as DataFrames
-        that are contained as attributes.
+        """Load data for peptides_file and proteins_file as pandas DataFrames.
 
         Note
         ----
@@ -69,25 +73,23 @@ class RawData(object):
         >>>raw_data = RawData(peptides_file,proteins_file)
 
         """
+        # FIXME: Add type checking.
+        # FIXME: Add more try and excepts but try to put them on function level
+
+        # Load your peptide groups file as a pandas DataFrame.
         self.raw_peptides = pd.read_csv(peptides_file,
                                         delimiter="\t",
                                         low_memory=False)
-
+        # Load your protein file as a pandas DataFrame.
         self.raw_proteins = pd.read_csv(proteins_file,
                                         delimiter="\t",
                                         low_memory=False)
-
+        # Store the shape of the respective DataFrames.
         self._numbers = (self.raw_peptides.shape, self.raw_proteins.shape)
 
     def __repr__(self):
-        """Show all attributes.
-        """
+        """Show all attributes."""
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
-    def showQuant(self):
-        """Returns tuple (peptides DataFrame shape, proteins DataFrame shape).
-        """
-        return self._numbers
 
 
 class PreProcess(RawData):
@@ -125,9 +127,9 @@ class PreProcess(RawData):
         Parameters
         ----------
         peptides_file : str
-            The location of peptide groups file stored as string.
+            The location of peptide groups file.
         proteins_file : str
-            The location of peptide groups file stored as string.
+            The location of peptide groups file.
         modifications : list
             List of derived or given modifications.
         genotype : list
@@ -147,17 +149,21 @@ class PreProcess(RawData):
                                                  self.raw_proteins,
                                                  modifications)
 
-        # These DataFrames can be used to index filter to statistically relevent
-        # PeptideGroups and Proteins
+        # Used to index filter to statistically relevent PeptideGroups
         self.pep_sel = pep_sel
+        # Used to index filter to statistically relevent Proteins
         self.prot_sel = prot_sel
-
+        # MitoCarta calls made
         mito, nonmito = mitoCartaCall.mitoCartaPepOut(self,
                                                       mods=modifications,
                                                       dex=True)
+        # Mitocarta hits DataFrame
         self.mitodex = mito
+        # Mitocarta non hits DataFrame
         self.nonmitodex = nonmito
+        # Find the number of inputs.
         self._input_number = SelectionTools.find_number_input(self.raw_peptides)
+        # Find the number of PTMs present in the PeptideGroups
         self._ptm_fraction_numbers = SelectionTools.find_fractions(self.raw_peptides)
 
 
@@ -186,37 +192,46 @@ class Process(PreProcess):
     omin.utils.SelectionTools.vLook
     omin.utils.SelectionTools.masterCleanse
     """
+
     def __init__(self, peptides_file, proteins_file, modifications=None,
                  genotype=None, treatments=None):
         """Initalize Process class.
+
+        Parameters
+        ----------
+        peptides_file : str
+            The location of peptide groups file.
+        proteins_file : str
+            The location of peptide groups file.
+        modifications : list
+            List of derived or given modifications.
+        genotype : list
+            List of given genotypes. May be DEPRICATED in future.
+        treatments: list
+            List of given treatments. May be DEPRICATED in future.
         """
+        self.normalized = None
         super(Process, self).__init__(peptides_file, proteins_file)
+
         # FIXME: Make the selection more specifically target abundance columns
-        if self.raw_peptides.columns.str.contains("Input", case=False).any():
-            print("Input fraction(s) found. omin is attempting to normalize")
+        if self._input_number > 0:
+            inp_notify = "{} input fraction(s) found. Normalizing now..."
+            inp_notify = inp_notify.format(self._input_number)
+            print(inp_notify)
             try:
                 self.normalized = NormalizedToInput(self.raw_peptides,
                                                     self.raw_proteins)
-
             except Exception:
-                print("Something went wrong. Please check to make sure you data is formatted correctly.")
+                print("omin.normalize.toInput.NormalizedToInput FAILED.")
 
-        elif self.raw_peptides.columns.str.contains("pool|control", case=False).any():
+        elif self.raw_peptides.columns.str.contains("pool|control",
+                                                    case=False).any():
 
-            print("Pool or control columns found. omin will attempt to normalize the data to it.")
-
+            print("Pool columns. Omin will attempt to copare the data to it.")
             try:
                 self.normalized = NormalizedToPool(self.raw_peptides)
-
             except Exception:
-                print("Something went wrong. Please check to make sure you data is formatted correctly.")
+                print("omin.normalize.toInput.NormalizedToInput FAILED.")
         else:
-            # FIXME: Make this a place where the use could specify.
-            print("Cannot find anything to normalize to. Check to see that your data fits omins conventions.")
-
-            self.normalized = None
-
-# if __name__ == "__main__":
-#     print("Omin Handles Test")
-#     RawData
-    # print(help(RawData))
+            # FIXME: Make this a place where the user could specify.
+            print("Cannot find anything to normalize to.")

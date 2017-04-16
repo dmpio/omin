@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""DEPRICATED
-
+"""
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -20,19 +19,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import warnings
 import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind
 
 # FIXME: Add built in python bhfdr method in here.
 
-deprecation_message = "Deprecated. Use omin.stats.tools"
-def deprecation_warning():
-    warnings.warn(deprecation_message, DeprecationWarning)
 
 def log2FC(numer, denom, new_column_name=""):
-    """Takes the log2 fold change of normalized DataFrames of simillar size.
+    """Take the log2 fold change of normalized DataFrames of simillar size.
 
     Parameters
     ----------
@@ -52,7 +47,6 @@ def log2FC(numer, denom, new_column_name=""):
         new_column_name = " "+new_column_name
     lfc = numer.mean(axis=1) - denom.mean(axis=1)
     lfc = pd.DataFrame(lfc, columns=["LFC"+new_column_name], index=numer.index)
-    deprecation_warning()
     return lfc
 
 
@@ -81,7 +75,6 @@ def ttester(numer, denom, new_column_name=""):
     >>>omin.ttester(KO_DataFrame,WT_DataFrame)
 
     """
-
     if len(new_column_name) > 0:
         new_column_name = " "+new_column_name
     # The loop below suppresses an irrelevent error message.
@@ -92,6 +85,4 @@ def ttester(numer, denom, new_column_name=""):
         #ttest_ind implemented
         pvals = ttest_ind(numer, denom, axis=1).pvalue
     pvals = pd.DataFrame(pvals, columns=["pval"+new_column_name], index=numer.index)
-
-    deprecation_warning()
     return pvals

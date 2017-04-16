@@ -1,5 +1,4 @@
-"""
-stats
+"""statistics tools
 
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
@@ -21,3 +20,4 @@ SOFTWARE.
 """
 
 from . import fdr
+from . import tools

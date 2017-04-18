@@ -21,3 +21,4 @@ SOFTWARE.
 
 from . import vis
 from .vis import Volcano
+from . import cluster

@@ -5,7 +5,8 @@ Handle in this context is a class composed of several pandas DataFrames, and
 other varibles that are either derived from the DataFrames or provided by the
 user.
 
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+Blair Chesnut, and Elizabeth Hauser.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files, Omics Modeling Integrating
@@ -231,7 +232,7 @@ class Process(PreProcess):
             try:
                 self.normalized = NormalizedToPool(self.raw_peptides)
             except Exception:
-                print("omin.normalize.toInput.NormalizedToInput FAILED.")
+                print("omin.normalize.toPool.NormalizedToPool FAILED.")
         else:
             # FIXME: Make this a place where the user could specify.
             print("Cannot find anything to normalize to.")

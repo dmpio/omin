@@ -22,9 +22,10 @@ SOFTWARE.
 """
 
 import numpy as np
+from scipy.spatial import distance
+from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import linkage
 from scipy.cluster.hierarchy import dendrogram
-from matplotlib import pyplot as plt
 
 
 def dendro_heatmap(dataframe, figsize=None, cmap=None, fig_title=None,
@@ -68,13 +69,15 @@ def dendro_heatmap(dataframe, figsize=None, cmap=None, fig_title=None,
     fig = plt.figure(figsize=figsize)
 
     # Create the subplot for the dendrogram
-    dendro_subplot = plt.subplot2grid((10,10), (0,1), rowspan = 1, colspan = 9)
+    dendro_subplot = plt.subplot2grid((10, 10), (0, 1),
+                                      rowspan=1, colspan=9)
 
-    # Create a linkage object. The transposed dataframe needs to be use for this part
-    linkmat = linkage(dataframe.T)
+    # Create a linkage object
+    # Dataframe most be transposed for this.
+    linkmat = linkage(distance.pdist(dataframe.T))
 
     # Make a dendrogram from the linkage object.
-    dendro_subplot = dendrogram(linkmat)
+    den0 = dendrogram(linkmat)
 
     if fig_title is not None:
         fig.suptitle(fig_title)
@@ -83,11 +86,12 @@ def dendro_heatmap(dataframe, figsize=None, cmap=None, fig_title=None,
     plt.axis("off")
 
     # ax2 = plt.subplot2grid((10, 10), (1, 0), rowspan= 4, colspan=1)
-    heatmap_subplot = plt.subplot2grid((10, 10), (1, 1), rowspan = 9, colspan=9)
+    heatmap_subplot = plt.subplot2grid((10, 10), (1, 1),
+                                       rowspan=9, colspan=9)
 
     # Generate heatmap
     # plt.pcolor(dataframe, cmap = cmap)
-    plt.pcolormesh(dataframe, cmap = cmap)
+    heatmap_subplot.pcolormesh(dataframe.values[:, den0["leaves"]], cmap=cmap)
 
     # Set dataframe column names as the axis labels
     if labels is not None:
@@ -96,16 +100,16 @@ def dendro_heatmap(dataframe, figsize=None, cmap=None, fig_title=None,
     else:
         try:
             plt.xticks(np.arange(0.5, dataframe.shape[1], 1))
-            plt.gca().set_xticklabels(list(dataframe.columns), rotation=270)
+            plt.gca().set_xticklabels(list(dataframe.columns[den0["leaves"]]),
+                                      rotation=270)
         except Exception:
             print("Not possible to add labels.")
             pass
 
-    # Make the vertical distance between plots equal to zero
-    plt.subplots_adjust(hspace=0)
-
     # Insert the colorbar for scale.
     # plt.colorbar()
-    # cb = plt.colorbar(heatmap_subplot)
+    # cb = plt.colorbar(ax=dendro_subplot)
     # cb.ax.set_visible(False)
-    return fig
+
+    # Make the vertical distance between plots equal to zero
+    plt.subplots_adjust(hspace=0)

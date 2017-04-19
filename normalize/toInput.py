@@ -76,19 +76,18 @@ class NormalizedToInput(object):
     ----------
     """
 
-    def __init__(self, raw_peptides=None, raw_proteins=None,
-                 modifications=None, genotypes=None, treatments=None):
+    def __init__(self, parent_self):
 
-        self.peptide_groups = None
-        self.proteins = None
+        # self.proteins = None
         try:
-            self.peptide_groups = PeptideGroups(raw_peptides)
+            self.peptide_groups = PeptideGroups(parent_self.raw_peptides)
+
         except Exception:
             print("omin.normalize.toInput.Proteins FAILED")
-        try:
-            self.proteins = Proteins(raw_proteins)
-        except Exception:
-            print("omin.normalize.toInput.Proteins FAILED")
+        # try:
+        #     self.proteins = Proteins(raw_proteins)
+        # except Exception:
+        #     print("omin.normalize.toInput.Proteins FAILED")
 
     def __repr__(self):
         """Show all attributes.

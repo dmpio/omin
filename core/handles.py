@@ -220,15 +220,14 @@ class Process(PreProcess):
             inp_notify = inp_notify.format(self._input_number)
             print(inp_notify)
             try:
-                self.normalized = NormalizedToInput(self.raw_peptides,
-                                                    self.raw_proteins)
+                self.normalized = NormalizedToInput(self)
             except Exception:
                 print("omin.normalize.toInput.NormalizedToInput FAILED.")
 
         elif self.raw_peptides.columns.str.contains("pool|control",
                                                     case=False).any():
 
-            print("Pool columns. Omin will attempt to copare the data to it.")
+            print("Pool columns. Omin will attempt to compare the data to it.")
             try:
                 self.normalized = NormalizedToPool(self.raw_peptides)
             except Exception:

@@ -958,25 +958,26 @@ class SelectionTools(object):
 
     @classmethod
     def alikeness(cls, dataframe_a, dataframe_b, term_a, term_b):
-        """Return a list of alikenes coffients.
+        """Return a list of alikeness coefficients.
 
         Parameters
         ----------
         dataframe_a : DataFrame
-
         dataframe_b : DataFrame
-
         term_a : str
-
         term_b : str
 
         Returns
         -------
         cof : list
         """
-        cof = list(set(itertools.starmap(cls.alike,
-                                         zip(dataframe_a.filter(regex=term_a).columns,
-                                             dataframe_b.filter(regex=term_b).columns))))
+        # Get list of columns from dataframe_a filtered by term_a.
+        filtered_a = dataframe_a.filter(regex=term_a).columns
+        # Get list of columns from dataframe_b filtered by term_b.
+        filtered_b = dataframe_b.filter(regex=term_b).columns
+        # Create list of alikeness coefficients.
+        cof = list(set(itertools.starmap(cls.alike, zip(filtered_a,
+                                                        filtered_b))))
         return cof
 
     # === VENN DIAGRAM FUNCTIONS ===

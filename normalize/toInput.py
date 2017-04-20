@@ -32,6 +32,7 @@ from omin.utils import SelectionTools
 from omin.normalize.methods import normFactors
 from omin.normalize.methods import normalizeTo
 from omin.normalize.methods import Logger
+from omin.normalize.methods import MachLink
 
 
 class NormalizedToInput(object):
@@ -119,22 +120,23 @@ class PeptideGroups(object):
         # MULTIPLE INPUT METHOD
         if parent_self._input_number > 1:
             for i in self.combos:
-                self.combo_dict[i] = SelectionTools.alikeness(self.ptm_abundance,
-                                                              self.input_abundance,
-                                                              i[0], i[1])[0]
+                linkage = MachLink.column_simillarity(self.ptm_abundance,
+                                                      self.input_abundance,
+                                                      term_a=i[0],
+                                                      term_b=i[1])[0]
+                self.combo_dict[i] = linkage
 
-            # # FIXME: CREATE A FUNCTION FOR THE FOLLOWING OPERATION
-            # linked_fractions = list(dict(sorted(self.combo_dict.items(),
-            #                                     key=itemgetter(1))[int(self.input_fraction_numbers):]).keys())
+            linked_fractions = MachLink.select_top_linked(self.combo_dict, parent_self._input_number)
 
-            # normalized = []
-            # for n in linked_fractions:
-            #     fptm = self.ptm_abundance.filter(regex=n[0])
-            #     finp = self.input_abundance.filter(regex=n[1])
-            #     normalized_df = normalizeTo(fptm, finp)
-            #
-            #     normalized.append(normalized_df)
-            # self.normalized_abundances = normalized
+            normalized = []
+            self.linked_fractions = linked_fractions
+            for n in linked_fractions:
+                fptm = self.ptm_abundance.filter(regex=n[0])
+                finp = self.input_abundance.filter(regex=n[1])
+                normalized_df = normalizeTo(fptm, finp)
+                normalized.append(normalized_df)
+                print(n[0],"normalized to",n[1])
+            self.normalized_abundances = normalized
 
     def __repr__(self):
         """Show all attributes.

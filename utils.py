@@ -941,7 +941,9 @@ class SelectionTools(object):
 
     @staticmethod
     def alike(string_one, string_two):
-        """Return difflib.SequnceMatcher.ratio results for two strings.
+        """DEPRECATED use omin.normalize.methods.MachLink.simillarity
+
+        Return difflib.SequnceMatcher.ratio results for two strings.
 
         Parameters
         ----------
@@ -958,7 +960,9 @@ class SelectionTools(object):
 
     @classmethod
     def alikeness(cls, dataframe_a, dataframe_b, term_a, term_b):
-        """Return a list of alikeness coefficients.
+        """DEPRECATED use omin.normalize.methods.MachLink.column_simillarity
+
+        Return a list of alikeness coefficients.
 
         Parameters
         ----------

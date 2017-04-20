@@ -52,17 +52,16 @@ class NormalizedToInput(object):
         parent_self : obj:
             The self argument of the parent class.
         """
-        # self.proteins = None
         try:
             self.peptide_groups = PeptideGroups(parent_self)
 
         except Exception:
             print("omin.normalize.toInput.PeptideGroups FAILED")
 
-        # try:
-        #     self.proteins = Proteins(raw_proteins)
-        # except Exception:
-        #     print("omin.normalize.toInput.Proteins FAILED")
+        try:
+            self.proteins = Proteins(parent_self)
+        except Exception:
+            print("omin.normalize.toInput.Proteins FAILED")
 
     def __repr__(self):
         """Show all attributes.
@@ -114,6 +113,7 @@ class PeptideGroups(object):
             for n in self.combos:
                 normalized_df = normalizeTo(self.ptm_abundance.filter(regex=n[0]),
                                             self.input_abundance.filter(regex=n[1]))
+                print("Peptide Groups", n[0], "normalized to", n[1])
 
                 normalized.append(normalized_df)
             self.normalized_abundances = normalized
@@ -135,7 +135,7 @@ class PeptideGroups(object):
                 finp = self.input_abundance.filter(regex=n[1])
                 normalized_df = normalizeTo(fptm, finp)
                 normalized.append(normalized_df)
-                print(n[0],"normalized to",n[1])
+                print(n[0], "normalized to", n[1])
             self.normalized_abundances = normalized
 
     def __repr__(self):
@@ -145,12 +145,38 @@ class PeptideGroups(object):
 
 
 class Proteins(object):
-    def __init__(self, raw_proteins=None):
+    """ Calculate the relative occupancy.
 
-        self.input_fraction_numbers = None
-        # self.input_fraction_numbers = SelectionTools.find_number_input(raw_proteins)
+    Attributes
+    ----------
+    raw_abundance : DataFrame
+    input_abundance : DataFrame
+
+    """
+    def __init__(self, parent_self=None):
+        """Initalize PeptideGroups class.
+
+        Parameters
+        ----------
+        parent_self : obj:
+            The self argument of the parent class.
+        """
+        # Filter for just the Abundance columns.
+        self.raw_abundance = parent_self.raw_proteins.filter(regex="Abundance:")
+
+        # Filter the abundance columns for just input columns.
+        self.input_abundance = self.raw_abundance.filter(regex="[Ii]nput")
+        # self.ps_dir = dir(parent_self.normalized.peptide_groups)
+        # # SINGLE INPUT METHOD
+        # if parent_self._input_number == 1:
+        #     normalized = []
+        #     normalized_df = normalizeTo(self.input_abundance,
+        #                                 parent_self.peptide_groups.input_abundance)
+        #     print("Proteins input fraction normalized to Peptide Groups input fraction")
+        #
+        #     normalized.append(normalized_df)
+        #     self.normalized_abundances = normalized
 
     def __repr__(self):
-        """Show all attributes.
-        """
+        """Show all attributes."""
         return "Attributes: "+", ".join(list(self.__dict__.keys()))

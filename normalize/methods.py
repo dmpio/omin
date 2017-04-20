@@ -68,7 +68,7 @@ def normToPool(log2_div_ave):
 
 
 def normFactors(peptide_data):
-    """Takes peptide abundance data and returns normalization factors.
+    """Take peptide abundance data and returns normalization factors.
 
     Normalization factors are derived by the taking the sum of each column in
     DataFrame then dividing each sum by the mean of all the sums.
@@ -96,12 +96,12 @@ def normalizeTo(different, normal):
     ----------
     different : DataFrame
     normal : DataFrame
-
     Returns
     -------
     normalized : DataFrame
     """
     normalized = different / normFactors(normal).as_matrix()
+    normalized.columns = different.columns + ": Normalized to: " + normal.columns
     return normalized
 
 

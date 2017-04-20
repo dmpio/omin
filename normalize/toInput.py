@@ -21,69 +21,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
-import pandas as pd
-import numpy as np
-from scipy.stats import ttest_ind
+# import re
+# import pandas as pd
+# import numpy as np
+# from scipy.stats import ttest_ind
+import itertools
+from operator import itemgetter
 from omin.utils import StringTools
 from omin.utils import SelectionTools
-
-from omin.normalize.methods import *
-
-
-def normFactors(abundance):
-    """Takes peptide abundance data and returns normalization factors.
-
-    Normalization factors are derived by the taking the sum of each column in
-    DataFrame then dividing each sum by the mean of all the sums.
-
-    Parameters
-    ----------
-    abundance : DataFrame
-
-    Returns
-    -------
-    norm_factors: DataFrame
-
-    """
-    norm_factors = abundance.sum() / abundance.sum().mean()
-    return norm_factors
-
-
-def normalizeTo(different, normal):
-    """Normalizes one DataFrame to another.
-
-    The 'different' DataFrame is normalized to the 'normal' DataFrame using the
-    normFactors function.
-
-    Parameters
-    ----------
-    different : DataFrame
-    normal : DataFrame
-
-    Returns
-    -------
-    normalized : DataFrame
-    """
-    normalized = different / normFactors(normal).as_matrix()
-    normalized.columns = different.columns + ": Normalized to: " + normal.columns
-    return normalized
+from omin.normalize.methods import normFactors
+from omin.normalize.methods import normalizeTo
+from omin.normalize.methods import Logger
 
 
 class NormalizedToInput(object):
-    """
+    """Claculate the normalized relative abundance and relative occupancy.
+
     Attributes
     ----------
+    peptide_groups : obj:
+        An instance of the peptide_groups class.
     """
 
     def __init__(self, parent_self):
+        """Initalize NormalizedToInput class.
 
+        Parameters
+        ----------
+        parent_self : obj:
+            The self argument of the parent class.
+        """
         # self.proteins = None
         try:
-            self.peptide_groups = PeptideGroups(parent_self.raw_peptides)
+            self.peptide_groups = PeptideGroups(parent_self)
 
         except Exception:
-            print("omin.normalize.toInput.Proteins FAILED")
+            print("omin.normalize.toInput.PeptideGroups FAILED")
+
         # try:
         #     self.proteins = Proteins(raw_proteins)
         # except Exception:
@@ -96,19 +70,82 @@ class NormalizedToInput(object):
 
 
 class PeptideGroups(object):
-    def __init__(self, raw_peptides=None):
-        self.input_fraction_numbers = SelectionTools.find_number_input(raw_peptides)
-        self.abundance = raw_peptides.filter(regex="Abundance:")
-        self.input = self.abundance.filter(regex="[Ii]nput")
+    """Normalize the abundance of the peptide groups.
+
+    Attributes
+    ----------
+    raw_abundance : DataFrame
+        Unfilter non-normalized abundance values.
+
+    """
+    def __init__(self, parent_self=None):
+        """Initalize PeptideGroups class.
+
+        Parameters
+        ----------
+        parent_self : obj:
+            The self argument of the parent class.
+
+        """
+        # Filter for just the Abundance columns.
+        self.raw_abundance = parent_self.raw_peptides.filter(regex="Abundance:")
+
+        # Filter the abundance columns for just input columns.
+        self.input_abundance = self.raw_abundance.filter(regex="[Ii]nput")
+
+        # Filter out the input fraction(s)
         negate_term = StringTools.regexNot("[Ii]nput")
-        self.other_fractions = self.abundance.filter(regex=negate_term)
-        self.other_fraction_numbers = list(SelectionTools.find_fractions(self.other_fractions))
+        self.ptm_abundance = self.raw_abundance.filter(regex=negate_term)
+
+        # Create a list of the ptm containing fractions.
+        ptm_fn = list(SelectionTools.find_fractions(self.ptm_abundance))
+        self.ptm_fraction_numbers = ptm_fn
+        # Create a list of the input containing fractions
+        inp_fn = list(SelectionTools.find_fractions(self.input_abundance))
+        self.input_fraction_numbers = inp_fn
+
+        self.combos = list(itertools.product(self.ptm_fraction_numbers,
+                                             self.input_fraction_numbers))
+        self.combo_dict = dict()
+        # SINGLE INPUT METHOD
+        if parent_self._input_number == 1:
+            normalized = []
+            for n in self.combos:
+                normalized_df = normalizeTo(self.ptm_abundance.filter(regex=n[0]),
+                                            self.input_abundance.filter(regex=n[1]))
+
+                normalized.append(normalized_df)
+            self.normalized_abundances = normalized
+        # MULTIPLE INPUT METHOD
+        if parent_self._input_number > 1:
+            for i in self.combos:
+                self.combo_dict[i] = SelectionTools.alikeness(self.ptm_abundance,
+                                                              self.input_abundance,
+                                                              i[0], i[1])[0]
+
+            # # FIXME: CREATE A FUNCTION FOR THE FOLLOWING OPERATION
+            # linked_fractions = list(dict(sorted(self.combo_dict.items(),
+            #                                     key=itemgetter(1))[int(self.input_fraction_numbers):]).keys())
+
+            # normalized = []
+            # for n in linked_fractions:
+            #     fptm = self.ptm_abundance.filter(regex=n[0])
+            #     finp = self.input_abundance.filter(regex=n[1])
+            #     normalized_df = normalizeTo(fptm, finp)
+            #
+            #     normalized.append(normalized_df)
+            # self.normalized_abundances = normalized
+
+    def __repr__(self):
+        """Show all attributes.
+        """
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
 
 class Proteins(object):
     def __init__(self, raw_proteins=None):
 
         self.input_fraction_numbers = None
-
         # self.input_fraction_numbers = SelectionTools.find_number_input(raw_proteins)
 
     def __repr__(self):

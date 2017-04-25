@@ -687,6 +687,11 @@ class SelectionTools(object):
     def find_plex_number(cls, dataframe):
         """Return the TMT plex number as an int.
 
+        FIXME: TMT6 and TMT10 are used interchangeablily throughout
+        Proteome Discoverer. This whole method needs to be rethought.
+        Perhaps count the number of fractions and then use that number to
+        devide by the number of abundance columns.
+
         Parameters
         ----------
         dataframe : DataFrame
@@ -695,10 +700,14 @@ class SelectionTools(object):
         -------
         plex_number : int
         """
-        mods = cls.findModifications(dataframe)
-        tmt_type = list(filter(lambda x: x.startswith("TMT"), mods))
-        plex_number = list(filter(lambda x: x.isdigit(), tmt_type[0]))
-        plex_number = int(plex_number[0])
+        # mods = cls.findModifications(dataframe)
+        # tmt_type = list(filter(lambda x: x.startswith("TMT"), mods))
+        # plex_number = list(filter(lambda x: x.isdigit(), tmt_type[0]))
+        # plex_number = int(plex_number[0])
+
+        fraction_number = len(cls.find_fractions(dataframe))
+        abundance_number = dataframe.filter(regex="Abundance:").shape[1]
+        plex_number = abundance_number/fraction_number
         return plex_number
 
     @classmethod

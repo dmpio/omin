@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
+""" omin's normalization methods.
+
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -19,11 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import difflib
+import itertools
 import pandas as pd
 import numpy as np
-
+from operator import itemgetter
 # === Pool Methods ===
-
 
 def logNormToAve(dataframe, add_to_header=None):
     """Return log2(datafame)-mean(log2(datafame)).
@@ -45,6 +47,7 @@ def logNormToAve(dataframe, add_to_header=None):
     log2_div_ave.columns = add_to_header + log2_div_ave.columns
     return log2_div_ave
 
+
 def normToPool(log2_div_ave):
     """Normalizes a DataFrame composed of a single fraction of peptide data
     that contains a single 'Control' or 'Pool' column.
@@ -58,17 +61,17 @@ def normToPool(log2_div_ave):
     log2_div_ave : DataFrame
 
     """
+    # FIXME: This needs to be rethought.
     pool = omin.betSep(log2_div_ave, "control", "pool")[0]
     lda_div_pool = log2_div_ave.sub(pool.ix[:, 0], axis=0)
     # Rename the columns to reflect the operations on them.
     lda_div_pool.columns = [re.sub("Log2-AVE", "Log2-AVE-Pool", i) for i in lda_div_pool.columns]
     return lda_div_pool
 
+
 # === Input Methods ===
-
-
 def normFactors(peptide_data):
-    """Takes peptide abundance data and returns normalization factors.
+    """Take peptide abundance data and returns normalization factors.
 
     Normalization factors are derived by the taking the sum of each column in
     DataFrame then dividing each sum by the mean of all the sums.
@@ -87,7 +90,7 @@ def normFactors(peptide_data):
 
 
 def normalizeTo(different, normal):
-    """Normalizes one DataFrame to another.
+    """Normalize one DataFrame to another.
 
     The 'different' DataFrame is normalized to the 'normal' DataFrame using the
     normFactors function.
@@ -96,15 +99,88 @@ def normalizeTo(different, normal):
     ----------
     different : DataFrame
     normal : DataFrame
-
     Returns
     -------
     normalized : DataFrame
     """
     normalized = different / normFactors(normal).as_matrix()
+    normalized.columns = different.columns + ": Normalized to: " + normal.columns
     return normalized
 
 
+# MACHINE LEARNING LINKAGE METHODS
+class MachLink(object):
+    """Machine learning based DataFrame linkage methods."""
+
+    @staticmethod
+    def simillarity(string_one, string_two):
+        """Return the difflib.SequnceMatcher results for two strings as ratio.
+
+        Parameters
+        ----------
+        srting_one : str
+
+        string_two : str
+
+        Returns
+        -------
+        results : float
+        """
+        results = difflib.SequenceMatcher(None, string_one, string_two).ratio()
+        return results
+
+    @classmethod
+    def column_simillarity(cls, dataframe_a, dataframe_b, term_a, term_b):
+        """Return a list of alikeness coefficients.
+
+        Parameters
+        ----------
+        dataframe_a : DataFrame
+        dataframe_b : DataFrame
+        term_a : str
+        term_b : str
+
+        Returns
+        -------
+        cof : list
+        """
+        # Get list of columns from dataframe_a filtered by term_a.
+        filtered_a = dataframe_a.filter(regex=term_a).columns
+        # Get list of columns from dataframe_b filtered by term_b.
+        filtered_b = dataframe_b.filter(regex=term_b).columns
+        # Create list of alikeness coefficients.
+        cof = list(set(itertools.starmap(cls.simillarity,
+                                         zip(filtered_a, filtered_b))))
+        return cof
+
+    @staticmethod
+    def select_top_linked(combo_dict, numb):
+        """Select a given number of keys for a combo_dict.
+
+        FIXME : This function needs to be rethought at the moment it just
+        returns all of the combinations.
+
+        Parameters
+        ----------
+        combo_dict : dict
+        numb : int
+
+        Returns
+        -------
+        linked_fractions : list
+        """
+        linked = None
+        try:
+            numb = int(numb)
+            snumb = len(combo_dict)-numb
+            linked = list(dict(sorted(combo_dict.items(),
+                                      key=itemgetter(1))).keys())
+        except Exception:
+            print("omin.normalize.methods.MachLink.select_top_linked FAILED")
+        return linked
+
+
+# THE LOGGER CLASS
 class Logger:
     """The class Logger preforms operations on normalized peptides.
 

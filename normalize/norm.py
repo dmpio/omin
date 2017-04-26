@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+"""DEPRECATED in favor of normalization methods
 
-"""
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -69,8 +69,6 @@ def logdiv(lso):
 
 def dfMin(d1, d2):
     """ Take the difference of two DataFrames.
-
-
     """
     return pd.DataFrame(d1.as_matrix() - d2.as_matrix(), index=d1.index)
 

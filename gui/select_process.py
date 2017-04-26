@@ -24,8 +24,8 @@ import easygui as eg
 # FIXME: CHANGE THIS TO TKINTER
 
 def select_process():
-    selected = eg.choicebox("Please pick a process:",
+    selected = eg.choicebox("Please pick a workflow:",
                             "Select Process",
-                            ["RawData","PreProcess","Process"])
-    print(selected)
+                            ["RawData", "PreProcess", "Process"])
+    print(selected, "workflow selected.")
     return selected

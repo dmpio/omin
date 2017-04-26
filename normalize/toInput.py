@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
+"""Normalization to input classes and functions
+
 LICENSE:
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
@@ -20,73 +21,47 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
-import pandas as pd
-import numpy as np
-from scipy.stats import ttest_ind
-from ..utils import StringTools
-from ..utils import SelectionTools
-
-from omin.normalize.methods import *
-
-
-def normFactors(abundance):
-    """Takes peptide abundance data and returns normalization factors.
-
-    Normalization factors are derived by the taking the sum of each column in
-    DataFrame then dividing each sum by the mean of all the sums.
-
-    Parameters
-    ----------
-    abundance : DataFrame
-
-    Returns
-    -------
-    norm_factors: DataFrame
-
-    """
-    norm_factors = abundance.sum() / abundance.sum().mean()
-    return norm_factors
+# import re
+# import pandas as pd
+# import numpy as np
+# from scipy.stats import ttest_ind
+import itertools
+from operator import itemgetter
+from omin.utils import StringTools
+from omin.utils import SelectionTools
+from omin.normalize.methods import normFactors
+from omin.normalize.methods import normalizeTo
+from omin.normalize.methods import Logger
+from omin.normalize.methods import MachLink
 
 
-def normalizeTo(different, normal):
-    """Normalizes one DataFrame to another.
-
-    The 'different' DataFrame is normalized to the 'normal' DataFrame using the
-    normFactors function.
-
-    Parameters
-    ----------
-    different : DataFrame
-    normal : DataFrame
-
-    Returns
-    -------
-    normalized : DataFrame
-    """
-    normalized = different / normFactors(normal).as_matrix()
-    normalized.columns = different.columns + ": Normalized to: " + normal.columns
-    return normalized
-
-# === NEW MAIN CLASS ===
 class NormalizedToInput(object):
-    """
+    """Claculate the normalized relative abundance and relative occupancy.
+
     Attributes
     ----------
+    peptide_groups : obj:
+        An instance of the peptide_groups class.
     """
-    def __init__(self, raw_peptides=None, raw_proteins=None,
-                 modifications=None, genotypes=None, treatments=None):
 
-        self.peptide_groups = None
-        self.proteins = None
+    def __init__(self, parent_self):
+        """Initalize NormalizedToInput class.
+
+        Parameters
+        ----------
+        parent_self : obj:
+            The self argument of the parent class.
+        """
         try:
-            self.peptide_groups = PeptideGroups(raw_peptides)
+            self.peptide_groups = PeptideGroups(parent_self)
+
         except Exception:
-            print("Couldn't initialize PeptideGroups class.")
+            print("omin.normalize.toInput.PeptideGroups FAILED")
+
         try:
-            self.proteins = Proteins(raw_proteins)
+            self.proteins = Proteins(parent_self)
         except Exception:
-            print("Something went wrong with processing the peptide_groups class.")
+            print("omin.normalize.toInput.Proteins FAILED")
 
     def __repr__(self):
         """Show all attributes.
@@ -95,22 +70,113 @@ class NormalizedToInput(object):
 
 
 class PeptideGroups(object):
-    def __init__(self, raw_peptides=None):
-        self.input_fraction_numbers = SelectionTools.find_number_input(raw_peptides)
-        self.abundance = raw_peptides.filter(regex="Abundance:")
-        self.input = self.abundance.filter(regex="[Ii]nput")
+    """Normalize the abundance of the peptide groups.
+
+    Attributes
+    ----------
+    raw_abundance : DataFrame
+        Unfilter non-normalized abundance values.
+
+    """
+    def __init__(self, parent_self=None):
+        """Initalize PeptideGroups class.
+
+        Parameters
+        ----------
+        parent_self : obj:
+            The self argument of the parent class.
+
+        """
+        # Filter for just the Abundance columns.
+        self.raw_abundance = parent_self.raw_peptides.filter(regex="Abundance:")
+
+        # Filter the abundance columns for just input columns.
+        self.input_abundance = self.raw_abundance.filter(regex="[Ii]nput")
+
+        # Filter out the input fraction(s)
         negate_term = StringTools.regexNot("[Ii]nput")
-        self.other_fractions = self.abundance.filter(regex=negate_term)
-        self.other_fraction_numbers = list(SelectionTools.find_fractions(self.other_fractions))
+        self.ptm_abundance = self.raw_abundance.filter(regex=negate_term)
 
-class Proteins(object):
-    def __init__(self, raw_proteins=None):
+        # Create a list of the ptm containing fractions.
+        ptm_fn = list(SelectionTools.find_fractions(self.ptm_abundance))
+        self.ptm_fraction_numbers = ptm_fn
+        # Create a list of the input containing fractions
+        inp_fn = list(SelectionTools.find_fractions(self.input_abundance))
+        self.input_fraction_numbers = inp_fn
 
-        self.input_fraction_numbers = None
+        self.combos = list(itertools.product(self.ptm_fraction_numbers,
+                                             self.input_fraction_numbers))
+        self.combo_dict = dict()
+        # SINGLE INPUT METHOD
+        if parent_self._input_number == 1:
+            normalized = []
+            for n in self.combos:
+                normalized_df = normalizeTo(self.ptm_abundance.filter(regex=n[0]),
+                                            self.input_abundance.filter(regex=n[1]))
+                print("Peptide Groups", n[0], "normalized to", n[1])
 
-        # self.input_fraction_numbers = SelectionTools.find_number_input(raw_proteins)
+                normalized.append(normalized_df)
+            self.normalized_abundances = normalized
+        # MULTIPLE INPUT METHOD
+        if parent_self._input_number > 1:
+            for i in self.combos:
+                linkage = MachLink.column_simillarity(self.ptm_abundance,
+                                                      self.input_abundance,
+                                                      term_a=i[0],
+                                                      term_b=i[1])[0]
+                self.combo_dict[i] = linkage
+
+            linked_fractions = MachLink.select_top_linked(self.combo_dict, parent_self._input_number)
+
+            normalized = []
+            self.linked_fractions = linked_fractions
+            for n in linked_fractions:
+                fptm = self.ptm_abundance.filter(regex=n[0])
+                finp = self.input_abundance.filter(regex=n[1])
+                normalized_df = normalizeTo(fptm, finp)
+                normalized.append(normalized_df)
+                print(n[0], "normalized to", n[1])
+            self.normalized_abundances = normalized
 
     def __repr__(self):
         """Show all attributes.
         """
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+
+class Proteins(object):
+    """ Calculate the relative occupancy.
+
+    Attributes
+    ----------
+    raw_abundance : DataFrame
+    input_abundance : DataFrame
+
+    """
+    def __init__(self, parent_self=None):
+        """Initalize PeptideGroups class.
+
+        Parameters
+        ----------
+        parent_self : obj:
+            The self argument of the parent class.
+        """
+        # Filter for just the Abundance columns.
+        self.raw_abundance = parent_self.raw_proteins.filter(regex="Abundance:")
+
+        # Filter the abundance columns for just input columns.
+        self.input_abundance = self.raw_abundance.filter(regex="[Ii]nput")
+        # self.ps_dir = dir(parent_self.normalized.peptide_groups)
+        # # SINGLE INPUT METHOD
+        # if parent_self._input_number == 1:
+        #     normalized = []
+        #     normalized_df = normalizeTo(self.input_abundance,
+        #                                 parent_self.peptide_groups.input_abundance)
+        #     print("Proteins input fraction normalized to Peptide Groups input fraction")
+        #
+        #     normalized.append(normalized_df)
+        #     self.normalized_abundances = normalized
+
+    def __repr__(self):
+        """Show all attributes."""
         return "Attributes: "+", ".join(list(self.__dict__.keys()))

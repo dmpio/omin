@@ -48,7 +48,12 @@ def select():
     root.call('wm', 'attributes', '.', '-topmost', True)
 
     selected_files = filedialog.askopenfilename(multiple=True)
-    # print(selected_files)
+    print("Omin will attempt to process the following files:")
+    # If selected_files is a list then print then to show the user.
+    if type(selected_files) == tuple:
+        for i in selected_files:
+            print(i)
+
     return selected_files
 
 

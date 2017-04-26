@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+"""Utilites for the omin module.
 
 LICENSE
 -------
@@ -20,8 +20,6 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Utilites for the omin module.
 
 """
 
@@ -689,6 +687,11 @@ class SelectionTools(object):
     def find_plex_number(cls, dataframe):
         """Return the TMT plex number as an int.
 
+        FIXME: TMT6 and TMT10 are used interchangeablily throughout
+        Proteome Discoverer. This whole method needs to be rethought.
+        Perhaps count the number of fractions and then use that number to
+        devide by the number of abundance columns.
+
         Parameters
         ----------
         dataframe : DataFrame
@@ -697,10 +700,14 @@ class SelectionTools(object):
         -------
         plex_number : int
         """
-        mods = cls.findModifications(dataframe)
-        tmt_type = list(filter(lambda x: x.startswith("TMT"), mods))
-        plex_number = list(filter(lambda x: x.isdigit(), tmt_type[0]))
-        plex_number = int(plex_number[0])
+        # mods = cls.findModifications(dataframe)
+        # tmt_type = list(filter(lambda x: x.startswith("TMT"), mods))
+        # plex_number = list(filter(lambda x: x.isdigit(), tmt_type[0]))
+        # plex_number = int(plex_number[0])
+
+        fraction_number = len(cls.find_fractions(dataframe))
+        abundance_number = dataframe.filter(regex="Abundance:").shape[1]
+        plex_number = abundance_number/fraction_number
         return plex_number
 
     @classmethod
@@ -715,7 +722,7 @@ class SelectionTools(object):
         -------
         number_input : float
         """
-        number_input = None
+        number_input = 0.0
         try:
             plex_number = cls.find_plex_number(dataframe)
             # FIXME: Proof this against Inputase ect.
@@ -943,7 +950,9 @@ class SelectionTools(object):
 
     @staticmethod
     def alike(string_one, string_two):
-        """Return difflib.SequnceMatcher.ratio results for two strings.
+        """DEPRECATED use omin.normalize.methods.MachLink.simillarity
+
+        Return difflib.SequnceMatcher.ratio results for two strings.
 
         Parameters
         ----------
@@ -960,25 +969,28 @@ class SelectionTools(object):
 
     @classmethod
     def alikeness(cls, dataframe_a, dataframe_b, term_a, term_b):
-        """Return a list of alikenes coffients.
+        """DEPRECATED use omin.normalize.methods.MachLink.column_simillarity
+
+        Return a list of alikeness coefficients.
 
         Parameters
         ----------
         dataframe_a : DataFrame
-
         dataframe_b : DataFrame
-
         term_a : str
-
         term_b : str
 
         Returns
         -------
         cof : list
         """
-        cof = list(set(itertools.starmap(cls.alike,
-                                         zip(dataframe_a.filter(regex=term_a).columns,
-                                             dataframe_b.filter(regex=term_b).columns))))
+        # Get list of columns from dataframe_a filtered by term_a.
+        filtered_a = dataframe_a.filter(regex=term_a).columns
+        # Get list of columns from dataframe_b filtered by term_b.
+        filtered_b = dataframe_b.filter(regex=term_b).columns
+        # Create list of alikeness coefficients.
+        cof = list(set(itertools.starmap(cls.alike, zip(filtered_a,
+                                                        filtered_b))))
         return cof
 
     # === VENN DIAGRAM FUNCTIONS ===

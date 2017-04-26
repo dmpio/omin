@@ -103,6 +103,15 @@ def normalizeTo(different, normal):
     -------
     normalized : DataFrame
     """
+    # Sort the different dataframe by it's columns.
+    different_sort = different.columns.tolist()
+    different_sort.sort()
+    different = different[different_sort]
+    # Sort the normal dataframe by it's columns.
+    normal_sort = normal.columns.tolist()
+    normal_sort.sort()
+    normal = normal[normal_sort]
+    # Divide the different df by the normalization factors.
     normalized = different / normFactors(normal).as_matrix()
     normalized.columns = different.columns + ": Normalized to: " + normal.columns
     return normalized

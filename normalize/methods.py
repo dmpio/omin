@@ -157,6 +157,9 @@ class MachLink(object):
     def select_top_linked(combo_dict, numb):
         """Select a given number of keys for a combo_dict.
 
+        FIXME : This function needs to be rethought at the moment it just
+        returns all of the combinations.
+
         Parameters
         ----------
         combo_dict : dict
@@ -171,7 +174,7 @@ class MachLink(object):
             numb = int(numb)
             snumb = len(combo_dict)-numb
             linked = list(dict(sorted(combo_dict.items(),
-                                      key=itemgetter(1))[snumb:]).keys())
+                                      key=itemgetter(1))).keys())
         except Exception:
             print("omin.normalize.methods.MachLink.select_top_linked FAILED")
         return linked

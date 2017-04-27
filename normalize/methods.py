@@ -49,7 +49,9 @@ def logNormToAve(dataframe, add_to_header=None):
 
 
 def normToPool(log2_div_ave):
-    """Normalizes a DataFrame composed of a single fraction of peptide data
+    """DEPRECATED use omin.normalize.methods.compareToPool
+
+    Normalizes a DataFrame composed of a single fraction of peptide data
     that contains a single 'Control' or 'Pool' column.
 
     Notes
@@ -67,6 +69,33 @@ def normToPool(log2_div_ave):
     # Rename the columns to reflect the operations on them.
     lda_div_pool.columns = [re.sub("Log2-AVE", "Log2-AVE-Pool", i) for i in lda_div_pool.columns]
     return lda_div_pool
+
+
+def compareToPool(dataframe, pool_selector):
+    """Return a dataframe that has been compared to pool channel.
+
+    Parameters
+    ----------
+    dataframe : DataFrame
+        Generally peptide groups abundance columns
+    pool_selector : str
+        Dealers choice but it would be best to use the channel number.
+
+    Returns
+    -------
+    df_sub_pool : DataFrame
+        The dataframe that was started with with each
+    """
+    pool_channel = dataframe.filter(regex=pool_selector).copy()
+    if pool_channel.shape[1] > 1:
+        print("Selection has more than one column. Consider selecting another.")
+
+    df_sub_pool = dataframe.values - pool_channel.values
+
+    df_sub_pool = pd.DataFrame(df_sub_pool,
+                               columns=dataframe.columns+": Pool comparison to: "+pool_selector)
+
+    return df_sub_pool
 
 
 # === Input Methods ===

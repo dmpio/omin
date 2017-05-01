@@ -37,27 +37,22 @@ def select():
     selected_files: tuple
 
     """
-
     # Create Tk root
     root = Tk()
-
     # Hide the main window
     root.withdraw()
-
     # Raise the root to the top of all windows.
     root.call('wm', 'attributes', '.', '-topmost', True)
-
     selected_files = filedialog.askopenfilename(multiple=True)
     print("Omin will attempt to process the following files:")
     # If selected_files is a list then print then to show the user.
     if type(selected_files) == tuple:
         for i in selected_files:
             print(i)
-
     return selected_files
 
 
-def selectInputPD(process_type = None):
+def selectInputPD(process_type=None):
     """
     Parameters
     ----------
@@ -68,8 +63,7 @@ def selectInputPD(process_type = None):
     output : obj
         Whatever type of object that the user defines.
     """
-
-    if process_type == None:
+    if process_type is None:
         process_type = select_process()
 
     pd_result_files = select()

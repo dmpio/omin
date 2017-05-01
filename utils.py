@@ -221,13 +221,20 @@ class StringTools(object):
 
         Parameters
         ----------
-        term : str
+        term : str or list
 
         Returns
         -------
         results : str
         """
-        results = "^(?!.*"+term+").*$"
+        results = None
+        if type(term) == str:
+            results = "^(?!.*"+term+").*$"
+
+        if type(term) == list:
+            ored = "({})".format("|".join(term))
+            results = "^(?!.*{}).*$".format(ored)
+
         return results
 
     @staticmethod
@@ -600,6 +607,26 @@ class SelectionTools(object):
 
         out_dataframe = pd.concat(df_list, axis=1)
         return out_dataframe
+
+    @staticmethod
+    def filter_out(dataframe, regex):
+        """Return a dataframe with [a] regex(es) filtered out_dataframe.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        regex : str or list
+
+        Returns
+        -------
+        result : DataFrame
+        """
+        # Create a single negate term out of regex.
+        negate_term = StringTools.regexNot(regex)
+        # Use the pandas filter method to filter out columns with regex.
+        result = dataframe.filter(regex=negate_term)
+        return result
 
 # === MODIFICATION ISOLATION/CLASSIFICATION TOOLS ===
 

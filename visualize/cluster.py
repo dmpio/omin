@@ -79,6 +79,7 @@ def dendro_heatmap(dataframe, figsize=None, cmap=None, fig_title=None,
     # Make a dendrogram from the linkage object.
     den0 = dendrogram(linkmat)
 
+
     if fig_title is not None:
         fig.suptitle(fig_title)
 

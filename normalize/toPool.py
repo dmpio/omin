@@ -26,6 +26,9 @@ from scipy.stats import ttest_ind
 from ..utils import StringTools
 from ..utils import SelectionTools
 
+# FIXME: Add the functions below to the methods file in this directory.
+# FIXME: Delete the functions below.
+# FIXME: Make the class below use the compareToPool method.
 
 def logNormToAve(pepdf):
     """Takes a DataFrame composed of a fraction of peptide abundances and then

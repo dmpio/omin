@@ -65,7 +65,6 @@ from . import stats
 from . import visualize
 from . import export
 from . import databases
-from . import compare
 from . import gui
 
 if sys.version_info[0] >= 3:

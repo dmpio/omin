@@ -21,12 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-# import re
-# import pandas as pd
-# import numpy as np
-# from scipy.stats import ttest_ind
 import itertools
-from operator import itemgetter
+# from operator import itemgetter
 from omin.utils import StringTools
 from omin.utils import SelectionTools
 from omin.normalize.methods import normFactors

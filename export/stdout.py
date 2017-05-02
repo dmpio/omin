@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files, Omics Modeling Integrating
@@ -19,5 +19,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from . import output
-from .stdout import StdOut
+import pandas as pd
+from ..gui import save
+from ..utils import objectWalker
+from ..utils import StringTools
+
+
+class StdOut(object):
+    """omin's canonical output handler"""
+
+    def __init__(self,
+                 the_object=None,
+                 dir_name=None):
+
+        self.df_list = objectWalker(self.obj, "dataframe")

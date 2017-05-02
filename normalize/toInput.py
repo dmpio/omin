@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Normalization to input classes and functions
+"""Normalization to input classes and functions.
 
 LICENSE:
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
@@ -72,8 +72,8 @@ class PeptideGroups(object):
     ----------
     raw_abundance : DataFrame
         Unfilter non-normalized abundance values.
-
     """
+
     def __init__(self, parent_self=None):
         """Initalize PeptideGroups class.
 
@@ -141,14 +141,14 @@ class PeptideGroups(object):
 
 
 class Proteins(object):
-    """ Calculate the relative occupancy.
+    """Calculate the relative occupancy.
 
     Attributes
     ----------
     raw_abundance : DataFrame
     input_abundance : DataFrame
-
     """
+
     def __init__(self, parent_self=None):
         """Initalize PeptideGroups class.
 
@@ -162,16 +162,6 @@ class Proteins(object):
 
         # Filter the abundance columns for just input columns.
         self.input_abundance = self.raw_abundance.filter(regex="[Ii]nput")
-        # self.ps_dir = dir(parent_self.normalized.peptide_groups)
-        # # SINGLE INPUT METHOD
-        # if parent_self._input_number == 1:
-        #     normalized = []
-        #     normalized_df = normalizeTo(self.input_abundance,
-        #                                 parent_self.peptide_groups.input_abundance)
-        #     print("Proteins input fraction normalized to Peptide Groups input fraction")
-        #
-        #     normalized.append(normalized_df)
-        #     self.normalized_abundances = normalized
 
     def __repr__(self):
         """Show all attributes."""

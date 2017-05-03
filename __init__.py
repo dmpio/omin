@@ -5,11 +5,10 @@ Omin
 ====
 
 Provides
---------
-Aims to provide the following for omics data.
-  1. Normalization
-  2. Visualiazion
-  3. Investigation
+
+  1. Rapid normalization of proteomics data.
+  2. State of the art visualiazion tools for proteomics data.
+  3. Interactive web ready objects for investigation of omics data.
 
 How to use the documentation
 ----------------------------
@@ -58,6 +57,9 @@ import sys
 import warnings
 
 from . import utils
+from .utils import StringTools
+from .utils import SelectionTools
+from .utils import IOTools
 from . import core
 from .core.handles import *
 from . import normalize

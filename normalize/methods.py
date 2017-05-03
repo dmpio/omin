@@ -148,7 +148,10 @@ def normalizeTo(different, normal):
 
 # MACHINE LEARNING LINKAGE METHODS
 class MachLink(object):
-    """Machine learning based DataFrame linkage methods."""
+    """Machine learning based DataFrame linkage methods.
+
+    This class will most likely be DEPRECATED
+    """
 
     @staticmethod
     def simillarity(string_one, string_two):

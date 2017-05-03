@@ -972,6 +972,7 @@ class SelectionTools(object):
         else:
             mpa = cls.masterPep(cls.manyModSel(peptides, mods)[-1])
 
+
         fdrdf = pd.DataFrame(fdr.Accession, index=fdr.index)
 
         peptide_select = mpa.merge(fdrdf, on="Accession",

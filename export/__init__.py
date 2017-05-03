@@ -20,4 +20,4 @@ SOFTWARE.
 """
 
 from . import output
-from . import excellor
+from .stdout import StdOut

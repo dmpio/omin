@@ -26,6 +26,7 @@ SOFTWARE.
 import os
 import pickle
 import re
+import string
 import itertools
 import num2words
 from datetime import datetime
@@ -95,7 +96,7 @@ def objectWalker(obj, desired_type=None, att_list=None):
     if att_list is None:
         att_list = []
 
-    # Create list of types that we do not want you serch through
+    # Create list of types that we do not want to search through.
     no_list = dir(__builtins__)
     no_list.append("DataFrame")
     desired_type = desired_type or "DataFrame"
@@ -315,6 +316,12 @@ class StringTools(object):
         washed = word_separator.join(new_phrase)
         return washed
 
+    @staticmethod
+    def remove_punctuation(start_str):
+        """Remove punctuation from a given string."""
+        table = str.maketrans({key: None for key in string.punctuation})
+        non_punct = start_str.translate(table)
+        return non_punct
 # === Selection tools ===
 
 
@@ -1244,6 +1251,29 @@ class SelectionTools(object):
                     )
             while contin == "n":
                 return out_list
+
+
+class IOTools(object):
+    """Tools for file handling and dir building."""
+
+    @staticmethod
+    def mkdir(directory):
+        """Create a directory.
+
+        Parameters
+        ----------
+        directory : str
+        """
+        assert type(directory) == str
+        directory = StringTools.remove_punctuation(directory)
+        directory = directory.replace(" ", "_")
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            print(directory, "is ready.")
+
+        else:
+            print(directory, "already exists.")
+
 # Testing
 
 if __name__ == "__main__":

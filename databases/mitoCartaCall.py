@@ -101,7 +101,8 @@ def mitoCartaPepOut(obj=None, mods=None, dex=False):
     >>>mitodex,nonmitodex = mitoCartaPepOut(raw_object,dex=True)
 
     """
-    mods = mods or ["Acetyl", "Phospho"]
+
+    # mods = mods or ["Acetyl", "Phospho"]
 
     try:
         rx = re.compile("[Pp]eptides")

@@ -142,7 +142,9 @@ def normalizeTo(different, normal):
     normal = normal[normal_sort]
     # Divide the different df by the normalization factors.
     normalized = different / normFactors(normal).as_matrix()
-    normalized.columns = different.columns + ": Normalized to: " + normal.columns
+    # normalized.columns = different.columns + ": Normalized to: " + normal.columns
+    normalized.columns = different.columns + ": Normalized to: "
+    normalized.columns.union(normal.columns)
     return normalized
 
 

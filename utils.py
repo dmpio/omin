@@ -967,7 +967,7 @@ class SelectionTools(object):
         fdr = cls.masterOne(proteins)
         if len(mods) == 0:
             mpa = cls.masterPep(peptides)
-        if len(mods) == 1:
+        elif len(mods) == 1:
             mpa = cls.masterPep(cls.manyModSel(peptides, mods)[0])
         else:
             mpa = cls.masterPep(cls.manyModSel(peptides, mods)[-1])

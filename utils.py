@@ -972,7 +972,6 @@ class SelectionTools(object):
         else:
             mpa = cls.masterPep(cls.manyModSel(peptides, mods)[-1])
 
-
         fdrdf = pd.DataFrame(fdr.Accession, index=fdr.index)
 
         peptide_select = mpa.merge(fdrdf, on="Accession",
@@ -1266,15 +1265,15 @@ class IOTools(object):
         directory : str
         """
         assert type(directory) == str
-        directory = StringTools.remove_punctuation(directory)
+        # directory = StringTools.remove_punctuation(directory)
         directory = directory.replace(" ", "_")
         if not os.path.exists(directory):
             os.makedirs(directory)
-            print(directory, "is ready.")
-
+            # print(directory, "is ready.")
+            return directory
         else:
-            print(directory, "already exists.")
-
+            # print(directory, "already exists.")
+            return directory
 # Testing
 
 if __name__ == "__main__":

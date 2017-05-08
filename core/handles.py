@@ -24,7 +24,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+import re
 import pandas as pd
 from omin.utils import SelectionTools
 from omin.normalize.toPool import NormalizedToPool
@@ -32,7 +32,7 @@ from omin.normalize.toInput import NormalizedToInput
 from omin.databases import mitoCartaCall
 
 
-# FIXME: Define varibles used at the highest possible class level.
+# FIXME: Define varibles used at the lowest possible class level.
 # FIXME: Store each handle class as SQLite database in same parent dir.
 
 class RawData(object):
@@ -48,7 +48,7 @@ class RawData(object):
     _numbers : tuple
     """
 
-    def __init__(self, peptides_file, proteins_file):
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None):
         """Load data for peptides_file and proteins_file as pandas DataFrames.
 
         Note
@@ -59,6 +59,8 @@ class RawData(object):
 
         Parameters
         ----------
+        file_list : list
+            A list of files.
         peptides_file : str
             Name of Proteome Discoverer Peptides file as string.
         proteins_file : str
@@ -76,6 +78,13 @@ class RawData(object):
         """
         # FIXME: Add type checking.
         # FIXME: Add more try and excepts but try to put them on function level
+        if file_list is not None:
+            rx = re.compile("[Pp]eptide")
+
+            peptides_file = list(filter(rx.findall, file_list))[0]
+
+            rx = re.compile("[Pp]roteins")
+            proteins_file = list(filter(rx.findall, file_list))[0]
 
         # Load your peptide groups file as a pandas DataFrame.
         self.raw_peptides = pd.read_csv(peptides_file,
@@ -121,8 +130,8 @@ class PreProcess(RawData):
 
     """Handles Proteome Discoverer search results.
     """
-    def __init__(self, peptides_file, proteins_file, modifications=None,
-                 genotype=None, treatments=None):
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None,
+                 modifications=None):
         """Initalize instance of PreProcess class.
 
         Parameters
@@ -133,13 +142,10 @@ class PreProcess(RawData):
             The location of peptide groups file.
         modifications : list
             List of derived or given modifications.
-        genotype : list
-            List of given genotypes. May be DEPRICATED in future.
-        treatments: list
-            List of given treatments. May be DEPRICATED in future.
         """
         # Initalize the RawData base class.
-        super(PreProcess, self).__init__(peptides_file, proteins_file)
+        super(PreProcess, self).__init__(file_list, peptides_file,
+                                         proteins_file)
         # Find invivo modifications
         self._invivo_modifications = SelectionTools.findInVivoModifications(self.raw_peptides)
         # Set modifications with given or derived.
@@ -194,8 +200,8 @@ class Process(PreProcess):
     omin.utils.SelectionTools.masterCleanse
     """
 
-    def __init__(self, peptides_file, proteins_file, modifications=None,
-                 genotype=None, treatments=None):
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None,
+                 modifications=None):
         """Initalize Process class.
 
         Parameters
@@ -206,13 +212,9 @@ class Process(PreProcess):
             The location of peptide groups file.
         modifications : list
             List of derived or given modifications.
-        genotype : list
-            List of given genotypes. May be DEPRICATED in future.
-        treatments: list
-            List of given treatments. May be DEPRICATED in future.
         """
         self.normalized = None
-        super(Process, self).__init__(peptides_file, proteins_file)
+        super(Process, self).__init__(file_list, peptides_file, proteins_file)
 
         # FIXME: Make the selection more specifically target abundance columns
         if self._input_number > 0:

@@ -1,34 +1,30 @@
-"""jupyter notebook gui."""
-
+import traitlets
 from ipywidgets import widgets
 from IPython.display import display
 from tkinter import Tk, filedialog
 
-class OminNotebook(object):
 
+class SelectFilesButton(widgets.Button):
+    """A file widget that leverages tkinter.filedialog."""
     def __init__(self):
-        # Create the select_files_button.
-        self.select_files_button = widgets.Button(description="Select Files", icon="file-text-o")
-        self.select_files_button.style.button_color = "orange"
-        # Create value attribute of select_files_button.
-        setattr(self.select_files_button, "value", None)
+        super(SelectFilesButton, self).__init__()
+        # Add the selected_files trait
+        self.add_traits(files=traitlets.traitlets.List())
+        # Create the button.
+        self.description = "Select Files"
+        self.icon = "square-o"
+        self.style.button_color = "orange"
         # Set on click behavior.
-        self.select_files_button.on_click(self.select_files)
-
-        # Select processing style.
-        self.process_select = widgets.Select(
-            options=['RawData', 'PreProcess', 'Process'],
-            value='Process',
-            description='Select Process:',
-            disabled=False)
-
-        # Run button
-        self.run_button = widgets.Button(description="RUN!",icon="rocket")
-        self.run_button.style.button_color = "lightgreen"
+        self.on_click(self.select_files)
 
     @staticmethod
     def select_files(b):
         """Generate instance of tkinter.filedialog.
+
+        Parameters
+        ----------
+        b : obj:
+            An instance of ipywidgets.widgets.Button
         """
         # Create Tk root
         root = Tk()
@@ -36,11 +32,9 @@ class OminNotebook(object):
         root.withdraw()
         # Raise the root to the top of all windows.
         root.call('wm', 'attributes', '.', '-topmost', True)
-        files = filedialog.askopenfilename(multiple=True)
-        b.value = files
+        # List of selected fileswill be set to b.value
+        b.files = filedialog.askopenfilename(multiple=True)
 
-    def __repr__(self):
-        display(self.select_files_button,
-                self.process_select,
-                self.run_button)
-        return ""
+        b.description = "Files Selected"
+        b.icon = "check-square-o"
+        b.style.button_color = "lightgreen"

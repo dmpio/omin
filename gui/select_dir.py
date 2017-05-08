@@ -19,9 +19,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from . import select_files
-from . import save
-from . import select_process
-from . import notebook
-from .notebook import SelectFilesButton
-from .select_dir import select_dir
+from tkinter import Tk, filedialog
+
+
+def select_dir():
+    """Generate instance of tkinter.filedialog.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    selected_files: tuple
+
+    """
+
+    # Create Tk root
+    root = Tk()
+
+    # Hide the main window
+    root.withdraw()
+
+    # Raise the root to the top of all windows.
+    root.call('wm', 'attributes', '.', '-topmost', True)
+
+    selected_dir = filedialog.askdirectory()
+    return selected_dir
+
+if __name__ == "__main__":
+    fn = select_dir()
+    print(fn)

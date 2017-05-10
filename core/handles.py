@@ -35,9 +35,14 @@ from omin.databases import mitoCartaCall
 # FIXME: Define varibles used at the lowest possible class level.
 # FIXME: Store each handle class as SQLite database in same parent dir.
 
+class Handle(object):
+    """The core omin handle base class."""
+
+    def __init__(self):
+        pass
+
 class RawData(object):
-    """
-    Converts Proteome Discoverer .txt files into pandas DataFrames.
+    """Converts Proteome Discoverer .txt files into pandas DataFrames.
 
     Attributes
     ----------

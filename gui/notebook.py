@@ -20,7 +20,7 @@ SOFTWARE.
 """
 
 import traitlets
-from IPython import display
+from IPython.display import display
 from ipywidgets import widgets
 from tkinter import Tk, filedialog
 

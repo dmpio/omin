@@ -31,17 +31,51 @@ from omin.normalize.toPool import NormalizedToPool
 from omin.normalize.toInput import NormalizedToInput
 from omin.databases import mitoCartaCall
 
-
 # FIXME: Define varibles used at the lowest possible class level.
 # FIXME: Store each handle class as SQLite database in same parent dir.
+# FIXME: Add type checking.
+# FIXME: Add more try and excepts but try to put them on function level
 
 class Handle(object):
     """The core omin handle base class."""
 
     def __init__(self):
+        """Initalize the core handle."""
+        # Basically a blank class.
         pass
 
-class RawData(object):
+
+class ProteomeDiscovererRaw(Handle):
+    """Base class for Proteome Discoverer raw files."""
+
+    def __init__(self, raw_data):
+        """Initalize base class for Proteome Discoverer raw files."""
+        super(ProteomeDiscovererRaw, self).__init__()
+        self.raw = raw_data.copy()
+        self.abundance = self.raw.filter(regex="Abundance:")
+
+    def __repr__(self):
+        """Show all attributes."""
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+
+class PeptideGroups(ProteomeDiscovererRaw):
+    """Base class for Peptide Groups."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the base class."""
+        super(PeptideGroups, self).__init__(*args, **kwargs)
+
+
+class Proteins(ProteomeDiscovererRaw):
+    """Base class for Proteins."""
+
+    def __init__(self, *args, **kwargs):
+        """Initalize the base class."""
+        super(Proteins, self).__init__(*args, **kwargs)
+
+
+class RawData(Handle):
     """Converts Proteome Discoverer .txt files into pandas DataFrames.
 
     Attributes
@@ -55,12 +89,6 @@ class RawData(object):
 
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None):
         """Load data for peptides_file and proteins_file as pandas DataFrames.
-
-        Note
-        ----
-        Please make sure that your files are in your current working directory.
-        If you are working in jupyter notebook put copy your peptides groups
-        and proteins files in the same directory as the notebook file.
 
         Parameters
         ----------
@@ -81,8 +109,7 @@ class RawData(object):
         >>>raw_data = RawData(peptides_file,proteins_file)
 
         """
-        # FIXME: Add type checking.
-        # FIXME: Add more try and excepts but try to put them on function level
+        super(RawData, self).__init__()
         if file_list is not None:
             rx = re.compile("[Pp]eptide")
 
@@ -99,6 +126,9 @@ class RawData(object):
         self.raw_proteins = pd.read_csv(proteins_file,
                                         delimiter="\t",
                                         low_memory=False)
+
+        self.peptide_groups = PeptideGroups(raw_data=self.raw_peptides)
+        self.proteins = Proteins(raw_data=self.raw_proteins)
         # Store the shape of the respective DataFrames.
         self._numbers = (self.raw_peptides.shape, self.raw_proteins.shape)
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
 # Blair Chesnut, and Elizabeth Hauser.
 
@@ -55,6 +54,19 @@ class PeptideGroups(ProteomeDiscovererRaw):
     def __init__(self, *args, **kwargs):
         """Initialize the base class."""
         super(PeptideGroups, self).__init__(*args, **kwargs)
+        # Find invivo modifications.
+        in_vivo_mods = SelectionTools.findInVivoModifications(self.raw)
+        # Declare varible
+        self._in_vivo_modifications = []
+        # Check if None.
+        if in_vivo_mods is not None:
+            # If the list is greater than zero then set varible.
+            if len(in_vivo_mods) > 0:
+                self._in_vivo_modifications = in_vivo_mods
+            else:
+                pass
+        else:
+            pass
 
 
 class Proteins(ProteomeDiscovererRaw):

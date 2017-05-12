@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+Blair Chesnut, and Elizabeth Hauser.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files, Omics Modeling Integrating
@@ -17,12 +16,3 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
-
-from . import select_files
-from . import save
-from . import select_process
-from . import notebook
-from .notebook import OminNotebook
-from .notebook import SelectFilesButton
-from .select_dir import select_dir

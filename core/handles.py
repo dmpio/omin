@@ -1,29 +1,22 @@
 # -*- coding: utf-8 -*-
+# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+# Blair Chesnut, and Elizabeth Hauser.
+
 """Omin core handles.
 
 Handle in this context is a class composed of several pandas DataFrames, and
 other varibles that are either derived from the DataFrames or provided by the
 user.
 
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-Blair Chesnut, and Elizabeth Hauser.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files, Omics Modeling Integrating
-Normalization (OMIN), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish, distribute,
-sublicense, and/or sell copies of the Software, and to permit persons to whom
-the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 """
+
+# FIXME: Investigate a SQLite/Json file stradegy.
+# FIXME: Store each handle class as SQLite database in same parent dir.
+# FIXME: Define varibles used at the lowest possible class level.
+# FIXME: Add type checking.
+# FIXME: Add more try and excepts but try to put them on function level
+# FIXME: Include paragraph description of the types of filtering.
+
 import re
 import pandas as pd
 from omin.utils import SelectionTools
@@ -32,12 +25,60 @@ from omin.normalize.toInput import NormalizedToInput
 from omin.databases import mitoCartaCall
 
 
-# FIXME: Define varibles used at the lowest possible class level.
-# FIXME: Store each handle class as SQLite database in same parent dir.
+class Handle(object):
+    """The core omin handle base class."""
 
-class RawData(object):
-    """
-    Converts Proteome Discoverer .txt files into pandas DataFrames.
+    def __init__(self):
+        """Initalize the core handle."""
+        # Basically a blank class.
+        pass
+
+
+class ProteomeDiscovererRaw(Handle):
+    """Base class for Proteome Discoverer raw files."""
+
+    def __init__(self, raw_data):
+        """Initalize base class for Proteome Discoverer raw files."""
+        super(ProteomeDiscovererRaw, self).__init__()
+        self.raw = raw_data.copy()
+        self.abundance = self.raw.filter(regex="Abundance:")
+
+    def __repr__(self):
+        """Show all attributes."""
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+
+class PeptideGroups(ProteomeDiscovererRaw):
+    """Base class for Peptide Groups."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the base class."""
+        super(PeptideGroups, self).__init__(*args, **kwargs)
+        # Find invivo modifications.
+        in_vivo_mods = SelectionTools.findInVivoModifications(self.raw)
+        # Declare varible
+        self._in_vivo_modifications = []
+        # Check if None.
+        if in_vivo_mods is not None:
+            # If the list is greater than zero then set varible.
+            if len(in_vivo_mods) > 0:
+                self._in_vivo_modifications = in_vivo_mods
+            else:
+                pass
+        else:
+            pass
+
+
+class Proteins(ProteomeDiscovererRaw):
+    """Base class for Proteins."""
+
+    def __init__(self, *args, **kwargs):
+        """Initalize the base class."""
+        super(Proteins, self).__init__(*args, **kwargs)
+
+
+class RawData(Handle):
+    """Converts Proteome Discoverer .txt files into pandas DataFrames.
 
     Attributes
     ----------
@@ -50,12 +91,6 @@ class RawData(object):
 
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None):
         """Load data for peptides_file and proteins_file as pandas DataFrames.
-
-        Note
-        ----
-        Please make sure that your files are in your current working directory.
-        If you are working in jupyter notebook put copy your peptides groups
-        and proteins files in the same directory as the notebook file.
 
         Parameters
         ----------
@@ -76,8 +111,7 @@ class RawData(object):
         >>>raw_data = RawData(peptides_file,proteins_file)
 
         """
-        # FIXME: Add type checking.
-        # FIXME: Add more try and excepts but try to put them on function level
+        super(RawData, self).__init__()
         if file_list is not None:
             rx = re.compile("[Pp]eptide")
 
@@ -94,6 +128,9 @@ class RawData(object):
         self.raw_proteins = pd.read_csv(proteins_file,
                                         delimiter="\t",
                                         low_memory=False)
+        # Load the RawData into their respective classes.
+        self.peptide_groups = PeptideGroups(raw_data=self.raw_peptides)
+        self.proteins = Proteins(raw_data=self.raw_proteins)
         # Store the shape of the respective DataFrames.
         self._numbers = (self.raw_peptides.shape, self.raw_proteins.shape)
 
@@ -120,7 +157,6 @@ class PreProcess(RawData):
 
     Notes
     -----
-    FIXME: Include paragraph description of the types of filtering.
 
     See Also
     --------

@@ -1,29 +1,23 @@
 # -*- coding: utf-8 -*-
+
+# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+# Blair Chesnut, and Elizabeth Hauser.
+
 """Omin core handles.
 
 Handle in this context is a class composed of several pandas DataFrames, and
 other varibles that are either derived from the DataFrames or provided by the
 user.
 
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-Blair Chesnut, and Elizabeth Hauser.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files, Omics Modeling Integrating
-Normalization (OMIN), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish, distribute,
-sublicense, and/or sell copies of the Software, and to permit persons to whom
-the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 """
+
+# FIXME: Investigate a SQLite/Json file stradegy.
+# FIXME: Store each handle class as SQLite database in same parent dir.
+# FIXME: Define varibles used at the lowest possible class level.
+# FIXME: Add type checking.
+# FIXME: Add more try and excepts but try to put them on function level
+# FIXME: Include paragraph description of the types of filtering.
+
 import re
 import pandas as pd
 from omin.utils import SelectionTools
@@ -31,10 +25,6 @@ from omin.normalize.toPool import NormalizedToPool
 from omin.normalize.toInput import NormalizedToInput
 from omin.databases import mitoCartaCall
 
-# FIXME: Define varibles used at the lowest possible class level.
-# FIXME: Store each handle class as SQLite database in same parent dir.
-# FIXME: Add type checking.
-# FIXME: Add more try and excepts but try to put them on function level
 
 class Handle(object):
     """The core omin handle base class."""
@@ -126,7 +116,7 @@ class RawData(Handle):
         self.raw_proteins = pd.read_csv(proteins_file,
                                         delimiter="\t",
                                         low_memory=False)
-
+        # Load the RawData into their respective classes.
         self.peptide_groups = PeptideGroups(raw_data=self.raw_peptides)
         self.proteins = Proteins(raw_data=self.raw_proteins)
         # Store the shape of the respective DataFrames.
@@ -155,7 +145,6 @@ class PreProcess(RawData):
 
     Notes
     -----
-    FIXME: Include paragraph description of the types of filtering.
 
     See Also
     --------

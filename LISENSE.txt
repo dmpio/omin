@@ -1,4 +1,5 @@
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+Blair Chesnut, and Elizabeth Hauser.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files, Omics Modeling Integrating

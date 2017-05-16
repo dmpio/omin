@@ -32,11 +32,10 @@ __version__
     omin version string
 """
 
-from __future__ import division, absolute_import, print_function
-
+import os
 import sys
+# from __future__ import division, absolute_import, print_function
 # import warnings
-
 from . import utils
 from .utils import StringTools
 from .utils import SelectionTools
@@ -57,3 +56,6 @@ else:
     from __builtin__ import bool, int, float, complex, object, unicode, str
 
 __docformat__ = 'restructuredtext'
+
+
+__dir_path__ = os.path.dirname(os.path.realpath(__file__))

@@ -43,6 +43,7 @@ this_dir, _ = os.path.split(__file__)
 # Load the modifications dictionary.
 mod_dict_local = "/databases/mod_dict.p"
 
+# If using windows replace "/" with "\\"
 if os.name == "nt":
     mod_dict_local = mod_dict_local.replace("/", "\\")
 
@@ -770,44 +771,6 @@ class SelectionTools(object):
         except Exception:
             print("utils.SelectionTools.find_number_input failed")
         return number_input
-
-# === MultiIndex method ===
-    @staticmethod
-    def superGroup(dataframe=None, new_level=None):
-        """Returns a multiindexed DataFrame with the top index named new_level.
-
-        Parameters
-        ----------
-        dataframe : DataFrame
-        new_level : str
-
-        Returns
-        -------
-        out_df : DataFrame
-
-        """
-        if type(dataframe.columns) == pd.indexes.base.Index:
-            out_df = pd.DataFrame(dataframe.values, index=dataframe.index,
-                                  columns=pd.MultiIndex.from_product([[new_level],dataframe.columns]))
-            return out_df
-        if type(dataframe.columns) == pd.indexes.multi.MultiIndex:
-            if len(dataframe.columns.levels[0]) < 1:
-                levels = [list(i.values) for i in dataframe.columns.levels]
-                levels = [[new_level]] + levels
-                out_df = pd.DataFrame(
-                    dataframe.values, index=dataframe.index,
-                    columns=pd.MultiIndex.from_arrays(levels))
-                return out_df
-            else:
-                levels = [[new_level]] + [list(i.values)
-                                          for i in dataframe.columns.levels]
-                labels = [list(i) for i in dataframe.columns.labels]
-                new_list = list(np.linspace(0, 0, len(labels[-1]), dtype=int))
-                labels = [new_list] + labels
-                multi = pd.MultiIndex(levels, labels)
-                out_df = pd.DataFrame(
-                    dataframe.values, index=dataframe.index, columns=multi)
-                return out_df
 
     # === FILTERING FUNCTIONS ===
 

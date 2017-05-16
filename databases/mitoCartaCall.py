@@ -25,16 +25,9 @@ import pandas as pd
 import numpy as np
 from ..utils import SelectionTools
 
-# Load this directory
+# Create a string from the local copy of the MitoCarta2.0 xlsx file.
 this_dir, _ = os.path.split(__file__)
-
-# Add the selected file.
-mitocarta_local = "/MitoCarta2.0_Mouse.xlsx"
-
-if os.name == "nt":
-    mitocarta_local = mitocarta_local.replace("/", "\\")
-
-carta_file_path = this_dir + mitocarta_local
+carta_file_path = os.path.join(this_dir, "MitoCarta2.0_Mouse.xlsx")
 
 # load MitoCarta2
 mitodf = pd.read_excel(carta_file_path)

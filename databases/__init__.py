@@ -18,6 +18,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+# import os
+import pickle
 from . import routines
 from . import mitoCartaCall
+
+# __mitodf_loc = os.path.join(os.path.split(__file__)[0], "mitodf.pickle")
+#
+# mitodf = pickle.load(open(__mitodf_loc, "rb"))

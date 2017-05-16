@@ -29,7 +29,12 @@ from ..utils import SelectionTools
 this_dir, _ = os.path.split(__file__)
 
 # Add the selected file.
-carta_file_path = this_dir + "\MitoCarta2.0_Mouse.xlsx"
+mitocarta_local = "/MitoCarta2.0_Mouse.xlsx"
+
+if os.name == "nt":
+    mitocarta_local = mitocarta_local.replace("/", "\\")
+
+carta_file_path = this_dir + mitocarta_local
 
 # load MitoCarta2
 mitodf = pd.read_excel(carta_file_path)

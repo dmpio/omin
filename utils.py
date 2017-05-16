@@ -41,7 +41,12 @@ import pandas as pd
 this_dir, _ = os.path.split(__file__)
 
 # Load the modifications dictionary.
-modification_terms = pickle.load(open(this_dir+"\databases\mod_dict.p", "rb"))
+mod_dict_local = "/databases/mod_dict.p"
+
+if os.name == "nt":
+    mod_dict_local = mod_dict_local.replace("/", "\\")
+
+modification_terms = pickle.load(open(this_dir+mod_dict_local, "rb"))
 
 # FIXME: Add try and except to most if not all functions. NO MORE QUITE FAILS!
 # FIXME: DEPRECATE OLD FUNCTIONS

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+"""Tools for making selections on DataFrames"""
 # LICENSE
 # -------
 
@@ -22,6 +22,18 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import numpy as np
+
+
+this_dir, _ = os.path.split(__file__)
+
+# Load the modifications dictionary.
+mod_dict_local = "/databases/mod_dict.p"
+
+# If using windows replace "/" with "\\"
+if os.name == "nt":
+    mod_dict_local = mod_dict_local.replace("/", "\\")
+
+modification_terms = pickle.load(open(this_dir+mod_dict_local, "rb"))
 
 
 class SelectionTools(object):

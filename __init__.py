@@ -58,7 +58,7 @@ import os
 import sys
 # from __future__ import division, absolute_import, print_function
 # import warnings
-from . import utils
+# from . import utils
 from .utils import StringTools
 from .utils import SelectionTools
 from .utils import IOTools

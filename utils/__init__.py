@@ -35,19 +35,3 @@ from .selection_tools import SelectionTools
 from .io_tools import IOTools
 from .object_tools import inspectObject
 from .object_tools import objectWalker
-
-# LIST OF IMPORTS FROM utils.py file
-
-# import os
-# import pickle
-# import re
-# import string
-# import itertools
-# import num2words
-# from datetime import datetime
-# from urllib.error import HTTPError
-# from urllib.request import urlopen
-# from difflib import SequenceMatcher
-# from operator import itemgetter
-# import numpy as np
-# import pandas as pd

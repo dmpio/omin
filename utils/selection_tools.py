@@ -28,20 +28,22 @@ import itertools
 import numpy as np
 import pandas as pd
 from difflib import SequenceMatcher
-
 from .string_tools import StringTools
+from ..pathfinder import find_path
 
 
-this_dir, _ = os.path.split(__file__)
+# this_dir, _ = os.path.split(__file__)
+#
+# # Load the modifications dictionary.
+# mod_dict_local = "/databases/mod_dict.p"
+#
+# # If using windows replace "/" with "\\"
+# if os.name == "nt":
+#     mod_dict_local = mod_dict_local.replace("/", "\\")
+#
+mod_dict_local = os.path.join(find_path(), "databases", "mod_dict.p")
 
-# Load the modifications dictionary.
-mod_dict_local = "/databases/mod_dict.p"
-
-# If using windows replace "/" with "\\"
-if os.name == "nt":
-    mod_dict_local = mod_dict_local.replace("/", "\\")
-
-modification_terms = pickle.load(open(this_dir+mod_dict_local, "rb"))
+modification_terms = pickle.load(open(mod_dict_local, "rb"))
 
 
 class SelectionTools(object):

@@ -53,12 +53,10 @@ __version__
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
+from __future__ import division, absolute_import, print_function
 import os
 import sys
-# from __future__ import division, absolute_import, print_function
-# import warnings
-# from . import utils
+import warnings
 from .utils import StringTools
 from .utils import SelectionTools
 from .utils import IOTools
@@ -70,6 +68,7 @@ from . import visualize
 from . import export
 from . import databases
 from . import gui
+from . import pathfinder
 
 if sys.version_info[0] >= 3:
     from builtins import bool, int, float, complex, object, str
@@ -79,5 +78,4 @@ else:
 
 __docformat__ = 'restructuredtext'
 
-
-__dir_path__ = os.path.dirname(os.path.realpath(__file__))
+# __dir_path__ = os.path.dirname(os.path.realpath(__file__))

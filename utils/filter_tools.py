@@ -22,12 +22,13 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import pandas as pd
 
 class FilterTools(object):
 
-    @staticmethod
+    @classmethod
     def master_cleanse(cls, protein_df):
-        """Filters raw protein DataFrame for master proteins.
+        """Filter raw protein DataFrame for master proteins.
 
         The raw protein data from Proteome Discoverer there is a column with
         the title 'Master' this funtion scans through that column and selects
@@ -84,7 +85,6 @@ class FilterTools(object):
 
     @classmethod
     def master_one(cls, protein_df):
-
         """Takes a raw protein DataFrame and filters it using first the
         'master_cleanse' function and 'one_percent_expq' function.
 
@@ -159,12 +159,12 @@ class FilterTools(object):
         return mpa
 
     @classmethod
-    def vLook(cls, peptides=None, proteins=None, mods=None,):
-        """Returns a tuple of selected peptides and proteins.
+    def vLook(cls, peptides=None, proteins=None):
+        """Return a tuple of selected peptides and proteins.
 
-        Takes raw peptides and protiens returns a tuple of selected peptides and
-        proteins. The function can also select for a sigle modification or many
-        modifications.
+        Takes raw peptides and protiens returns a tuple of selected peptides
+        and proteins. The function can also select for a sigle modification or
+        many modifications.
 
         Parameters
         ----------
@@ -176,28 +176,9 @@ class FilterTools(object):
         -------
         peptide_select : DataFrame
         protein_select : DataFrame
-
-        Examples
-        --------
-        >>>peptide_select,protein_select = vLook(raw.peptides,raw.proteins)
-        >>>peptide_select,protein_select= vLook(raw.peptides,raw.proteins,["hydroxy...methyl.glutaryl"])
-        >>>peptide_select,protein_select= vLook(raw.peptides,raw.proteins,["Acetyl","Phospho"])
-
-        See Also
-        --------
-        manyModSel
-        masterOne
-        masterPep
-
         """
-
-        fdr = cls.masterOne(proteins)
-        if len(mods) == 0:
-            mpa = cls.masterPep(peptides)
-        if len(mods) == 1:
-            mpa = cls.masterPep(cls.manyModSel(peptides, mods)[0])
-        else:
-            mpa = cls.masterPep(cls.manyModSel(peptides, mods)[-1])
+        fdr = cls.master_one(proteins)
+        mpa = cls.masterPep(peptides)
 
         fdrdf = pd.DataFrame(fdr.Accession, index=fdr.index)
 

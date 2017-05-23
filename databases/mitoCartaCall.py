@@ -24,6 +24,7 @@ import re
 import pandas as pd
 import numpy as np
 from ..utils import SelectionTools
+from ..utils import FilterTools
 
 # Create a string from the local copy of the MitoCarta2.0 xlsx file.
 this_dir, _ = os.path.split(__file__)
@@ -115,7 +116,7 @@ def mitoCartaPepOut(obj=None, mods=None, dex=False):
     proteins = obj.__dict__[proteins]
 
     carta = mitoProt(proteins)
-    pepsel, prosel = SelectionTools.vLook(peptides, proteins, mods)
+    pepsel, prosel = FilterTools.vLook(peptides, proteins)
     mitocarta_pep = pepsel.merge(carta, on="Accession", how="left")
     mitocarta_pep.index = pepsel.index
     if dex:

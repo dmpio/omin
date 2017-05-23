@@ -20,6 +20,7 @@ user.
 import re
 import pandas as pd
 from omin.utils import SelectionTools
+from omin.utils import FilterTools
 from omin.normalize.toPool import NormalizedToPool
 from omin.normalize.toInput import NormalizedToInput
 from omin.databases import mitoCartaCall
@@ -188,9 +189,8 @@ class PreProcess(RawData):
         modifications = modifications or self._invivo_modifications
         # Create 2 Dataframes that map specific peptide or protien uniprot ID
         # to it's relevent mitocarta index. Simillar to vlookup in excel.
-        pep_sel, prot_sel = SelectionTools.vLook(self.raw_peptides,
-                                                 self.raw_proteins,
-                                                 modifications)
+        pep_sel, prot_sel = FilterTools.vLook(self.raw_peptides,
+                                              self.raw_proteins)
 
         # Used to index filter to statistically relevent PeptideGroups
         self.pep_sel = pep_sel

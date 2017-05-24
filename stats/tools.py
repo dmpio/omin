@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 """Statistical tools"""
-import numpy as np
-import pandas as pd
-from scipy.stats import ttest_ind
-import functools
-from statsmodels.sandbox.stats.multicomp import multipletests
+
 
 # LICENSE
 # -------
@@ -26,6 +22,13 @@ from statsmodels.sandbox.stats.multicomp import multipletests
 # FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+import numpy as np
+import pandas as pd
+from scipy.stats import ttest_ind
+import functools
+from statsmodels.sandbox.stats.multicomp import multipletests
+
 
 class Compare(object):
     """Tools for comparisons."""

@@ -20,4 +20,4 @@ SOFTWARE.
 """
 
 from . import fdr
-from . import tools
+from .tools import Compare

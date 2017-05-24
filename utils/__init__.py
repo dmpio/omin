@@ -35,3 +35,4 @@ from .selection_tools import SelectionTools
 from .io_tools import IOTools
 from .object_tools import inspectObject
 from .object_tools import objectWalker
+from .warnings import deprecated

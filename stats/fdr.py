@@ -18,10 +18,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-# FIXME: DEPRECATE ALL FUNCTIONS AS WELL AS CONTAINING FILE AND FOLDER
-# FIXME: REPLACE ALL USAGE WITH stats.sm.fdr.LOOK.IT.UP
+# FIXME: ADD DEPRECATION WARNING TO ALL FUNCTIONS AND classes
 
+# import warnings
 import pandas as pd
+# from ..utils.warnings import deprecated
+
 
 class Comparison:
     """
@@ -83,8 +85,9 @@ def benjamini_hochberg(comparison_objects, sig_level):
     return sequential_comparison_objects
 
 
+# @deprecated
 def bhFDR(pval_series):
-    """Returns the p-adjusted values for a series of p-values.
+    """Return the p-adjusted values for a series of p-values.
 
     Parameters
     ----------
@@ -95,6 +98,7 @@ def bhFDR(pval_series):
     p_adjust : DataFrame
 
     """
+    print("DEPRECATED")
     # Test to see if pval_series is actually a DataFrame.
     if type(pval_series) == pd.core.frame.DataFrame:
         # If it is a DataFrame test to make sure that it only has one column.

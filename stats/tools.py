@@ -99,26 +99,28 @@ class Compare(object):
                              index=numer.index)
         return pvals
 
-        @staticmethod
-        def bh_fdr(p_val):
-            """Return adjusted p-values.
+    @staticmethod
+    def bh_fdr(p_val):
+        """Return adjusted p-values.
 
-            statsmodels.sandbox.stats.multicomp.multipletests function with
-            method = "fdr_bh" and alpha=.05
+        statsmodels.sandbox.stats.multicomp.multipletests function with
+        method = "fdr_bh" and alpha=.05
 
-            Parameters
-            ----------
-            p_val : DataFrame
+        Parameters
+        ----------
+        p_val : DataFrame
 
-            Returns
-            -------
-            p_adj : DataFrame
-            """
-            # FIXME : Add somekind of dataprovenonce measure here.
-            bh_funct = functools.partial(multipletests,
-                                         method="fdr_bh",
-                                         alpha=.05)
-            p_adj = bh_funct(pvals=p_val.dropna().values.T[0])
-            p_adj = p_adj.reindex(index=p_val.index)
-            p_adj = pd.DataFrame(p_adj, columns=["p-adjusted"])
-            return p_adj
+        Returns
+        -------
+        p_adj : DataFrame
+        """
+        # FIXME : Add somekind of dataprovenonce measure here.
+        bh_funct = functools.partial(multipletests,
+                                     method="fdr_bh",
+                                     alpha=.05)
+        p_adj = bh_funct(pvals=p_val.dropna().values.T[0])
+
+        p_adj = pd.DataFrame([p_adj[0], p_adj[1]]).T
+        p_adj.columns = ["reject", "p_adjusted"]
+        # p_adj = p_adj.reindex(index=p_val[1].index)
+        return p_adj

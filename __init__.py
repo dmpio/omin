@@ -64,6 +64,7 @@ from . import core
 from .core.handles import *
 from . import normalize
 from . import stats
+from .stats import Compare
 from . import visualize
 from . import export
 from . import databases

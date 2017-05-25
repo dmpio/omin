@@ -30,6 +30,7 @@ from tkinter import Tk, filedialog
 from ..core.handles import Process
 # warnings.filterwarnings("ignore")
 
+
 class SelectFilesButton(widgets.Button):
     """A file widget that leverages tkinter.filedialog."""
 
@@ -68,14 +69,16 @@ class SelectFilesButton(widgets.Button):
         b.style.button_color = "lightgreen"
 
 class RunButton(widgets.Button):
+    """Button that begins processing the selected files."""
+
     def __init__(self, *args, **kwargs):
         """Initialize the SelectFilesButton class."""
         super(RunButton, self).__init__(*args, **kwargs)
         self.add_traits(files=traitlets.traitlets.List())
         self.add_traits(data=traitlets.traitlets.Instance(object))
         self.description = "Run"
+        self.button_style = "info"
         self.icon = "play"
-
         # Enter the number
         self.process = "Process"
         self.on_click(self.run_process)
@@ -93,7 +96,6 @@ class OminNotebook(object):
         """Initialize the dashboard."""
         self.select_files_button = SelectFilesButton()
         self.run_button = RunButton()
-        self.data = None
 
     # @staticmethod
     def on_value_change(self,change):
@@ -101,13 +103,24 @@ class OminNotebook(object):
             self.run_button.files = self.select_files_button.files
             display(self.run_button)
 
-    def __repr__(self):
-        """Show the dashboard on call."""
-        display(self.select_files_button)
-        self.select_files_button.observe(self.on_value_change, names="files")
-        return ""
-
     @property
     def files(self):
         """Getter method for the selected files."""
         return self.select_files_button.files
+
+    @property
+    def data(self):
+        return self.run_button.data
+
+    @property
+    def explore(self):
+        view = lambda Attribute:display(self.data.__dict__[Attribute])
+        vw = widgets.interactive(view,Attribute=list(self.data.__dict__.keys()))
+        display(vw)
+
+    def __repr__(self):
+        """Show the dashboard on call."""
+
+        display(self.select_files_button)
+        self.select_files_button.observe(self.on_value_change, names="files")
+        return ""

@@ -19,6 +19,7 @@ user.
 
 import re
 import pandas as pd
+from omin.utils import StringTools
 from omin.utils import SelectionTools
 from omin.utils import FilterTools
 from omin.normalize.toPool import NormalizedToPool
@@ -64,6 +65,13 @@ class PeptideGroups(ProteomeDiscovererRaw):
             # If the list is greater than zero then set varible.
             if len(in_vivo_mods) > 0:
                 self._in_vivo_modifications = in_vivo_mods
+                # For each modification create a filtered dataframe attribute.
+                for i in in_vivo_mods:
+                    mod = StringTools.remove_punctuation(i).lower()
+                    df = SelectionTools.filterRow(self.raw,
+                                                  on="Modifications",
+                                                  term=i)
+                    self.__dict__[mod] = df
             else:
                 pass
         else:

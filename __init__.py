@@ -69,6 +69,7 @@ from . import visualize
 from . import export
 from . import databases
 from . import gui
+from .gui import OminNotebook as nb
 from . import pathfinder
 
 if sys.version_info[0] >= 3:

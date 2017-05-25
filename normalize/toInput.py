@@ -29,7 +29,8 @@ from omin.normalize.methods import normFactors
 from omin.normalize.methods import normalizeTo
 from omin.normalize.methods import Logger
 from omin.normalize.methods import MachLink
-
+from IPython.display import display
+from ipywidgets import widgets
 
 class NormalizedToInput(object):
     """Claculate the normalized relative abundance and relative occupancy.
@@ -62,7 +63,13 @@ class NormalizedToInput(object):
     def __repr__(self):
         """Show all attributes.
         """
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+        if "_Jupyter" in globals().keys():
+            view = lambda Attribute: display(self.__dict__[Attribute])
+            vw = widgets.interactive(view, Attribute=list(self.__dict__.keys()))
+            display(vw)
+            return "Attributes: "+", ".join(list(self.__dict__.keys()))
+        else:
+            return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class PeptideGroups(object):

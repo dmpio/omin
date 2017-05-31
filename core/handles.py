@@ -18,6 +18,7 @@ user.
 # FIXME: Include paragraph description of the types of filtering.
 
 import re
+import gc
 import pandas as pd
 from omin.utils import StringTools
 from omin.utils import SelectionTools
@@ -214,6 +215,36 @@ class PreProcess(RawData):
         self.mitodex = mito
         # Mitocarta non hits DataFrame
         self.nonmitodex = nonmito
+        # Delete the temporary varibles.
+        del mito, nonmito, pep_sel, prot_sel
+        # Garbage collect.
+        gc.collect()
+        # Create a unified index of mitocarta calls.
+        self.unidex = None
+        try:
+            unidex = pd.concat([self.mitodex, self.nonmitodex]).sort_index()
+            self.unidex = unidex.reindex(index=self.peptide_groups.raw.index)
+            del unidex
+            gc.collect()
+        except Exception:
+            pass
+        self.master_index = None
+        try:
+            gi = self.proteins.raw["Gene ID"].ix[self.prot_sel.index]
+            gi.index = self.peptide_groups.raw.index
+            mdex = pd.concat([self.unidex.ix[:, -4],
+                              self.unidex.ix[:, -2:]],
+                             axis=1)
+            self.master_index = pd.concat([self.pep_sel, gi,
+                                           self.peptide_groups.raw.Modifications,
+                                           self.peptide_groups.raw.Sequence,
+                                           mdex], axis=1)
+            del gi, mdex
+            gc.collect()
+
+        except Exception:
+            print("Could not create master_index")
+            pass
         # Find the number of inputs.
         self._input_number = SelectionTools.find_number_input(self.raw_peptides)
         # Find the number of PTMs present in the PeptideGroups

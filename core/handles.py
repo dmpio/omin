@@ -197,8 +197,10 @@ class PreProcess(RawData):
         modifications = modifications or self._invivo_modifications
         # Create 2 Dataframes that map specific peptide or protien uniprot ID
         # to it's relevent mitocarta index. Simillar to vlookup in excel.
-        pep_sel, prot_sel = FilterTools.vLook(self.raw_peptides,
-                                              self.raw_proteins)
+        # pep_sel, prot_sel = FilterTools.vLook(self.raw_peptides,
+        #                                       self.raw_proteins)
+        pep_sel, prot_sel = FilterTools.bridge(self.peptide_groups.raw,
+                                               self.proteins.raw)
 
         # Used to index filter to statistically relevent PeptideGroups
         self.pep_sel = pep_sel

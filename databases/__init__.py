@@ -22,6 +22,7 @@ SOFTWARE.
 import pickle
 from . import routines
 from . import mitoCartaCall
+from .mitocarta_call import MitoCarta
 
 # __mitodf_loc = os.path.join(os.path.split(__file__)[0], "mitodf.pickle")
 #

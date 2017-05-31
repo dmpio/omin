@@ -68,6 +68,7 @@ from .stats import Compare
 from . import visualize
 from . import export
 from . import databases
+from .databases import MitoCarta
 from . import gui
 from .gui import OminNotebook as nb
 from . import pathfinder

@@ -24,7 +24,40 @@
 
 import pandas as pd
 
+
 class FilterTools(object):
+    """Tools for filtering"""
+
+    @staticmethod
+    def filterRow(dataframe_in=None, on=None, term=None, *args, **kwargs):
+        """Return DataFrame that contains a given term on specific column.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+        term : str
+        on : str
+
+        Returns
+        -------
+        filtered : DataFrame
+        """
+        filtered = None
+        if on in dataframe_in.columns:
+            try:
+                mask = dataframe_in[on].str.contains(term, *args, **kwargs)
+                filtered = dataframe_in[mask]
+                return filtered
+            except Exception:
+                print("omin.FilterTools.FilterRow FAILED")
+        else:
+            try:
+                mask = dataframe_in.filter(regex=on).ix[:, 0]
+                mask = mask.str.contains(term, *args, **kwargs).fillna(False)
+                filtered = dataframe_in[mask]
+                return filtered
+            except Exception:
+                print("omin.FilterTools.FilterRow FAILED")
 
     @classmethod
     def master_cleanse(cls, protein_df):
@@ -128,35 +161,35 @@ class FilterTools(object):
                                        index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
         return master_prot_acc
 
-    @classmethod
-    def mpaParse(cls, raw_peptides=None, master_uniprot_id="Master",
-                 new_column_name="MPA"):
-        """Returns a DataFrame containing only the first master protein accession.
-
-        Notes
-        -----
-        FIXME: Use try dropna() and reindex instead of else statement in loop.
-
-        Parameters
-        ----------
-        raw_peptides : DataFrame
-        master_uniprot_id : str
-            The search term used in omin.sep(raw_peptides,master_prot_id).
-        new_column_name : str
-            Label your new dataframe
-
-        Returns
-        -------
-        mpa : DataFrame
-
-        See Also
-        --------
-        omin.masterPep
-
-        """
-        mpa_list = [i.split(";")[0] if type(i) == str else np.nan for i in omin.sep(raw_peptides, master_uniprot_id).ix[:, 0]]
-        mpa = pd.DataFrame(mpa_list, index=raw_peptides.index, columns=[new_column_name])
-        return mpa
+    # @classmethod
+    # def mpaParse(cls, raw_peptides=None, master_uniprot_id="Master",
+    #              new_column_name="MPA"):
+    #     """Returns a DataFrame containing only the first master protein accession.
+    #
+    #     Notes
+    #     -----
+    #     FIXME: Use try dropna() and reindex instead of else statement in loop.
+    #
+    #     Parameters
+    #     ----------
+    #     raw_peptides : DataFrame
+    #     master_uniprot_id : str
+    #         The search term used in omin.sep(raw_peptides,master_prot_id).
+    #     new_column_name : str
+    #         Label your new dataframe
+    #
+    #     Returns
+    #     -------
+    #     mpa : DataFrame
+    #
+    #     See Also
+    #     --------
+    #     omin.masterPep
+    #
+    #     """
+    #     mpa_list = [i.split(";")[0] if type(i) == str else np.nan for i in omin.sep(raw_peptides, master_uniprot_id).ix[:, 0]]
+    #     mpa = pd.DataFrame(mpa_list, index=raw_peptides.index, columns=[new_column_name])
+    #     return mpa
 
     @classmethod
     def vLook(cls, peptides=None, proteins=None):
@@ -186,6 +219,71 @@ class FilterTools(object):
                                    how="left", right_index=True)
 
         protein_select = mpa.merge(fdrdf, on="Accession",
+                                   how="left", left_index=True)
+
+        return peptide_select, protein_select
+
+    @classmethod
+    def first_mpa(cls, peptide_df):
+        """Return the first master protein.
+
+        Notes
+        -----
+        Assumes the first uniprot ID list is the correct one.
+
+        Parameters
+        ----------
+        peptide_df : DataFrame
+
+        Returns
+        -------
+        master_prot_acc : DataFrame
+
+        """
+        mpa = peptide_df['Master Protein Accessions'].dropna()
+        master_prot_acc = [i.split(';')[0] for i in mpa]
+
+        master_prot_acc = pd.DataFrame(master_prot_acc,
+                                       index=mpa.index,
+                                       columns=['Accession'])
+        master_prot_acc = master_prot_acc.reindex(peptide_df.index)
+        return master_prot_acc
+
+    @staticmethod
+    def first_filter(dataframe, on, column_name=None):
+        """Filter the filter element of a string."""
+        ser = dataframe[on].dropna()
+        # first = [i.split(';')[0] for i in ser]
+        first = ser.apply(lambda x: x.split(";")[0])
+        if column_name is not None:
+            first = pd.DataFrame(first, columns=column_name)
+        else:
+            first = pd.DataFrame(first, columns=[on])
+        first = first.reindex(dataframe.index)
+        return first
+
+    @classmethod
+    def bridge(cls, peptides=None, proteins=None):
+        """Return a tuple of selected peptides and proteins.
+
+        Parameters
+        ----------
+        peptides : DataFrame
+        proteins : DataFrame
+        mods : list
+
+        Returns
+        -------
+        peptide_select : DataFrame
+        protein_select : DataFrame
+        """
+        mpa = cls.first_mpa(peptides)
+        prot_acc = pd.DataFrame(proteins.Accession, index=proteins.index)
+
+        peptide_select = mpa.merge(prot_acc, on="Accession",
+                                   how="left", right_index=True)
+
+        protein_select = mpa.merge(prot_acc, on="Accession",
                                    how="left", left_index=True)
 
         return peptide_select, protein_select

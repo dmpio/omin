@@ -74,6 +74,64 @@ class Volcano(object):
             plt.axes().set_aspect(aspect)
         return plt
 
+    @classmethod
+    def by_compartment(cls, lfc, pval, bdex, wdex, cutoff=-np.log10(.05),
+                       aspect=None):
+        """Volcano plot mitochondrial peptides(black) non-mitochondrial (white).
+
+        Parameters
+        ----------
+        lfc : DataFrame
+        pval : DataFrame
+        bdex : DataFrame
+        wdex : DataFrame
+        cutoff : float
+        aspect : float
+
+        Returns
+        -------
+        matplotlib plot
+
+        """
+        # LOAD VARIBLES
+        p1 = pval.ix[bdex.index]
+        p2 = pval.ix[wdex.index]
+        y1 = -np.log10(p1)
+        x1 = lfc.ix[bdex.index]
+        y2 = -np.log10(p2)
+        x2 = lfc.ix[wdex.index]
+
+        # PLOT 1
+        plt.scatter(x1, y1,
+                    c=swatch["gray"],
+                    edgecolors=cls.swatch["opti-black"],
+                    # color=swatch["opti-black"],
+                    zorder=10)
+        # PLOT2
+        plt.scatter(x2, y2,
+                    c="w",
+                    edgecolors=cls.swatch["opti-black"],
+                    # color=swatch["opti-black"],
+                    zorder=9)
+
+        # Show cutoff
+        plt.axhspan(cutoff,
+                    -np.log10(pval.min()) + 2,
+                    facecolor='y',
+                    alpha=0.25)
+
+        # Set plot limits
+        plt.ylim([0, 5])
+        plt.xlim([-3, 3])
+        # Show grid
+        plt.grid(True)
+        # Set aspect
+        if aspect is not None:
+            plt.axes().set_aspect(aspect)
+        # return plt
+        return
+
+
 def volcan(FC, pvals, cutoff=-np.log10(.05), aspect=None):
     """Takes p-values and log2 fold changes and returns a basic volcano plot
     figure.

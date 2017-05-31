@@ -124,3 +124,42 @@ class Compare(object):
         p_adj.columns = ["reject", "p_adjusted"]
         # p_adj = p_adj.reindex(index=p_val[1].index)
         return p_adj
+
+    @classmethod
+    def comparison_summary_stats(cls, numerator, denominator, cut_off=None,
+                                 mitodex=None, nonmitodex=None):
+        """Summarize the stats of a comparison."""
+        # Define the significance cut off
+        cut_off = cut_off or -np.log10(.05)
+        pval = cls.ttester(numerator, denominator)
+        lfc = cls.log2FC(numerator, denominator)
+        over_cutoff = -np.log10(pval).dropna() > cut_off
+        over_cutoff = over_cutoff.reindex(index=numerator.index).fillna(False)
+        total_sig = over_cutoff.values.sum()
+        print("Total peptides with -Log10(p-values) > {:.3}:".format(cut_off),
+              total_sig)
+        # significant LFCs.
+        sig_lfc = lfc.ix[over_cutoff.ix[:, 0]]
+        # Find all negative significant fold changes.
+        negative_sig_lfc = sig_lfc < 0
+        negative_sig_lfc = sig_lfc.ix[negative_sig_lfc.ix[:, 0]]
+        print("\t Total negative LFCs:", negative_sig_lfc.shape[0])
+
+        # Find all positive significant fold changes.
+        positive_sig_lfc = sig_lfc > 0
+        positive_sig_lfc = sig_lfc.ix[positive_sig_lfc.ix[:, 0]]
+        print("\t Total positive LFCs:", positive_sig_lfc.shape[0])
+
+        # number of significant mitochondrial peptides
+        mito_over_cutoff = -pval.reindex(index=numerator.index).ix[mitodex.index].apply(np.log10)
+        mito_over_cutoff = mito_over_cutoff.dropna() > cut_off
+        mito_sig = mito_over_cutoff.values.sum()
+        print("Total mitochondrial peptides with -Log10(p-values) > {:.3}:".format(cut_off),
+              mito_sig)
+
+        # number of significant nonmitochondrial peptides
+        nonmito_over_cutoff = -pval.reindex(index=numerator.index).ix[nonmitodex.index].apply(np.log10)
+        nonmito_over_cutoff = nonmito_over_cutoff.dropna() > cut_off
+        nonmito_sig = nonmito_over_cutoff.values.sum()
+        print("Total of non-mitochondrial peptides with -Log10(p-values) > Log10(.05):",
+              nonmito_sig)

@@ -193,7 +193,8 @@ class PreProcess(RawData):
         super(PreProcess, self).__init__(file_list, peptides_file,
                                          proteins_file)
         # Find invivo modifications
-        self._invivo_modifications = SelectionTools.findInVivoModifications(self.raw_peptides)
+        invivos = SelectionTools.findInVivoModifications(self.raw_peptides)
+        self._invivo_modifications = invivos
         # Set modifications with given or derived.
         modifications = modifications or self._invivo_modifications
         # Create 2 Dataframes that map specific peptide or protien uniprot ID

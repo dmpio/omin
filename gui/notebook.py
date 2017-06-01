@@ -68,6 +68,7 @@ class SelectFilesButton(widgets.Button):
         b.icon = "check-square-o"
         b.style.button_color = "lightgreen"
 
+
 class RunButton(widgets.Button):
     """Button that begins processing the selected files."""
 
@@ -85,6 +86,7 @@ class RunButton(widgets.Button):
 
     @staticmethod
     def run_process(b):
+        """Run the process defined in the __init__ def."""
         process = eval(b.process)
         b.data = process(b.files)
 
@@ -97,8 +99,8 @@ class OminNotebook(object):
         self.select_files_button = SelectFilesButton()
         self.run_button = RunButton()
 
-    # @staticmethod
-    def on_value_change(self,change):
+    def on_value_change(self, change):
+        """Display the Run Button upon value change."""
         if type(change["old"]) != list:
             self.run_button.files = self.select_files_button.files
             display(self.run_button)
@@ -110,17 +112,19 @@ class OminNotebook(object):
 
     @property
     def data(self):
+        """Getter method for the data held in button."""
         return self.run_button.data
 
     @property
     def explore(self):
-        view = lambda Attribute:display(self.data.__dict__[Attribute])
-        vw = widgets.interactive(view,Attribute=list(self.data.__dict__.keys()))
+        """Interactively explore the 'data' object."""
+        view = lambda Attribute: display(self.data.__dict__[Attribute])
+        vw = widgets.interactive(view,
+                                 Attribute=list(self.data.__dict__.keys()))
         display(vw)
 
     def __repr__(self):
         """Show the dashboard on call."""
-
         display(self.select_files_button)
         self.select_files_button.observe(self.on_value_change, names="files")
         return ""

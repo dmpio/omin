@@ -231,12 +231,18 @@ class PreProcess(RawData):
             pass
         self.master_index = None
         try:
+            # Get the Gene Symbol
             gi = self.proteins.raw["Gene ID"].ix[self.prot_sel.index]
             gi.index = self.peptide_groups.raw.index
+            # Get Gene Description.
+            ga = self.proteins.raw["Description"].ix[self.prot_sel.index]
+            ga.index = self.peptide_groups.raw.index
             mdex = pd.concat([self.unidex.ix[:, -4],
                               self.unidex.ix[:, -2:]],
                              axis=1)
-            self.master_index = pd.concat([self.pep_sel, gi,
+            self.master_index = pd.concat([self.pep_sel,
+                                           gi,
+                                           ga,
                                            self.peptide_groups.raw.Modifications,
                                            self.peptide_groups.raw.Sequence,
                                            mdex], axis=1)

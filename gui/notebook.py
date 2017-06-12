@@ -23,11 +23,15 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import traitlets
+import numpy as np
+import pandas as pd
 # import warnings
 from IPython.display import display
 from ipywidgets import widgets
 from tkinter import Tk, filedialog
 from ..core.handles import Process
+from ..stats.tools import Compare
+from ..visualize import Volcano
 # warnings.filterwarnings("ignore")
 
 
@@ -127,4 +131,34 @@ class OminNotebook(object):
         """Show the dashboard on call."""
         display(self.select_files_button)
         self.select_files_button.observe(self.on_value_change, names="files")
+        return ""
+
+class MakeComparison(object):
+    def __init__(self, dataframe=None):
+        self.data = dataframe
+        self.numerator = widgets.SelectMultiple(description="Numerator",
+                                               options=list(dataframe.columns),
+                                               layout=widgets.Layout(width="90%"))
+
+        self.denominator = widgets.SelectMultiple(description="Denominator",
+                                                 options=list(dataframe.columns),
+                                                 layout=widgets.Layout(width="90%"))
+
+        self.compute = widgets.Button(description="Compute")
+        self.compare = widgets.VBox([self.numerator,
+                                     self.denominator])
+        self.compute.on_click(self.on_compute)
+
+    def on_compute(self, b):
+        num = self.data[list(self.numerator.value)]
+        dem = self.data[list(self.denominator.value)]
+        pvl = Compare.ttester(num.apply(np.log2), dem.apply(np.log2))
+        lfc = Compare.log2FC(num.apply(np.log2), dem.apply(np.log2))
+        # qvl = omin.Compare.bh_fdr(pvl)
+        Volcano.simple(lfc, pvl)
+
+    def __repr__(self):
+        display(self.compare)
+        display(self.compute)
+
         return ""

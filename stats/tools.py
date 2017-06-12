@@ -163,3 +163,12 @@ class Compare(object):
         nonmito_sig = nonmito_over_cutoff.values.sum()
         print("Total of non-mitochondrial peptides with -Log10(p-values) > Log10(.05):",
               nonmito_sig)
+
+    @classmethod
+    def annotated_comparison(cls, numerator, denominator, master_index):
+        """Return an annotated comparison as a DataFrame."""
+        pvl = cls.ttester(numerator, denominator)
+        lfc = cls.log2FC(numerator, denominator)
+        qvl = cls.bh_fdr(pvl)
+        output = pd.concat([master_index, lfc, pvl, qvl], axis=1)
+        return output

@@ -25,8 +25,11 @@
 import traitlets
 import numpy as np
 import pandas as pd
+from datetime import datetime
+from dominate import tags
 # import warnings
 from IPython.display import display
+# from IPython.display import HTML
 from ipywidgets import widgets
 from tkinter import Tk, filedialog
 from ..core.handles import Process
@@ -100,6 +103,9 @@ class OminNotebook(object):
 
     def __init__(self):
         """Initialize the dashboard."""
+        self._header = "Omin Notebook"
+        self._title = ""
+        self._time_stamp = "{:%I:%M %p %A %B %d %Y}".format(datetime.now())
         self.select_files_button = SelectFilesButton()
         self.run_button = RunButton()
 
@@ -108,6 +114,24 @@ class OminNotebook(object):
         if type(change["old"]) != list:
             self.run_button.files = self.select_files_button.files
             display(self.run_button)
+
+    @property
+    def header(self):
+        return self._header
+
+    @property
+    def title(self):
+        return self._title
+
+    @property
+    def time_stamp(self):
+        return self._time_stamp
+
+    @property
+    def top(self):
+        header = widgets.HTML(tags.h1(self.header).render())
+        time_stamp = widgets.HTML(tags.h4(self.time_stamp).render())
+        return header, time_stamp
 
     @property
     def files(self):
@@ -129,6 +153,7 @@ class OminNotebook(object):
 
     def __repr__(self):
         """Show the dashboard on call."""
+        display(self.top[0], self.top[1])
         display(self.select_files_button)
         self.select_files_button.observe(self.on_value_change, names="files")
         return ""

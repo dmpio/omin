@@ -119,10 +119,13 @@ class Compare(object):
                                      method="fdr_bh",
                                      alpha=.05)
         p_adj = bh_funct(pvals=p_val.dropna().values.T[0])
-
+        # p_adj = bh_funct(pvals=p_val.values.T[0])
         p_adj = pd.DataFrame([p_adj[0], p_adj[1]]).T
+        p_adj.index = p_val.dropna().index
+        p_adj = p_adj.reindex(index=p_val.index)
         p_adj.columns = ["reject", "p_adjusted"]
-        # p_adj = p_adj.reindex(index=p_val[1].index)
+        # write over NaNs will boolean False
+        p_adj.reject = p_adj.reject.fillna(False)
         return p_adj
 
     @classmethod

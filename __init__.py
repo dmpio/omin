@@ -57,6 +57,7 @@ from __future__ import division, absolute_import, print_function
 import os
 import sys
 import warnings
+from .setup import version
 from .utils import StringTools
 from .utils import SelectionTools
 from .utils import IOTools
@@ -70,6 +71,7 @@ from . import export
 from . import databases
 from .databases import MitoCarta
 from . import gui
+from .gui import timestamp
 from .gui import OminNotebook as nb
 from . import pathfinder
 

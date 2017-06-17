@@ -20,6 +20,7 @@ user.
 import re
 import gc
 import pandas as pd
+import numpy as np
 from omin.utils import StringTools
 from omin.utils import SelectionTools
 from omin.utils import FilterTools
@@ -33,8 +34,11 @@ class Handle(object):
 
     def __init__(self):
         """Initalize the core handle."""
-        # Basically a blank class.
         pass
+
+    def __repr__(self):
+        """Show all attributes."""
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class ProteomeDiscovererRaw(Handle):
@@ -45,10 +49,6 @@ class ProteomeDiscovererRaw(Handle):
         super(ProteomeDiscovererRaw, self).__init__()
         self.raw = raw_data.copy()
         self.abundance = self.raw.filter(regex="Abundance:")
-
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class PeptideGroups(ProteomeDiscovererRaw):

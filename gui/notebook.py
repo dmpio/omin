@@ -23,11 +23,18 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import traitlets
+import numpy as np
+import pandas as pd
+from datetime import datetime
+from dominate import tags
 # import warnings
 from IPython.display import display
+# from IPython.display import HTML
 from ipywidgets import widgets
 from tkinter import Tk, filedialog
 from ..core.handles import Process
+from ..stats.tools import Compare
+from ..visualize import Volcano
 # warnings.filterwarnings("ignore")
 
 
@@ -68,6 +75,7 @@ class SelectFilesButton(widgets.Button):
         b.icon = "check-square-o"
         b.style.button_color = "lightgreen"
 
+
 class RunButton(widgets.Button):
     """Button that begins processing the selected files."""
 
@@ -85,6 +93,7 @@ class RunButton(widgets.Button):
 
     @staticmethod
     def run_process(b):
+        """Run the process defined in the __init__ def."""
         process = eval(b.process)
         b.data = process(b.files)
 
@@ -94,14 +103,35 @@ class OminNotebook(object):
 
     def __init__(self):
         """Initialize the dashboard."""
+        self._header = "Omin Notebook"
+        self._title = ""
+        self._time_stamp = "{:%I:%M %p %A %B %d %Y}".format(datetime.now())
         self.select_files_button = SelectFilesButton()
         self.run_button = RunButton()
 
-    # @staticmethod
-    def on_value_change(self,change):
+    def on_value_change(self, change):
+        """Display the Run Button upon value change."""
         if type(change["old"]) != list:
             self.run_button.files = self.select_files_button.files
             display(self.run_button)
+
+    @property
+    def header(self):
+        return self._header
+
+    @property
+    def title(self):
+        return self._title
+
+    @property
+    def time_stamp(self):
+        return self._time_stamp
+
+    @property
+    def top(self):
+        header = widgets.HTML(tags.h1(self.header).render())
+        time_stamp = widgets.HTML(tags.h4(self.time_stamp).render())
+        return header, time_stamp
 
     @property
     def files(self):
@@ -110,17 +140,50 @@ class OminNotebook(object):
 
     @property
     def data(self):
+        """Getter method for the data held in button."""
         return self.run_button.data
 
     @property
     def explore(self):
-        view = lambda Attribute:display(self.data.__dict__[Attribute])
-        vw = widgets.interactive(view,Attribute=list(self.data.__dict__.keys()))
+        """Interactively explore the 'data' object."""
+        view = lambda Attribute: display(self.data.__dict__[Attribute])
+        vw = widgets.interactive(view,
+                                 Attribute=list(self.data.__dict__.keys()))
         display(vw)
 
     def __repr__(self):
         """Show the dashboard on call."""
-
+        display(self.top[0], self.top[1])
         display(self.select_files_button)
         self.select_files_button.observe(self.on_value_change, names="files")
+        return ""
+
+class MakeComparison(object):
+    def __init__(self, dataframe=None):
+        self.data = dataframe
+        self.numerator = widgets.SelectMultiple(description="Numerator",
+                                               options=list(dataframe.columns),
+                                               layout=widgets.Layout(width="90%"))
+
+        self.denominator = widgets.SelectMultiple(description="Denominator",
+                                                 options=list(dataframe.columns),
+                                                 layout=widgets.Layout(width="90%"))
+
+        self.compute = widgets.Button(description="Compute")
+        self.compare = widgets.VBox([self.numerator,
+                                     self.denominator])
+        self.compute.on_click(self.on_compute)
+
+    def on_compute(self, b):
+        num = self.data[list(self.numerator.value)]
+        dem = self.data[list(self.denominator.value)]
+        pvl = Compare.ttester(num.apply(np.log2), dem.apply(np.log2))
+        lfc = Compare.log2FC(num.apply(np.log2), dem.apply(np.log2))
+        # qvl = omin.Compare.bh_fdr(pvl)
+        Volcano.simple(lfc, pvl)
+
+    def __repr__(self):
+        display(self.compare)
+        display(self.compute)
+
         return ""

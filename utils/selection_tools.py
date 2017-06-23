@@ -45,6 +45,8 @@ mod_dict_local = os.path.join(find_path(), "databases", "mod_dict.p")
 
 modification_terms = pickle.load(open(mod_dict_local, "rb"))
 
+chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex',
+                          'TMT10plex'}
 
 class SelectionTools(object):
     """
@@ -483,3 +485,16 @@ class SelectionTools(object):
         except Exception:
             print("utils.SelectionTools.find_number_input failed")
         return number_input
+
+    @staticmethod
+    def filter_modification(modification_list):
+        mod = "".join([i for i in modification_list if i not in chemical_modifications])
+        return mod
+
+    @classmethod
+    def modification_kind(cls, dataframe):
+        simple_modifications = dataframe.pipe(cls.simplifyModifications)
+        modification_kind = simple_modifications.apply(cls.filter_modification)
+        modification_kind = pd.DataFrame(modification_kind,
+                                         columns=["Modification Kind"])
+        return modification_kind

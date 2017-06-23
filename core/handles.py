@@ -18,7 +18,9 @@ user.
 # FIXME: Include paragraph description of the types of filtering.
 
 import re
+import gc
 import pandas as pd
+import numpy as np
 from omin.utils import StringTools
 from omin.utils import SelectionTools
 from omin.utils import FilterTools
@@ -32,8 +34,11 @@ class Handle(object):
 
     def __init__(self):
         """Initalize the core handle."""
-        # Basically a blank class.
         pass
+
+    def __repr__(self):
+        """Show all attributes."""
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class ProteomeDiscovererRaw(Handle):
@@ -44,10 +49,6 @@ class ProteomeDiscovererRaw(Handle):
         super(ProteomeDiscovererRaw, self).__init__()
         self.raw = raw_data.copy()
         self.abundance = self.raw.filter(regex="Abundance:")
-
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class PeptideGroups(ProteomeDiscovererRaw):
@@ -192,7 +193,8 @@ class PreProcess(RawData):
         super(PreProcess, self).__init__(file_list, peptides_file,
                                          proteins_file)
         # Find invivo modifications
-        self._invivo_modifications = SelectionTools.findInVivoModifications(self.raw_peptides)
+        invivos = SelectionTools.findInVivoModifications(self.raw_peptides)
+        self._invivo_modifications = invivos
         # Set modifications with given or derived.
         modifications = modifications or self._invivo_modifications
         # Create 2 Dataframes that map specific peptide or protien uniprot ID
@@ -214,6 +216,45 @@ class PreProcess(RawData):
         self.mitodex = mito
         # Mitocarta non hits DataFrame
         self.nonmitodex = nonmito
+        # Delete the temporary varibles.
+        del mito, nonmito, pep_sel, prot_sel
+        # Garbage collect.
+        gc.collect()
+        # Create a unified index of mitocarta calls.
+        self.unidex = None
+        try:
+            unidex = pd.concat([self.mitodex, self.nonmitodex]).sort_index()
+            self.unidex = unidex.reindex(index=self.peptide_groups.raw.index)
+            del unidex
+            gc.collect()
+        except Exception:
+            pass
+        self.master_index = None
+        try:
+            # Get the Gene Symbol
+            gi = self.proteins.raw["Gene ID"].ix[self.prot_sel.index]
+            gi.index = self.peptide_groups.raw.index
+            # Get Gene Description.
+            ga = self.proteins.raw["Description"].ix[self.prot_sel.index]
+            ga.index = self.peptide_groups.raw.index
+            mdex = pd.concat([self.unidex.ix[:, -4],
+                              self.unidex.ix[:, -2:]],
+                             axis=1)
+            mdex = pd.DataFrame(mdex.fillna(0.0), dtype="bool")
+
+            self.master_index = pd.concat([self.pep_sel,
+                                           gi,
+                                           ga,
+                                           self.peptide_groups.raw.Modifications,
+                                           self.peptide_groups.raw["Modifications in Proteins"],
+                                           self.peptide_groups.raw.Sequence,
+                                           mdex], axis=1)
+            del gi, mdex
+            gc.collect()
+
+        except Exception:
+            print("Could not create master_index")
+            pass
         # Find the number of inputs.
         self._input_number = SelectionTools.find_number_input(self.raw_peptides)
         # Find the number of PTMs present in the PeptideGroups

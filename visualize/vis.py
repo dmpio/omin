@@ -103,7 +103,7 @@ class Volcano(object):
 
         # PLOT 1
         plt.scatter(x1, y1,
-                    c=swatch["gray"],
+                    c=cls.swatch["gray"],
                     edgecolors=cls.swatch["opti-black"],
                     # color=swatch["opti-black"],
                     zorder=10)
@@ -116,7 +116,7 @@ class Volcano(object):
 
         # Show cutoff
         plt.axhspan(cutoff,
-                    -np.log10(pval.min()) + 2,
+                    -np.log10(pval.min()) + 10,
                     facecolor='y',
                     alpha=0.25)
 
@@ -128,8 +128,51 @@ class Volcano(object):
         # Set aspect
         if aspect is not None:
             plt.axes().set_aspect(aspect)
+        # Label the axes
+        plt.xlabel("Log2 Fold Change", fontname="arial")
+        plt.ylabel('-Log10 of P-Value', fontname="arial")
         # return plt
         return
+
+    @classmethod
+    def by_significance(cls, lfc, pvals, padj,
+                        aspect=None, c=None, edgecolors=None,
+                        y_axis=None, x_axis=None):
+
+        if c is None:
+            c = cls.swatch["gray"]
+
+        if edgecolors is None:
+            edgecolors = cls.swatch["opti-black"]
+
+        y1 = pvals[padj.reject]
+        y1 = -np.log10(y1)
+        x1 = lfc[padj.reject]
+
+        y2 = pvals[~padj.reject]
+        y2 = -np.log10(y2)
+        x2 = lfc[~padj.reject]
+        if y_axis is None:
+            y_axis = [0, int(y1.max()) + 2]
+
+        if x_axis is None:
+            x_axis = [-5, 5]
+
+        # PLOT
+        plt.scatter(x1, y1, c=c, edgecolors=edgecolors, zorder=10)
+        plt.scatter(x2, y2, c=(.5, .5, .5), edgecolors=edgecolors, alpha=.8)
+
+        plt.ylim(y_axis)
+        plt.xlim(x_axis)
+        plt.grid(True)
+        # LABELS
+        plt.xlabel("Log2 Fold Change", fontname="arial")
+        plt.ylabel('-Log10 of P-Value', fontname="arial")
+
+        if aspect is not None:
+            plt.axes().set_aspect(aspect)
+        return
+
 
 
 def volcan(FC, pvals, cutoff=-np.log10(.05), aspect=None):

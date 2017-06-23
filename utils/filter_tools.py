@@ -161,36 +161,6 @@ class FilterTools(object):
                                        index=peptide_df['Master Protein Accessions'].dropna().index, columns=['Accession'])
         return master_prot_acc
 
-    # @classmethod
-    # def mpaParse(cls, raw_peptides=None, master_uniprot_id="Master",
-    #              new_column_name="MPA"):
-    #     """Returns a DataFrame containing only the first master protein accession.
-    #
-    #     Notes
-    #     -----
-    #     FIXME: Use try dropna() and reindex instead of else statement in loop.
-    #
-    #     Parameters
-    #     ----------
-    #     raw_peptides : DataFrame
-    #     master_uniprot_id : str
-    #         The search term used in omin.sep(raw_peptides,master_prot_id).
-    #     new_column_name : str
-    #         Label your new dataframe
-    #
-    #     Returns
-    #     -------
-    #     mpa : DataFrame
-    #
-    #     See Also
-    #     --------
-    #     omin.masterPep
-    #
-    #     """
-    #     mpa_list = [i.split(";")[0] if type(i) == str else np.nan for i in omin.sep(raw_peptides, master_uniprot_id).ix[:, 0]]
-    #     mpa = pd.DataFrame(mpa_list, index=raw_peptides.index, columns=[new_column_name])
-    #     return mpa
-
     @classmethod
     def vLook(cls, peptides=None, proteins=None):
         """Return a tuple of selected peptides and proteins.
@@ -251,7 +221,10 @@ class FilterTools(object):
 
     @staticmethod
     def first_filter(dataframe, on, column_name=None):
-        """Filter the filter element of a string."""
+        """Filter the filter element of a string.
+
+        FIXME: FIX THIS FUNCTION
+        """
         ser = dataframe[on].dropna()
         # first = [i.split(';')[0] for i in ser]
         first = ser.apply(lambda x: x.split(";")[0])
@@ -259,7 +232,7 @@ class FilterTools(object):
             first = pd.DataFrame(first, columns=column_name)
         else:
             first = pd.DataFrame(first, columns=[on])
-        first = first.reindex(dataframe.index)
+        first = first.reindex(index=dataframe.index)
         return first
 
     @classmethod

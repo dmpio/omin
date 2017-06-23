@@ -128,6 +128,9 @@ class Volcano(object):
         # Set aspect
         if aspect is not None:
             plt.axes().set_aspect(aspect)
+        # Label the axes
+        plt.xlabel("Log2 Fold Change", fontname="arial")
+        plt.ylabel('-Log10 of P-Value', fontname="arial")
         # return plt
         return
 
@@ -146,9 +149,9 @@ class Volcano(object):
         y1 = -np.log10(y1)
         x1 = lfc[padj.reject]
 
-        y2 = pvals[padj.reject == False]
+        y2 = pvals[~padj.reject]
         y2 = -np.log10(y2)
-        x2 = lfc[padj.reject == False]
+        x2 = lfc[~padj.reject]
         if y_axis is None:
             y_axis = [0, int(y1.max()) + 2]
 

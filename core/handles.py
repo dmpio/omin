@@ -240,10 +240,13 @@ class PreProcess(RawData):
             mdex = pd.concat([self.unidex.ix[:, -4],
                               self.unidex.ix[:, -2:]],
                              axis=1)
+            mdex = pd.DataFrame(mdex.fillna(0.0), dtype="bool")
+
             self.master_index = pd.concat([self.pep_sel,
                                            gi,
                                            ga,
                                            self.peptide_groups.raw.Modifications,
+                                           self.peptide_groups.raw["Modifications in Proteins"],
                                            self.peptide_groups.raw.Sequence,
                                            mdex], axis=1)
             del gi, mdex

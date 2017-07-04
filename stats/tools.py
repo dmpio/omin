@@ -26,6 +26,7 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind
+from scipy.stats import f_oneway
 import functools
 from statsmodels.sandbox.stats.multicomp import multipletests
 
@@ -94,6 +95,33 @@ class Compare(object):
             np.less([np.nan, 0], 1)
             # ttest_ind implemented
             pvals = ttest_ind(numer, denom, axis=1).pvalue
+        pvals = pd.DataFrame(pvals,
+                             columns=["pval"+new_column_name],
+                             index=numer.index)
+        return pvals
+
+    @staticmethod
+    def anova_oneway(numer, denom, new_column_name=""):
+        """For pvalue comparision of types of DataFrames of similar shape.
+
+        Parameters
+        ----------
+        numer : DataFrame
+            The numerator DataFrame
+        denom : DataFrame
+            The denominator DataFrame
+
+        Returns
+        -------
+        pvals : DataFrame
+
+        """
+        if len(new_column_name) > 0:
+            new_column_name = " "+new_column_name
+        # The loop below suppresses an irrelevent error message.
+        with np.errstate(invalid='ignore'):
+            np.less([np.nan, 0], 1)
+            pvals = f_oneway(numer.T, denom.T).pvalue
         pvals = pd.DataFrame(pvals,
                              columns=["pval"+new_column_name],
                              index=numer.index)

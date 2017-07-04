@@ -406,7 +406,7 @@ def saveFig(fig_title, parent_file=None, dpi=300, ftype=".png"):
               " directory with the title: ", fn, "@", dpi, "dpi")
 
 # VENN DIAGRAMS
-
+# FIXME: REWRITE ALL OF THIS
 
 def mitoAboveCut(ligob, bdex, cond, cut=None):
     """Finds the interesting peptides in a DataFrame.

@@ -22,7 +22,28 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from bokeh.models import ColumnDataSource
+# Load Bokeh tools
+from bokeh.plotting import figure
+
+from bokeh.models.widgets import (DataTable,
+                                  TableColumn,
+                                  HTMLTemplateFormatter)
+
+from bokeh.models import (ColumnDataSource,
+                          HoverTool,
+                          TapTool,
+                          OpenURL,
+                          ToolbarBox,
+                          )
+
+from bokeh.io import output_notebook, push_notebook, show
+
+
+# class DataSource(ColumnDataSource):
+#     """Subclass of ColumnDataSource."""
+#
+#     def __init__(self, *args, **kwargs):
+#         super(DataSource, self).__init__(*args, **kwargs)
 
 
 class Bokomin(object):
@@ -30,4 +51,9 @@ class Bokomin(object):
 
     def __init__(self):
         """Initialize the base class."""
+        output_notebook(hide_banner=True)
         pass
+
+    def __repr__(self):
+        """Show all attributes."""
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))

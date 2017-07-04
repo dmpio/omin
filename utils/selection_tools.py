@@ -539,7 +539,8 @@ class SelectionTools(object):
         mod_interest = cls.modifications_of_interest(dataframe, mod_list)
 
         # Compile the regex to find best postions for modifications.
-        rx = re.compile("\w(\d+)\(\d+\)")
+        # rx = re.compile("\w(\d+)\(\d+\)")
+        rx = re.compile("\w(\d+)\(\d+.\d+\)")
 
         # Apply the compiled regex using findall to Modifications column.
         best_pos = mod_interest.apply(rx.findall)

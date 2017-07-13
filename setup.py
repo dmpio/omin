@@ -31,6 +31,10 @@ funding permit.
 from __future__ import division, print_function
 # import os
 import sys
+import os
+from setuptools import setup, find_packages
+
+here = os.path.abspath(os.path.dirname(__file__))
 
 # FIXME: Create standard python setup install
 # FIXME: Attempt to make base compatible with Python 2.7 and up.
@@ -45,7 +49,7 @@ if sys.version_info[:2] < (2, 7) or (3, 0) <= sys.version_info[:2] < (3, 4):
 # However Versioning began with 0.0.0 on April 12 2017
 MAJOR = 0
 MINOR = 0
-MICRO = 8
+MICRO = 10
 ISRELEASED = False
 VERSION = '{}.{}.{}'.format(MAJOR, MINOR, MICRO)
 # print(VERSION)

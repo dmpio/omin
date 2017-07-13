@@ -28,6 +28,70 @@ from omin.normalize.toPool import NormalizedToPool
 from omin.normalize.toInput import NormalizedToInput
 from omin.databases import mitoCartaCall
 
+# Hotpatched functions for pd.DataFrame
+# -------------------------------------
+# Hotpatching aka monkey-patching functions to an existing class is suggested
+# over subclassing functions. I prefer to use this method instead of pandas
+# pd.DataFrame.pipe command because I think that it yields a simpler syntax for
+# for the lab rats.
+
+
+def log2(self):
+    """Take the Log2 of all values in a DataFrame."""
+    return self.apply(np.log2)
+
+
+setattr(pd.DataFrame, "log2", log2)
+
+
+def log2_normalize(self):
+    """Return a Log2 normalized DataFrame Log2(values)-mean(Log2(values))."""
+    return self.log2().sub(self.log2().mean(axis=1), axis=0)
+
+
+setattr(pd.DataFrame, "log2_normalize", log2_normalize)
+
+
+def compare_to(self, *args, **kwargs):
+    """Subtract all columns of a DataFrame by specified column."""
+    result = self.subtract(self.filter(*args, **kwargs).iloc[:, 0], axis=0)
+    return result
+
+
+setattr(pd.DataFrame, "compare_to", compare_to)
+
+
+def normalization_factors(self):
+    """Compute normalization factors for a DataFrame."""
+    norm_factors = self.sum() / self.sum().mean()
+    return norm_factors
+
+
+setattr(pd.DataFrame, "normalization_factors", normalization_factors)
+
+
+def normalize_to(self, normal):
+    """Normalize a DataFrame to another DataFrame."""
+    # Sort by columns.
+    self_sort = self.columns.tolist()
+    self_sort.sort()
+    self = self[self_sort]
+    # Sort the normal dataframe by it's columns.
+    normal_sort = normal.columns.tolist()
+    normal_sort.sort()
+    normal = normal[normal_sort]
+    # Divide by the normalization factors.
+    normalized = self / normal.normalization_factors().as_matrix()
+    normalized.columns = self.columns + ": Normalized to: " + normal.columns
+    return normalized
+
+
+setattr(pd.DataFrame, "normalize_to", normalize_to)
+
+
+# Omin's core handle objects
+# ---------------------------
+# These are essentially containers for DataFrames.
 
 class Handle(object):
     """The core omin handle base class."""

@@ -26,6 +26,7 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind
+from scipy.stats import f_oneway
 import functools
 from statsmodels.sandbox.stats.multicomp import multipletests
 
@@ -100,11 +101,38 @@ class Compare(object):
         return pvals
 
     @staticmethod
-    def bh_fdr(p_val):
+    def anova_oneway(numer, denom, new_column_name=""):
+        """For pvalue comparision of types of DataFrames of similar shape.
+
+        Parameters
+        ----------
+        numer : DataFrame
+            The numerator DataFrame
+        denom : DataFrame
+            The denominator DataFrame
+
+        Returns
+        -------
+        pvals : DataFrame
+
+        """
+        if len(new_column_name) > 0:
+            new_column_name = " "+new_column_name
+        # The loop below suppresses an irrelevent error message.
+        with np.errstate(invalid='ignore'):
+            np.less([np.nan, 0], 1)
+            pvals = f_oneway(numer.T, denom.T).pvalue
+        pvals = pd.DataFrame(pvals,
+                             columns=["pval"+new_column_name],
+                             index=numer.index)
+        return pvals
+
+    @staticmethod
+    def bh_fdr(p_val, alpha=None):
         """Return adjusted p-values.
 
         statsmodels.sandbox.stats.multicomp.multipletests function with
-        method = "fdr_bh" and alpha=.05
+        method = "fdr_bh" default and alpha=.05
 
         Parameters
         ----------
@@ -114,10 +142,11 @@ class Compare(object):
         -------
         p_adj : DataFrame
         """
+        alpha = alpha or .05
         # FIXME : Add somekind of dataprovenonce measure here.
         bh_funct = functools.partial(multipletests,
                                      method="fdr_bh",
-                                     alpha=.05)
+                                     alpha=alpha)
         p_adj = bh_funct(pvals=p_val.dropna().values.T[0])
         # p_adj = bh_funct(pvals=p_val.values.T[0])
         p_adj = pd.DataFrame([p_adj[0], p_adj[1]]).T
@@ -168,10 +197,11 @@ class Compare(object):
               nonmito_sig)
 
     @classmethod
-    def annotated_comparison(cls, numerator, denominator, master_index):
+    def annotated_comparison(cls, numerator, denominator, master_index,
+                             fdr_alpha=None):
         """Return an annotated comparison as a DataFrame."""
         pvl = cls.ttester(numerator, denominator)
         lfc = cls.log2FC(numerator, denominator)
-        qvl = cls.bh_fdr(pvl)
+        qvl = cls.bh_fdr(pvl, alpha=fdr_alpha)
         output = pd.concat([master_index, lfc, pvl, qvl], axis=1)
         return output

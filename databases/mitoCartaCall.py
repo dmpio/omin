@@ -31,7 +31,7 @@ from ..utils import FilterTools
 # Create a string from the local copy of the MitoCarta2.0 xlsx file.
 this_dir, _ = os.path.split(__file__)
 carta_file_path = os.path.join(this_dir, "MitoCarta2.0_Mouse.xlsx")
-
+# carta_file_path = os.path.join(this_dir, "mitocarta", "Mouse.MitoCarta2.0.xls")
 # load MitoCarta2
 mitodf = pd.read_excel(carta_file_path)
 
@@ -42,7 +42,7 @@ mgi = mitodf.MouseGeneID.copy()
 cmitodf = mitodf.copy()
 
 # Remove useless columns
-cmitodf.drop(cmitodf.columns[1:5], axis=1, inplace=True)
+# cmitodf.drop(cmitodf.columns[1:5], axis=1, inplace=True)
 
 
 def mitoProt(protdata):

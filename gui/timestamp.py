@@ -22,12 +22,15 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from IPython.display import HTML
 from datetime import datetime
-from ipywidgets import widgets
+# from ipywidgets import widgets
 from dominate import tags
+
 
 def timestamp():
     """Return a ipywidget timestamp."""
     ts = tags.h4("{:%I:%M:%S %p %A %B %d %Y}".format(datetime.now()))
-    ts_widget = widgets.HTML(ts.render())
+    # ts_widget = widgets.HTML(ts.render())
+    ts_widget = HTML(ts.render())
     return ts_widget

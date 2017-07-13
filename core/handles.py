@@ -89,6 +89,10 @@ def normalize_to(self, normal):
 setattr(pd.DataFrame, "normalize_to", normalize_to)
 
 
+# Omin's core handle objects
+# ---------------------------
+# These are essentially containers for DataFrames.
+
 class Handle(object):
     """The core omin handle base class."""
 

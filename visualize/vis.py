@@ -26,12 +26,50 @@ import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib_venn import venn2, venn3, venn2_circles, venn3_circles
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.colors import LinearSegmentedColormap
+
+
+def choose_index_cutoff(dataframe, on, conditional, cut_off, new_name= None):
+    """Return series of bool for cut off on a DataFrame column.
+
+    Parameters
+    ----------
+    dataframe: DataFrame
+
+    on : str
+        The column name to perform the operation.
+
+    conditional : str
+        A string version of the conditional to use i.e. '>', '<'
+
+    cut_off : float
+        A float for the cut off value.
+
+    Returns
+    -------
+    result : Series
+        The boolean values for the results of the comparison.
+    """
+    equality = "x{}{}".format(conditional, cut_off)
+
+    result = dataframe[on].apply(lambda x:eval(equality))
+
+    if new_name is not None:
+        result.name = new_name
+
+    return result
 
 
 class Volcano(object):
+    """"""
 
     swatch = {"gray": (0.35, 0.3, 0.3),
               "opti-black": (0.10, 0.05, 0.15)}
+
+    cmap = LinearSegmentedColormap.from_list('mycmap',
+                                             ["beige", swatch["opti-black"]],
+                                             N=2)
 
     @classmethod
     def simple(cls, FC, pvals, cutoff=-np.log10(.05), aspect=None,
@@ -68,7 +106,7 @@ class Volcano(object):
         plt.grid(True)
         # LABELS
         plt.xlabel("Log2 Fold Change", fontname="arial")
-        plt.ylabel('-Log10 of P-Value', fontname="arial")
+        plt.ylabel('-Log10(p-value)', fontname="arial")
 
         if aspect is not None:
             plt.axes().set_aspect(aspect)
@@ -130,7 +168,7 @@ class Volcano(object):
             plt.axes().set_aspect(aspect)
         # Label the axes
         plt.xlabel("Log2 Fold Change", fontname="arial")
-        plt.ylabel('-Log10 of P-Value', fontname="arial")
+        plt.ylabel('-Log10(p-value)', fontname="arial")
         # return plt
         return
 
@@ -167,12 +205,77 @@ class Volcano(object):
         plt.grid(True)
         # LABELS
         plt.xlabel("Log2 Fold Change", fontname="arial")
-        plt.ylabel('-Log10 of P-Value', fontname="arial")
+        plt.ylabel('-Log10(p-value)', fontname="arial")
 
         if aspect is not None:
             plt.axes().set_aspect(aspect)
         return
 
+    @classmethod
+    def by_classic(cls, lfc, pval, curtain=[-np.log10(.05), 20],
+                   dot_size=None, aspect=None, *args, **kwargs):
+        """Update on simple."""
+        dot_size = dot_size or 40
+
+        plt.scatter(lfc, -np.log10(pval), edgecolors="gray",
+                    s=dot_size, zorder=3, *args, **kwargs)
+
+        # Show cutoff
+        plt.axhspan(curtain[0], curtain[1], facecolor='y',
+                    alpha=0.25, zorder=0)
+
+        # Set plot limits
+        plt.ylim([0, 5])
+        plt.xlim([-3, 3])
+
+        # Show grid
+        plt.grid(True, linestyle=':', zorder=1, c="k")
+
+        # Set aspect
+        if aspect is not None:
+            plt.axes().set_aspect(aspect)
+
+        # Label the axes
+        plt.xlabel("Log2 Fold Change", fontname="arial")
+        plt.ylabel('-Log10(p-value)', fontname="arial")
+        # return plt
+        return
+
+
+    @classmethod
+    def by_chosen_cutoff(cls, lfc, pval, chosen, curtain=[-np.log10(.05), 20],
+                         dot_size=None, aspect=None, *args, **kwargs):
+
+        """Volcano plot mitochondrial peptides(black) non-mitochondrial (white)."""
+
+        dot_size = dot_size or 40
+        sizes_b = chosen.astype(int)*dot_size
+        sizes_w = (~chosen).astype(int)*dot_size
+
+        colors = cls.cmap(chosen.astype(int))
+
+        plt.scatter(lfc, -np.log10(pval), c=colors, edgecolors="gray", s=sizes_w, zorder=2)
+        plt.scatter(lfc, -np.log10(pval), c=colors, edgecolors="gray", s=sizes_b, zorder=3)
+
+        # Show cutoff
+        plt.axhspan(curtain[0], curtain[1], facecolor='y', alpha=0.25, zorder=0)
+
+        # Set plot limits
+        plt.ylim([0, 5])
+        plt.xlim([-3, 3])
+
+        # Show grid
+        plt.grid(True, linestyle=':', zorder=1 ,c="k")
+
+        # Set aspect
+        if aspect is not None:
+            plt.axes().set_aspect(aspect)
+
+        # Label the axes
+        plt.xlabel("Log2 Fold Change", fontname="arial")
+        plt.ylabel('-Log10(p-value)', fontname="arial")
+        # return plt
+        return
 
 
 def volcan(FC, pvals, cutoff=-np.log10(.05), aspect=None):
@@ -201,7 +304,7 @@ def volcan(FC, pvals, cutoff=-np.log10(.05), aspect=None):
     plt.grid(True)
     # LABELS
     plt.xlabel("Log2 Fold Change", fontname="arial")
-    plt.ylabel('-Log10 of P-Value', fontname="arial")
+    plt.ylabel('-Log10(p-value)', fontname="arial")
 
     if aspect is not None:
         plt.axes().set_aspect(aspect)
@@ -289,7 +392,7 @@ def trePlot(trunob):
     # Subplot1
     ax1 = plt.subplot(131)
     plotByMito(trunob.lfc.ix[:, 0], trunob.pval.ix[:, 0], bdex, wdex)
-    plt.ylabel('-Log10 of P-Value', fontname="arial")
+    plt.ylabel('-Log10(p-value)', fontname="arial")
     plt.xlabel('Log2 Fold Change', fontname="arial")
     plt.xticks(size=xtix)
     plt.yticks(size=ytix)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
+"""Color tools.
+
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -19,12 +20,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-# from . import select_files
-from . import save
-from . import notebook
+import numpy as np
+import webcolors
 
-from .notebook import OminNotebook
-from .notebook import SelectFilesButton
-from .select_dir import select_dir
-from .timestamp import timestamp
-from .bokomin import Bokomin
+
+def web2rgb(color):
+    """Turn your webcolor names and hex strings into rgb format."""
+    try:
+        return np.array(webcolors.name_to_rgb(color))/255.0
+    except Exception:
+        pass
+    try:
+        return np.array(webcolors.hex_to_rgb(color))/255.0
+    except Exception:
+        pass

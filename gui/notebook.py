@@ -107,13 +107,20 @@ class OminNotebook(object):
         self._title = ""
         self._time_stamp = "{:%I:%M %p %A %B %d %Y}".format(datetime.now())
         self.select_files_button = SelectFilesButton()
+        self.select_files_button.observe(self.on_value_change, names="files")
         self.run_button = RunButton()
+        self.start_panel = widgets.VBox()
+        self.start_panel.children = [self.top[0],
+                                     self.top[1],
+                                     self.select_files_button]
 
     def on_value_change(self, change):
         """Display the Run Button upon value change."""
         if type(change["old"]) != list:
             self.run_button.files = self.select_files_button.files
-            display(self.run_button)
+            # display(self.run_button)
+            updated_panel = self.start_panel.children + (self.run_button,)
+            self.start_panel.children = updated_panel
 
     @property
     def header(self):
@@ -153,9 +160,7 @@ class OminNotebook(object):
 
     def __repr__(self):
         """Show the dashboard on call."""
-        display(self.top[0], self.top[1])
-        display(self.select_files_button)
-        self.select_files_button.observe(self.on_value_change, names="files")
+        display(self.start_panel)
         return ""
 
 class MakeComparison(object):
@@ -181,6 +186,8 @@ class MakeComparison(object):
         lfc = Compare.log2FC(num.apply(np.log2), dem.apply(np.log2))
         # qvl = omin.Compare.bh_fdr(pvl)
         Volcano.simple(lfc, pvl)
+        # plt.show()
+        # TODO: Make this update the same graph seamlessly.
 
     def __repr__(self):
         display(self.compare)

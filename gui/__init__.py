@@ -22,9 +22,9 @@ SOFTWARE.
 # from . import select_files
 from . import save
 from . import notebook
-
+# from .widget_utils import timestamp
+# from .widget_utils import LoadedButton
 from .notebook import OminNotebook
-from .notebook import SelectFilesButton
-from .select_dir import select_dir
-from .timestamp import timestamp
+# from .notebook import SelectFilesButton
+# from .select_dir import select_dir
 from .bokomin import Bokomin

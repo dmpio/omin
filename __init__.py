@@ -71,7 +71,7 @@ from . import export
 from . import databases
 from .databases import MitoCarta
 from . import gui
-from .gui import timestamp
+# from .gui import timestamp
 from .gui import OminNotebook as nb
 from . import pathfinder
 

@@ -27,10 +27,16 @@ from datetime import datetime
 
 
 class StringTools(object):
+    """Tools for processing strings or that have a string basis."""
 
     @staticmethod
-    def time_stamp():
-        """Takes no arguments and returns datetime timestamp as string.
+    def time_stamp(posix=False):
+        """Return datetime timestamp as string at the time called.
+
+        Parameters
+        ----------
+        posix : bool
+            If True returns the string in a POSIX format.
 
         Returns
         -------
@@ -41,7 +47,10 @@ class StringTools(object):
         >>>StingTools.time_stamp()
         '1483631005_38507'
         """
-        ts = str(datetime.timestamp(datetime.now())).replace(".", "_")
+        if posix:
+            ts = str(datetime.timestamp(datetime.now())).replace(".", "_")
+        else:
+            ts = "{:%I:%M:%S %p %A %B %d %Y}".format(datetime.now())
         return ts
 
     @staticmethod

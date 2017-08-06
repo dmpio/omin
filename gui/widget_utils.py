@@ -23,9 +23,11 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import traitlets
+from IPython.display import display
 from IPython.display import HTML
 from ipywidgets import widgets
 # from traitlets import traitlets
+from functools import partial
 from datetime import datetime
 from tkinter import Tk, filedialog
 from dominate import tags
@@ -42,6 +44,27 @@ def timestamp():
     return ts_widget
 
 
+def widget_append(change, target, new_widget):
+    """Append new widget to a taget layout."""
+    if change['new'] is not change['old']:
+        if new_widget not in target.children:
+            target.children += (new_widget,)
+            return
+
+
+def toggle_append(change, target, new_widget):
+    """Append new widget to a taget layout on a toggle change."""
+    if change['new'] is True:
+        if new_widget not in target.children:
+            target.children += (new_widget,)
+            return
+    # Remove the widget if toggle is set to false
+    if change['new'] is not False:
+        if new_widget in target.children:
+            target.children = list(filter(lambda x: x is not new_widget,
+                                          target.children))
+
+
 class LoadedButton(widgets.Button):
     """A button that can holds a value as a attribute."""
 
@@ -54,12 +77,11 @@ class LoadedButton(widgets.Button):
 
 class SelectFilesButton(widgets.Button):
     """A file widget that leverages tkinter.filedialog."""
+    files = traitlets.List([], help="List of file paths").tag(sync=True)
 
     def __init__(self, *args, **kwargs):
         """Initialize the SelectFilesButton class."""
         super(SelectFilesButton, self).__init__(*args, **kwargs)
-        # Add the selected_files trait
-        self.add_traits(files=traitlets.List())
         # Create the button.
         self.description = "Select Files"
         self.icon = "square-o"
@@ -93,15 +115,15 @@ class SelectFilesButton(widgets.Button):
 class RunButton(widgets.Button):
     """Button that begins processing the selected files."""
 
+    files = traitlets.List([], help="List of file paths").tag(sync=True)
+
     def __init__(self, *args, **kwargs):
         """Initialize the SelectFilesButton class."""
         super(RunButton, self).__init__(*args, **kwargs)
-        self.add_traits(files=traitlets.traitlets.List())
-        self.add_traits(data=traitlets.traitlets.Instance(object))
+        self.add_traits(data=traitlets.Instance(object))
         self.description = "Run"
         self.button_style = "info"
         self.icon = "play"
-        # Enter the number
         self.process = "Process"
         self.on_click(self.run_process)
 
@@ -110,3 +132,30 @@ class RunButton(widgets.Button):
         """Run the process defined in the __init__ def."""
         process = eval(b.process)
         b.data = process(b.files)
+
+
+class SelectFilesPanel(widgets.VBox):
+    """General File Selection Panel."""
+
+    def __init__(self, selector_description="", *args, **kwargs):
+        """Initialize the SelectFilesPanel."""
+        super(SelectFilesPanel, self).__init__(*args, **kwargs)
+        # Create selector button.
+        self.files = []
+        self.selector = widgets.ToggleButton(description=selector_description,
+                                             value=False)
+        self.select_files = SelectFilesButton()
+        self.children = [self.selector]
+        # self.panel = widgets.VBox([self.selector])
+        # Load the kwargs into trigger.
+        loaded_toggle_append = partial(toggle_append,
+                                       target=self,
+                                       new_widget=self.select_files)
+        # If selector is then selecte_files is added to panel.
+        self.selector.observe(loaded_toggle_append,
+                              names="value", type='change')
+
+    def __repr__(self):
+        """Show the panel."""
+        display(self.panel)
+        return ""

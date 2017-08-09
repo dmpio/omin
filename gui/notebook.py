@@ -35,13 +35,14 @@ from ..visualize import Volcano
 from ..utils.string_tools import StringTools
 from .widget_utils import SelectFilesButton
 from .widget_utils import RunButton
-
+from warnings import warn
 
 class OminNotebook(object):
     """A hybrid GUI for Omin."""
 
     def __init__(self):
         """Initialize the dashboard."""
+        warn("OminNotebook has been deprecated, use omin.gui.OminNotebookController.")
         self._header = "Omin Notebook"
         self._title = ""
         # self._time_stamp = "{:%I:%M %p %A %B %d %Y}".format(datetime.now())

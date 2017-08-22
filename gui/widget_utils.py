@@ -31,6 +31,7 @@ from functools import partial
 from datetime import datetime
 from tkinter import Tk, filedialog
 from dominate import tags
+from .super_selection_container import SuperAccordion
 from ..core.handles import Process
 from warnings import warn
 
@@ -44,12 +45,20 @@ def timestamp():
     return ts_widget
 
 
-def widget_append(change, target, new_widget):
+def widget_append(change, target, new_widget, title=None):
     """Append new widget to a taget layout."""
     if change['new'] is not change['old']:
-        if new_widget not in target.children:
-            target.children += (new_widget,)
-            return
+        # Only for SuperSelectionContainer
+        if isinstance(new_widget, SuperAccordion):
+            if title is not None:
+                if new_widget not in target.children:
+                    print('success')
+                    target[title] = new_widget
+                    return
+        else:
+            if new_widget not in target.children:
+                target.children += (new_widget,)
+                return
 
 
 def toggle_append(change, target, new_widget):
@@ -63,6 +72,20 @@ def toggle_append(change, target, new_widget):
         if new_widget in target.children:
             target.children = list(filter(lambda x: x is not new_widget,
                                           target.children))
+
+
+def shift_focus(layout, index):
+    """Change the selected_index of a layout widget on the fly."""
+    if hasattr(layout, 'selected_index'):
+        layout.selected_index = index
+
+
+def focus_new_child(change, target=None):
+    """On the addition of a child widget a target layout will focus on it."""
+    if len(change['new']) is not len(change['old']):
+        if target is not None:
+            assert hasattr(target, 'selected_index')
+            target.selected_index = len(target.children) - 1
 
 
 class LoadedButton(widgets.Button):
@@ -155,7 +178,7 @@ class SelectFilesPanel(widgets.VBox):
         self.selector.observe(loaded_toggle_append,
                               names="value", type='change')
 
-    def __repr__(self):
-        """Show the panel."""
-        display(self.panel)
-        return ""
+    # def __repr__(self):
+    #     """Show the panel."""
+    #     display(self.panel)
+    #     return ""

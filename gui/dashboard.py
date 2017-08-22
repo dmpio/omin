@@ -28,7 +28,11 @@ from IPython.display import display
 from functools import partial
 
 from ..utils.string_tools import StringTools
+
+from .super_selection_container import SuperAccordion
+
 from .widget_utils import widget_append
+from .widget_utils import focus_new_child
 from .widget_utils import SelectFilesButton
 from .widget_utils import RunButton
 from .widget_utils import SelectFilesPanel
@@ -42,11 +46,11 @@ class OminNotebookController(object):
         self._banner = "Omin Notebook"
         self._title = ""
         self._time_stamp = StringTools.time_stamp()
-        self._sections = ['Select Files',
-                          'Quick Stats',
-                          'Process',
-                          'Results',
-                          'Export']
+        # self._sections = ['Select Files',
+        #                   'Process',
+        #                   'Quick Stats',
+        #                   'Results',
+        #                   'Export']
 
         # Create new_analysis panel.
         self.new_analysis = SelectFilesPanel(selector_description='New Analysis')
@@ -57,9 +61,18 @@ class OminNotebookController(object):
         # Link the files trait between new Analysis and run
         widgets.jslink((self.new_analysis.select_files, 'files'), (self.run_button, 'files'))
         # Create the Accordian widget
-        self.accordion = widgets.Accordion()
-        [self.accordion.set_title(i, title) for i, title in enumerate(self._sections)]
-        self.accordion.children = [self.new_analysis]
+        # self.accordion = widgets.Accordion()
+        self.accordion = SuperAccordion()
+        # [self.accordion.set_title(i, title) for i, title in enumerate(self._sections)]
+        self.accordion['Select Files'] = self.new_analysis
+        # # Load the partial function for focussing on the new child widget.
+        # loaded_focus_new_child = partial(focus_new_child,
+        #                                  target=self.accordion)
+        # # On the addition of a new child widget the accordion will focus on it.
+        # self.accordion.observe(loaded_focus_new_child,
+        #                        names='children',
+        #                        type='change')
+
         # Create the header panel
         self.header_panel = widgets.VBox()
         self.header_panel.children = [self.header[0], self.header[1]]
@@ -68,22 +81,34 @@ class OminNotebookController(object):
 
         # Observers
 
-        # Quick Stats observer
-        add_qs = partial(widget_append,
-                         new_widget=self.quick_stats,
-                         target=self.accordion)
+        # # Quick Stats observer
+        # add_qs = partial(widget_append,
+        #                  new_widget=self.quick_stats,
+        #                  target=self.accordion)
+        #
+        # self.new_analysis.select_files.observe(add_qs,
+        #                                        names='files',
+        #                                        type='change')
 
-        self.new_analysis.select_files.observe(add_qs,
-                                               names='files',
-                                               type='change')
+        # # Set up for the Run Button.
+        # add_rb = partial(widget_append,
+        #                  new_widget=self.run_button,
+        #                  target=self.accordion)
+        #
+        # self.new_analysis.select_files.observe(add_rb,
+        #                                        names='files',
+        #                                        type='change')
 
+        # Set up for the Run Button.
         add_rb = partial(widget_append,
                          new_widget=self.run_button,
-                         target=self.accordion)
+                         target=self.accordion,
+                         title='Run Button')
 
         self.new_analysis.select_files.observe(add_rb,
                                                names='files',
                                                type='change')
+
 
     @property
     def banner(self):

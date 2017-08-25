@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""ipywidgets timestamp for your Jupyter Notebook"""
+"""Tools ipywidget based hybrid gui."""
 
 # LICENSE
 # -------
@@ -22,15 +22,19 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from IPython.display import HTML
-from datetime import datetime
-# from ipywidgets import widgets
+import traitlets
 from dominate import tags
+from ipywidgets import widgets
+from IPython.display import display
+from functools import partial
+from ..utils.string_tools import StringTools
 
 
-def timestamp():
-    """Return a ipywidget timestamp."""
-    ts = tags.h4("{:%I:%M:%S %p %A %B %d %Y}".format(datetime.now()))
-    # ts_widget = widgets.HTML(ts.render())
-    ts_widget = HTML(ts.render())
-    return ts_widget
+class QuickStats(widgets.HTML):
+    """A heads up display of your stats."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize quick stats."""
+        super(QuickStats, self).__init__(*args, **kwargs)
+        # TODO: possibly take dict as arg throw into HTML table with dominate.
+        # Actually I can just make a DataFrame and then do to_html

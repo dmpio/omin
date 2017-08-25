@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
+"""Data Visualization tools.
+
 Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -30,7 +31,43 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.colors import LinearSegmentedColormap
 
 
-def choose_index_cutoff(dataframe, on, conditional, cut_off, new_name= None):
+def saveFig(fig_title, parent_file=None, dpi=300, ftype=".png"):
+    """Save your figures.
+
+    Parameters
+    ----------
+    figtitle : str
+    parent_file : str or None
+        Defaults to None
+    dpi : int
+        Defaults to 300
+    ftype : str
+        Defaults to '.png'
+
+    """
+    from matplotlib import pyplot as plt
+
+    if parent_file is None:
+        # Make fig file name
+        fn = re.sub('[^0-9a-zA-Z]+',  # regex pattern
+                    '_',  # replacement
+                    fig_title)  # input string
+        fn = fn + ftype
+        plt.savefig(fn, dpi=dpi)
+        print("Your file has been saved in this directory with the title: ",
+              fn, "@", dpi, "dpi")
+    else:
+        fn = re.sub('[^0-9a-zA-Z]+',  # regex pattern
+                    '_',  # replacement
+                    fig_title)  # input string
+        fn = fn + ftype
+        fpath = parent_file + "/" + fn
+        plt.savefig(fpath, dpi=dpi)
+        print("Your figure has been saved in " + parent_file +
+              " directory with the title: ", fn, "@", dpi, "dpi")
+
+
+def choose_index_cutoff(dataframe, on, conditional, cut_off, new_name=None):
     """Return series of bool for cut off on a DataFrame column.
 
     Parameters
@@ -53,7 +90,7 @@ def choose_index_cutoff(dataframe, on, conditional, cut_off, new_name= None):
     """
     equality = "x{}{}".format(conditional, cut_off)
 
-    result = dataframe[on].apply(lambda x:eval(equality))
+    result = dataframe[on].apply(lambda x: eval(equality))
 
     if new_name is not None:
         result.name = new_name
@@ -62,7 +99,7 @@ def choose_index_cutoff(dataframe, on, conditional, cut_off, new_name= None):
 
 
 class Volcano(object):
-    """"""
+    """Data erruptions."""
 
     swatch = {"gray": (0.35, 0.3, 0.3),
               "opti-black": (0.10, 0.05, 0.15)}
@@ -74,7 +111,6 @@ class Volcano(object):
     @classmethod
     def simple(cls, FC, pvals, cutoff=-np.log10(.05), aspect=None,
                c=None, edgecolors=None):
-
         """Takes p-values and log2 fold changes and returns a basic volcano plot
         figure.
 
@@ -471,42 +507,6 @@ def quadPlot(trunob):
     plt.subplots_adjust(wspace=0.08, hspace=0.25)
     return plt
 
-
-def saveFig(fig_title, parent_file=None, dpi=300, ftype=".png"):
-    """Takes a figure and figure title and saves it with a file system
-    compatable name.
-
-    Parameters
-    ----------
-    figtitle : str
-    parent_file : str or None
-        Defaults to None
-    dpi : int
-        Defaults to 300
-    ftype : str
-        Defaults to '.png'
-
-    """
-    from matplotlib import pyplot as plt
-
-    if parent_file is None:
-        # Make fig file name
-        fn = re.sub('[^0-9a-zA-Z]+',  # regex pattern
-                    '_',  # replacement
-                    fig_title)  # input string
-        fn = fn + ftype
-        plt.savefig(fn, dpi=dpi)
-        print("Your file has been saved in this directory with the title: ",
-              fn, "@", dpi, "dpi")
-    else:
-        fn = re.sub('[^0-9a-zA-Z]+',  # regex pattern
-                    '_',  # replacement
-                    fig_title)  # input string
-        fn = fn + ftype
-        fpath = parent_file + "/" + fn
-        plt.savefig(fpath, dpi=dpi)
-        print("Your figure has been saved in " + parent_file +
-              " directory with the title: ", fn, "@", dpi, "dpi")
 
 # VENN DIAGRAMS
 # FIXME: REWRITE ALL OF THIS

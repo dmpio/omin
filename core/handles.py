@@ -98,7 +98,7 @@ class Handle(object):
 
     def __init__(self):
         """Initalize the core handle."""
-        pass
+        self.numbers = dict()
 
     def __repr__(self):
         """Show all attributes."""
@@ -113,6 +113,7 @@ class ProteomeDiscovererRaw(Handle):
         super(ProteomeDiscovererRaw, self).__init__()
         self.raw = raw_data.copy()
         self.abundance = self.raw.filter(regex="Abundance:")
+        self.numbers['total_ids'] = self.raw.shape[0]
 
 
 class PeptideGroups(ProteomeDiscovererRaw):
@@ -136,6 +137,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
                     df = SelectionTools.filterRow(self.raw,
                                                   on="Modifications",
                                                   term=i)
+                    self.numbers[mod] = df.shape[0]
                     self.__dict__[mod] = df
             else:
                 pass
@@ -313,6 +315,7 @@ class PreProcess(RawData):
                                            self.peptide_groups.raw["Modifications in Proteins"],
                                            self.peptide_groups.raw.Sequence,
                                            mdex], axis=1)
+            self.numbers['mitocarta_hits'] = self.master_index.MitoCarta2_List.sum()
             del gi, mdex
             gc.collect()
 

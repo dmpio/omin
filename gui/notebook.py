@@ -22,98 +22,46 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import traitlets
+
 import numpy as np
-import pandas as pd
-from datetime import datetime
 from dominate import tags
-# import warnings
-from IPython.display import display
-# from IPython.display import HTML
 from ipywidgets import widgets
-from tkinter import Tk, filedialog
-from ..core.handles import Process
+from IPython.display import display
+
+
 from ..stats.tools import Compare
 from ..visualize import Volcano
-# warnings.filterwarnings("ignore")
 
-
-class SelectFilesButton(widgets.Button):
-    """A file widget that leverages tkinter.filedialog."""
-
-    def __init__(self, *args, **kwargs):
-        """Initialize the SelectFilesButton class."""
-        super(SelectFilesButton, self).__init__(*args, **kwargs)
-        # Add the selected_files trait
-        self.add_traits(files=traitlets.traitlets.List())
-        # Create the button.
-        self.description = "Select Files"
-        self.icon = "square-o"
-        self.style.button_color = "orange"
-        # Set on click behavior.
-        self.on_click(self.select_files)
-
-    @staticmethod
-    def select_files(b):
-        """Generate instance of tkinter.filedialog.
-
-        Parameters
-        ----------
-        b : obj:
-            An instance of ipywidgets.widgets.Button
-        """
-        # Create Tk root
-        root = Tk()
-        # Hide the main window
-        root.withdraw()
-        # Raise the root to the top of all windows.
-        root.call('wm', 'attributes', '.', '-topmost', True)
-        # List of selected fileswill be set to b.value
-        b.files = filedialog.askopenfilename(multiple=True)
-
-        b.description = "Files Selected"
-        b.icon = "check-square-o"
-        b.style.button_color = "lightgreen"
-
-
-class RunButton(widgets.Button):
-    """Button that begins processing the selected files."""
-
-    def __init__(self, *args, **kwargs):
-        """Initialize the SelectFilesButton class."""
-        super(RunButton, self).__init__(*args, **kwargs)
-        self.add_traits(files=traitlets.traitlets.List())
-        self.add_traits(data=traitlets.traitlets.Instance(object))
-        self.description = "Run"
-        self.button_style = "info"
-        self.icon = "play"
-        # Enter the number
-        self.process = "Process"
-        self.on_click(self.run_process)
-
-    @staticmethod
-    def run_process(b):
-        """Run the process defined in the __init__ def."""
-        process = eval(b.process)
-        b.data = process(b.files)
-
+from ..utils.string_tools import StringTools
+from .widget_utils import SelectFilesButton
+from .widget_utils import RunButton
+from warnings import warn
 
 class OminNotebook(object):
     """A hybrid GUI for Omin."""
 
     def __init__(self):
         """Initialize the dashboard."""
+        warn("OminNotebook has been deprecated, use omin.gui.OminNotebookController.")
         self._header = "Omin Notebook"
         self._title = ""
-        self._time_stamp = "{:%I:%M %p %A %B %d %Y}".format(datetime.now())
+        # self._time_stamp = "{:%I:%M %p %A %B %d %Y}".format(datetime.now())
+        self._time_stamp = StringTools.time_stamp()
         self.select_files_button = SelectFilesButton()
+        self.select_files_button.observe(self.on_value_change, names="files")
         self.run_button = RunButton()
+        self.start_panel = widgets.VBox()
+        self.start_panel.children = [self.top[0],
+                                     self.top[1],
+                                     self.select_files_button]
 
     def on_value_change(self, change):
         """Display the Run Button upon value change."""
         if type(change["old"]) != list:
             self.run_button.files = self.select_files_button.files
-            display(self.run_button)
+            # display(self.run_button)
+            updated_panel = self.start_panel.children + (self.run_button,)
+            self.start_panel.children = updated_panel
 
     @property
     def header(self):
@@ -153,9 +101,7 @@ class OminNotebook(object):
 
     def __repr__(self):
         """Show the dashboard on call."""
-        display(self.top[0], self.top[1])
-        display(self.select_files_button)
-        self.select_files_button.observe(self.on_value_change, names="files")
+        display(self.start_panel)
         return ""
 
 class MakeComparison(object):
@@ -181,6 +127,8 @@ class MakeComparison(object):
         lfc = Compare.log2FC(num.apply(np.log2), dem.apply(np.log2))
         # qvl = omin.Compare.bh_fdr(pvl)
         Volcano.simple(lfc, pvl)
+        # plt.show()
+        # TODO: Make this update the same graph seamlessly.
 
     def __repr__(self):
         display(self.compare)

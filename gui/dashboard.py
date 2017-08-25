@@ -127,7 +127,7 @@ class OminNotebookController(object):
         banner = widgets.HTML(tags.h1(self.banner).render())
         time_stamp = widgets.HTML(tags.h4(self.time_stamp).render())
         return banner, time_stamp
-
+    # FIXME: Not using select files button any more. Files need to be assigned to variable.
     @property
     def files(self):
         """Getter method for the selected files."""

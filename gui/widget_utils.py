@@ -49,10 +49,9 @@ def widget_append(change, target, new_widget, title=None):
     """Append new widget to a taget layout."""
     if change['new'] is not change['old']:
         # Only for SuperSelectionContainer
-        if isinstance(new_widget, SuperAccordion):
+        if isinstance(target, SuperAccordion):
             if title is not None:
                 if new_widget not in target.children:
-                    print('success')
                     target[title] = new_widget
                     return
         else:

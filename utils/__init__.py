@@ -29,7 +29,7 @@
 # from .utils import *
 from .filter_tools import FilterTools
 from .fasta_tools import FastaTools
-from .fasta_tools import UniprotTools
+from .fasta_tools import UniProtTools
 from .string_tools import StringTools
 from .selection_tools import SelectionTools
 from .io_tools import IOTools

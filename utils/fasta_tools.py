@@ -22,6 +22,7 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import re
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
@@ -67,36 +68,41 @@ class FastaTools(object):
 # === UNIPROT TOOLS ===
 
 
-class UniprotTools(object):
+class UniProtTools(object):
+    """Tools for querying the UniProt database."""
+
+    id_rx = re.compile('ID;\s(\d+);')
 
     @classmethod
-    def getFasta(cls, upID):
-        """Takes a uniprot ID and returns a string.
+    def get_uniprot(cls, accession, file_format='.fasta'):
+        """Retrieve UniProt data for a given accession."""
+        if file_format[0] != '.':
+            file_format = '.' + file_format
 
-        Parameters
-        ----------
-        upID : str
-
-        Returns
-        -------
-        fasta : str
-
-        """
+        url = "http://www.uniprot.org/uniprot/"
+        req = ''.join([url, accession, file_format])
         try:
-            fasta = str
-            link = "http://www.uniprot.org/uniprot/"+upID+".fasta"
-            try:
-                urlout = urlopen(link)
-                # print("hey")
+            data = urlopen(req)
+            return data.read().decode()
+        except HTTPError:
+            print('Entry :', accession, 'not found.')
+            return None
 
-            except HTTPError:
-                print(
-                      "Try again, the formatting may be off.",
-                      "Try removing dashes."
-                      )
+    @classmethod
+    def get_gene_id(cls, accession):
+        """Retrieve the gene id for a given accession."""
+        result = cls.get_uniprot(accession, file_format='.txt')
+        result = cls.id_rx.findall(result)
+        result = result[0]
+        return result
 
-            # fasta = urlout.read().decode("utf-8")
-            fasta = urlout.read().decode("utf-8").split("\n")
-            return fasta
-        except TypeError as err:
-            print("Please enter UniProt ID as string.")
+    @classmethod
+    def go_anno(cls, accession, desc=False):
+        """Retrieve GO annotations for a given accession."""
+        txt = cls.get_uniprot(accession, file_format='.txt')
+        if desc:
+            rx = re.compile('GO:\d+;.+\n')
+        else:
+            rx = re.compile('(GO:\d+);')
+        results = rx.findall(txt)
+        return results

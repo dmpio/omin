@@ -61,6 +61,7 @@ from .setup import version
 from .utils import StringTools
 from .utils import SelectionTools
 from .utils import IOTools
+from .utils import UniProtTools
 from . import core
 from .core.handles import *
 from . import normalize

@@ -76,6 +76,7 @@ from . import gui
 # from .gui import OminNotebook as nb
 from .gui import OminNotebookController as nb
 from . import pathfinder
+from .databases import MitoCartaTwo
 
 if sys.version_info[0] >= 3:
     from builtins import bool, int, float, complex, object, str

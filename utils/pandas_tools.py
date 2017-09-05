@@ -94,3 +94,13 @@ def label_insert(self, label, *args, **kwargs):
 
 
 setattr(pd.DataFrame, 'label_insert', label_insert)
+
+
+def filter_type(self, col, desired):
+    """Filter a DataFrame by the type stored in a given column."""
+    assert(type(self) is pd.DataFrame)
+    assert(type(col) is str)
+    return self[self[col].apply(lambda x:type(x) == desired)]
+
+
+setattr(pd.DataFrame, 'filter_type', filter_type)

@@ -225,6 +225,7 @@ class FilterTools(object):
 
         FIXME: FIX THIS FUNCTION
         """
+        # TODO: Deprecate in favor of omin.utils.pandas_tools.first_member
         ser = dataframe[on].dropna()
         # first = [i.split(';')[0] for i in ser]
         first = ser.apply(lambda x: x.split(";")[0])

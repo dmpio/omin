@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Custom pandas tools."""
+"""Custom pandas tools.
+
+Hotpatched functions for pd.DataFrame
+-------------------------------------
+Hotpatching aka monkey-patching functions to an existing class is suggested
+over subclassing functions. I prefer to use this method instead of pandas
+pd.DataFrame.pipe command because I think that it yields a simpler syntax for
+for the lab rats.
+"""
 
 # LICENSE
 # -------
@@ -88,9 +96,24 @@ def label_pos(self):
 setattr(pd.DataFrame, 'label_pos', label_pos)
 
 
-def label_insert(self, label, *args, **kwargs):
-    """Insert an array-like into a DataFrame before that label."""
-    self.insert(int(self.label_pos[label]), *args, **kwargs)
+def label_insert(self, label, how='Right', *args, **kwargs):
+    """Insert an array-like into a DataFrame before that label.
+
+    Parameters
+    ----------
+    label : str
+        The label of th ecolumn to insert by.
+    how : str
+        Right or Left.
+    value : Series
+        New column.
+    column : str
+        New column name.
+    """
+    if how == 'Right':
+        self.insert(int(self.label_pos[label]+1), *args, **kwargs)
+    if how == 'Left':
+        self.insert(int(self.label_pos[label]), *args, **kwargs)
 
 
 setattr(pd.DataFrame, 'label_insert', label_insert)
@@ -104,3 +127,32 @@ def filter_type(self, col, desired):
 
 
 setattr(pd.DataFrame, 'filter_type', filter_type)
+
+
+def first_member(self, delim=';'):
+    """Return the first member of split on delim.
+
+    Intended for pandas.Series that has lists in the form of strings
+    with a foreign delimiter.
+
+    WARNING: NaNs are cast as strings and cast back to floats. So if
+    your first member happens to be 'nan' it will be cast as a float.
+
+    Parameters
+    ----------
+    delim : str
+        The delimeter to to perform the split on.
+
+    Returns
+    -------
+    results : pd.Series
+        A Series of the first members of the list.
+    """
+    result = self.astype(str).apply(lambda x: x.split(delim)[0])
+
+    result = result.replace('nan', float('nan'))
+
+    return result
+
+
+setattr(pd.Series, 'first_member', first_member)

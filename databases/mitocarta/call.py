@@ -39,6 +39,10 @@ class MitoCartaTwo(object):
     carta_file_path = os.path.join(this_dir, db_name)
     # load the MitoCarta 2.0 database
     data = pd.read_pickle(carta_file_path)
+    # Load the modified mitocarta2.0 database.
+    ukb = 'uniprotkb_mitocarta2.p.gz'
+    ukb_file_path = os.path.join(this_dir, ukb)
+    ukb2mito = pd.read_pickle(ukb_file_path, compression='gzip')
 
     @classmethod
     def look_up(cls, syn_list):

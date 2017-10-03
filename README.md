@@ -16,22 +16,13 @@ Using python to squeeze the biomarkers out of your big data.
 
 ### Windows
 
-Commandline:
-```
-cd Anaconda3\lib\site-packages
-git clone https://github.com/dmpio/omin
-```
-
-Through the GitHub GUI (provides tracking support through Github GUI);
-- 1. Find the plus icon on the left-side of the application.
-- 2. Click it and select clone this repo.
-- 3. Prompted for a location add it here; `Anaconda3\lib\site-packages`
+- Download the zip file.
+- Extract the files.
+- Run omin_win7_installer.cmd
 
 Here are a some Jupyter notebook examples;
 
 - [omin method development]([here](https://github.com/dmpio/omin_method_development)
-
-FIXME: Give some specific use cases.
 
 ---
 ## Omin state diagram

@@ -18,9 +18,6 @@ user.
 # FIXME: Include paragraph description of the types of filtering.
 
 import re
-import gc
-# import pandas as pd
-# import numpy as np
 from omin.utils import StringTools
 from omin.utils import SelectionTools
 from omin.utils import FilterTools
@@ -223,24 +220,23 @@ class PreProcess(RawData):
         self.mitodex = mito
         # Mitocarta non hits DataFrame
         self.nonmitodex = nonmito
-        # Delete the temporary varibles.
-        del mito, nonmito, pep_sel, prot_sel
-        # Garbage collect.
-        gc.collect()
         # Create a unified index of mitocarta calls.
         self.unidex = None
         try:
             unidex = pd.concat([self.mitodex, self.nonmitodex]).sort_index()
             self.unidex = unidex.reindex(index=self.peptide_groups.raw.index)
-            del unidex
-            gc.collect()
         except Exception:
             pass
         self.master_index = None
         try:
             # Get the Gene Symbol
-            gi = self.proteins.raw["Gene ID"].ix[self.prot_sel.index]
-            gi.index = self.peptide_groups.raw.index
+            if "Gene ID" in self.proteins.raw: # PD2.1
+                entrez_gene_id = self.proteins.raw["Gene ID"].iloc[self.prot_sel.index]
+                entrez_gene_id.index = self.peptide_groups.raw.index
+            if "Entrez Gene ID" in self.proteins.raw: # PD2.2
+                entrez_gene_id = self.proteins.raw["Entrez Gene ID"].iloc[self.prot_sel.index]
+                entrez_gene_id.index = self.peptide_groups.raw.index
+
             # Get Gene Description.
             ga = self.proteins.raw["Description"].ix[self.prot_sel.index]
             ga.index = self.peptide_groups.raw.index
@@ -250,15 +246,13 @@ class PreProcess(RawData):
             mdex = pd.DataFrame(mdex.fillna(0.0), dtype="bool")
 
             self.master_index = pd.concat([self.pep_sel,
-                                           gi,
+                                           entrez_gene_id,
                                            ga,
                                            self.peptide_groups.raw.Modifications,
                                            self.peptide_groups.raw["Modifications in Proteins"],
                                            self.peptide_groups.raw.Sequence,
                                            mdex], axis=1)
             self.numbers['mitocarta_hits'] = self.master_index.MitoCarta2_List.sum()
-            del gi, mdex
-            gc.collect()
 
         except Exception:
             print("Could not create master_index")

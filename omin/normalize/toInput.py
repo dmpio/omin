@@ -23,12 +23,12 @@ SOFTWARE.
 
 import itertools
 # from operator import itemgetter
-from omin.utils import StringTools
-from omin.utils import SelectionTools
-from omin.normalize.methods import normFactors
-from omin.normalize.methods import normalizeTo
-from omin.normalize.methods import Logger
-from omin.normalize.methods import MachLink
+from ..utils import StringTools
+from ..utils import SelectionTools
+from ..normalize.methods import normFactors
+from ..normalize.methods import normalizeTo
+from ..normalize.methods import Logger
+from ..normalize.methods import MachLink
 from IPython.display import display
 from ipywidgets import widgets
 

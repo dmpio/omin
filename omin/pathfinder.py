@@ -30,3 +30,6 @@ def find_path():
     """Find the location of omin package in any given file system."""
     __dir_path__ = os.path.dirname(os.path.realpath(__file__))
     return __dir_path__
+
+if __name__ == '__main__':
+    print(find_path())

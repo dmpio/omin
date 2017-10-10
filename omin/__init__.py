@@ -19,8 +19,6 @@ core
     Provides core classes.
 databases
     Locally stored databases and tools to read and convert them.
-ExampleData
-    Examples of input databases.
 export
     Tools for explorting processed data.
 stats

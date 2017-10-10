@@ -18,13 +18,13 @@ user.
 # FIXME: Include paragraph description of the types of filtering.
 
 import re
-from omin.utils import StringTools
-from omin.utils import SelectionTools
-from omin.utils import FilterTools
-from omin.normalize.toPool import NormalizedToPool
-from omin.normalize.toInput import NormalizedToInput
-from omin.databases import mitoCartaCall
-from omin.utils.pandas_tools import pd
+from ..utils import StringTools
+from ..utils import SelectionTools
+from ..utils import FilterTools
+from ..normalize.toPool import NormalizedToPool
+from ..normalize.toInput import NormalizedToInput
+from ..databases import mitoCartaCall
+from ..utils.pandas_tools import pd
 
 # Omin's core handle objects
 # ---------------------------

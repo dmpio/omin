@@ -48,21 +48,21 @@ class IOTools(object):
 # Testing
 
 
-if __name__ == "__main__":
-    print("Testing utils.py ...")
-    from omin.core.handles import RawData
-
-    try:
-        data = RawData(
-            "ExampleData\crat_ex\_E749_4154_010716_PeptideGroups.txt",
-            "ExampleData\crat_ex\_E749_4154_010716_Proteins.txt"
-            )
-        if data.raw_peptides.shape == (8712, 277):
-            print("ExampleData has loaded correctly.")
-    except Exception:
-        print("Loading ExampleData failed.")
-    try:
-        if type(inspectObject(data)) == list:
-            print("inspectObject works!")
-    except Exception:
-        print("inspectObject has failed.")
+# if __name__ == "__main__":
+#     print("Testing utils.py ...")
+#     from omin.core.handles import RawData
+#
+#     try:
+#         data = RawData(
+#             "ExampleData\crat_ex\_E749_4154_010716_PeptideGroups.txt",
+#             "ExampleData\crat_ex\_E749_4154_010716_Proteins.txt"
+#             )
+#         if data.raw_peptides.shape == (8712, 277):
+#             print("ExampleData has loaded correctly.")
+#     except Exception:
+#         print("Loading ExampleData failed.")
+#     try:
+#         if type(inspectObject(data)) == list:
+#             print("inspectObject works!")
+#     except Exception:
+#         print("inspectObject has failed.")

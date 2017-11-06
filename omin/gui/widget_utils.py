@@ -22,6 +22,7 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import os
 import traitlets
 from IPython.display import display
 from IPython.display import HTML
@@ -35,6 +36,8 @@ from .super_selection_container import SuperAccordion
 from ..core.handles import Process
 from warnings import warn
 
+# Find the cureent working directory.
+here = os.getcwd()
 
 def timestamp():
     """Return a ipywidget timestamp."""
@@ -127,7 +130,7 @@ class SelectFilesButton(widgets.Button):
         # Raise the root to the top of all windows.
         root.call('wm', 'attributes', '.', '-topmost', True)
         # List of selected fileswill be set to b.value
-        b.files = filedialog.askopenfilename(multiple=True)
+        b.files = filedialog.askopenfilename(multiple=True, initialdir=here)
 
         b.description = "Files Selected"
         b.icon = "check-square-o"

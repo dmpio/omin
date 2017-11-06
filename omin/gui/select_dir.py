@@ -19,8 +19,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import os
 from tkinter import Tk, filedialog
 
+# Find the cureent working directory.
+here = os.getcwd()
 
 def select_dir():
     """Generate instance of tkinter.filedialog.
@@ -44,7 +47,7 @@ def select_dir():
     # Raise the root to the top of all windows.
     root.call('wm', 'attributes', '.', '-topmost', True)
 
-    selected_dir = filedialog.askdirectory()
+    selected_dir = filedialog.askdirectory(initialdir=here)
     return selected_dir
 
 if __name__ == "__main__":

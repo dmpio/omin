@@ -129,6 +129,21 @@ def filter_type(self, col, desired):
 setattr(pd.DataFrame, 'filter_type', filter_type)
 
 
+def filter_out(self, *args, **kwargs):
+    """Filter like filter but the opposite."""
+
+    filter_result = self.filter(*args, **kwargs)
+
+    result = list(filter(lambda x:x not in set(filter_result.columns), self.columns))
+
+    result = self[result]
+
+    return result
+
+
+setattr(pd.DataFrame, 'filter_out', filter_out)
+
+
 def first_member(self, delim=';'):
     """Return the first member of split on delim.
 

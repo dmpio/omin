@@ -1,7 +1,6 @@
 "Creates file in .ipython\profile_default\startup that adds package to path."
 
 import os
-from pathlib import PureWindowsPath
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = os.path.join(dir_path)

@@ -22,8 +22,8 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from ..utils import IOTools
-
 import os
+
 
 def save_fig(path, parent_file=None, dpi=300, ftype="png"):
     """Save your figures.
@@ -32,7 +32,7 @@ def save_fig(path, parent_file=None, dpi=300, ftype="png"):
 
     here = os.path.abspath('.')
 
-    fn = sanitize_file_path(path)
+    fn = IOTools.anitize_file_path(path)
     fn = '.'.join([fn, ftype])
     fn = os.path.join(here, fn)
 

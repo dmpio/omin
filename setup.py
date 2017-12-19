@@ -8,7 +8,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='omin',
-    version='0.0.15',
+    version='0.0.16',
     description='Tools for omics analysis',
     url='https://github.com/draperjames/skunkworks',
     author='James Draper',

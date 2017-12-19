@@ -28,6 +28,26 @@ class IOTools(object):
     """Tools for file handling and dir building."""
 
     @staticmethod
+    def sanitize_file_path(path):
+        """Return an os safe file string.
+        """
+        result = re.sub('[^0-9a-zA-Z]+', '_', path)
+        return result
+
+
+    def file_path_here(path, ext=None):
+        """Return a sanitized file path for the current working directory.
+        """
+        path = sanitize_file_path(path)
+
+        if ext is not None:
+            path = '.'.join([path, ext])
+
+        here = os.path.abspath('.')
+        result = os.path.join(here, path)
+        return result
+
+    @staticmethod
     def mkdir(directory):
         """Create a directory.
 
@@ -45,6 +65,9 @@ class IOTools(object):
         else:
             # print(directory, "already exists.")
             return directory
+
+
+
 # Testing
 
 

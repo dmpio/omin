@@ -32,7 +32,7 @@ def save_fig(path, parent_file=None, dpi=300, ftype="png"):
 
     here = os.path.abspath('.')
 
-    fn = IOTools.anitize_file_path(path)
+    fn = IOTools.sanitize_file_path(path)
     fn = '.'.join([fn, ftype])
     fn = os.path.join(here, fn)
 

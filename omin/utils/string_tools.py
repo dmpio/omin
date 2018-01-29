@@ -22,7 +22,7 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import string
-import num2words
+# import num2words
 from datetime import datetime
 
 
@@ -120,38 +120,38 @@ class StringTools(object):
 
         return formatted_list
 
-    # @classmethod
-    @staticmethod
-    def phraseWasher(phrase, word_separator=" "):
-        """Replace numerical portions of strings with words.
-
-        Parameters
-        ----------
-        phrase : str
-        word_separator : str
-            Defaults to " " but you can put in whatever you like.
-
-        See Also
-        --------
-        num2words.num2words
-
-        Examples
-        --------
-        >>>phraseWasher("10 min post", word_separator = "_")
-        "ten_min_post"
-        >>>phraseWasher("65 min post", word_separator = "_")
-        "sixty-five_min_post"
-
-        """
-        new_phrase = []
-        for i in phrase.split():
-            if i.isnumeric():
-                phrase_part = num2words.num2words(int(i))
-                new_phrase.append(phrase_part)
-            else:
-                new_phrase.append(i)
-        washed = word_separator.join(new_phrase)
-        return washed
+    # # @classmethod
+    # @staticmethod
+    # def phraseWasher(phrase, word_separator=" "):
+    #     """Replace numerical portions of strings with words.
+    #
+    #     Parameters
+    #     ----------
+    #     phrase : str
+    #     word_separator : str
+    #         Defaults to " " but you can put in whatever you like.
+    #
+    #     See Also
+    #     --------
+    #     num2words.num2words
+    #
+    #     Examples
+    #     --------
+    #     >>>phraseWasher("10 min post", word_separator = "_")
+    #     "ten_min_post"
+    #     >>>phraseWasher("65 min post", word_separator = "_")
+    #     "sixty-five_min_post"
+    #
+    #     """
+    #     new_phrase = []
+    #     for i in phrase.split():
+    #         if i.isnumeric():
+    #             phrase_part = num2words.num2words(int(i))
+    #             new_phrase.append(phrase_part)
+    #         else:
+    #             new_phrase.append(i)
+    #     washed = word_separator.join(new_phrase)
+    #     return washed
 
     @staticmethod
     def remove_punctuation(start_str):

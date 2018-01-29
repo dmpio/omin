@@ -35,5 +35,5 @@ setup(
 							 'databases/mitocarta/*.xls',
 							 'databases/mitocarta/*.xlsx',
 							 'databases/mitocarta/*.gz'],},
-    install_requires=['dominate', 'num2words', 'matplotlib_venn'],
+    install_requires=['dominate', 'matplotlib_venn'],
 )

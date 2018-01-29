@@ -93,17 +93,21 @@ def by_compartment(lfc, pval, mask, aspect=None, title=None):
 
 def boolean_color(mask, true_color='black', false_color='white',
                   name="face_color"):
+    """Return a Series with colors replacing True and False."""
     _mask = mask.copy()
     result = _mask.apply(lambda x: true_color if x == True else false_color)
     result.name = name
     return result
 
 def scatter_scale(target, max_size=50.0):
+    """Return a scaled list of sizes."""
     result = target.apply(lambda x:max_size*(1-x))
     return result
 
 def scale(lfc=None, pval=None, scalar=None, compartment_mask=None,
                           true_color=None, false_color=None, ax=None):
+    """Return a scaled scatter subplot.
+    """
 
     color_matrix = boolean_color(mask=compartment_mask,
                                  true_color=true_color,

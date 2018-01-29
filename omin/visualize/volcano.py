@@ -88,3 +88,38 @@ def by_compartment(lfc, pval, mask, aspect=None, title=None):
     plt.ylabel('-Log10(p-value)', fontname="arial")
 
     return
+
+###
+
+def boolean_color(mask, true_color='black', false_color='white',
+                  name="face_color"):
+    _mask = mask.copy()
+    result = _mask.apply(lambda x: true_color if x == True else false_color)
+    result.name = name
+    return result
+
+def scatter_scale(target, max_size=50.0):
+    result = target.apply(lambda x:max_size*(1-x))
+    return result
+
+def scale(lfc=None, pval=None, scalar=None, compartment_mask=None,
+                          true_color=None, false_color=None, ax=None):
+
+    color_matrix = boolean_color(mask=compartment_mask,
+                                 true_color=true_color,
+                                 false_color=false_color)
+
+    if ax is None:
+        ax = plt.gca()
+
+    ax.scatter(lfc,
+               -np.log10(pval),
+               sizes=scatter_scale(scalar),
+               edgecolors=[.5, .5, .5 , .7],
+               color=color_matrix)
+
+    # # Label the axes
+    ax.set_xlabel("Log2 Fold Change", fontname="arial")
+    ax.set_ylabel('-Log10(p-value)', fontname="arial")
+
+    return ax

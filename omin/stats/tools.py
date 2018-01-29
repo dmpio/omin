@@ -198,6 +198,15 @@ class Compare(object):
               nonmito_sig)
 
     @classmethod
+    def simple_comparison(cls, numer, denom):
+        """Returns DataFrame containing LFC, p-value, and p-adjusted."""
+        lfc = cls.log2FC(numer, denom)
+        pvl = cls.ttester(numer, denom)
+        pad = cls.bh_fdr(pvl)
+        result = pd.concat([lfc, pvl, pad], axis=1)
+        return result
+
+    @classmethod
     def annotated_comparison(cls, numerator, denominator, master_index,
                              fdr_alpha=None):
         """Return an annotated comparison as a DataFrame."""

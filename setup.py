@@ -35,5 +35,5 @@ setup(
 							 'databases/mitocarta/*.xls',
 							 'databases/mitocarta/*.xlsx',
 							 'databases/mitocarta/*.gz'],},
-    install_requires=['guipyter', 'dominate', 'matplotlib_venn'],
+    install_requires=['pandas', 'xlrd', 'numpy', 'guipyter', 'dominate', 'matplotlib_venn'],
 )

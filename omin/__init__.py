@@ -45,7 +45,7 @@ PROTIP: Define variables used at the lowest possible class level.
 # LICENSE
 # -------
 
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
 # Blair Chesnut, and Elizabeth Hauser.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy

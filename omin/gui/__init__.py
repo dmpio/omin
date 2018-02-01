@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files, Omics Modeling Integrating
@@ -19,11 +19,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-# from . import select_files
-# from . import save
-from . import notebook
-from . import dashboard
-from . import widget_utils
-from .notebook import OminNotebook
-from .bokomin import Bokomin
+# from . import notebook
+# from . import dashboard
+# from . import widget_utils
+# from .notebook import OminNotebook
 from .dashboard import OminNotebookController

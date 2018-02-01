@@ -21,16 +21,87 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import difflib
 import itertools
-# from operator import itemgetter
+from operator import itemgetter
 from ..utils import StringTools
 from ..utils import SelectionTools
-from ..normalize.methods import normFactors
-from ..normalize.methods import normalizeTo
-from ..normalize.methods import Logger
-from ..normalize.methods import MachLink
-from IPython.display import display
-from ipywidgets import widgets
+
+
+# MACHINE LEARNING LINKAGE METHODS
+class MachLink(object):
+    """Machine learning based DataFrame linkage methods.
+
+    This class will most likely be DEPRECATED
+    """
+
+    @staticmethod
+    def simillarity(string_one, string_two):
+        """Return the difflib.SequnceMatcher results for two strings as ratio.
+
+        Parameters
+        ----------
+        srting_one : str
+
+        string_two : str
+
+        Returns
+        -------
+        results : float
+        """
+        results = difflib.SequenceMatcher(None, string_one, string_two).ratio()
+        return results
+
+    @classmethod
+    def column_simillarity(cls, dataframe_a, dataframe_b, term_a, term_b):
+        """Return a list of alikeness coefficients.
+
+        Parameters
+        ----------
+        dataframe_a : DataFrame
+        dataframe_b : DataFrame
+        term_a : str
+        term_b : str
+
+        Returns
+        -------
+        cof : list
+        """
+        # Get list of columns from dataframe_a filtered by term_a.
+        filtered_a = dataframe_a.filter(regex=term_a).columns
+        # Get list of columns from dataframe_b filtered by term_b.
+        filtered_b = dataframe_b.filter(regex=term_b).columns
+        # Create list of alikeness coefficients.
+        cof = list(set(itertools.starmap(cls.simillarity,
+                                         zip(filtered_a, filtered_b))))
+        return cof
+
+    @staticmethod
+    def select_top_linked(combo_dict, numb):
+        """Select a given number of keys for a combo_dict.
+
+        FIXME : This function needs to be rethought at the moment it just
+        returns all of the combinations.
+
+        Parameters
+        ----------
+        combo_dict : dict
+        numb : int
+
+        Returns
+        -------
+        linked_fractions : list
+        """
+        linked = None
+        try:
+            numb = int(numb)
+            snumb = len(combo_dict)-numb
+            linked = list(dict(sorted(combo_dict.items(),
+                                      key=itemgetter(1))).keys())
+        except Exception:
+            print("omin.normalize.methods.MachLink.select_top_linked FAILED")
+        return linked
+
 
 class NormalizedToInput(object):
     """Claculate the normalized relative abundance and relative occupancy.
@@ -63,13 +134,7 @@ class NormalizedToInput(object):
     def __repr__(self):
         """Show all attributes.
         """
-        if "_Jupyter" in globals().keys():
-            view = lambda Attribute: display(self.__dict__[Attribute])
-            vw = widgets.interactive(view, Attribute=list(self.__dict__.keys()))
-            display(vw)
-            return "Attributes: "+", ".join(list(self.__dict__.keys()))
-        else:
-            return "Attributes: "+", ".join(list(self.__dict__.keys()))
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class PeptideGroups(object):
@@ -114,8 +179,9 @@ class PeptideGroups(object):
         if parent_self._input_number == 1:
             normalized = []
             for n in self.combos:
-                normalized_df = normalizeTo(self.ptm_abundance.filter(regex=n[0]),
-                                            self.input_abundance.filter(regex=n[1]))
+                # normalized_df = normalizeTo(self.ptm_abundance.filter(regex=n[0]),
+                #                             self.input_abundance.filter(regex=n[1]))
+                normalized_df = self.ptm_abundance.filter(regex=n[0]).normalize_to(self.input_abundance.filter(regex=n[1]))
                 print("Peptide Groups", n[0], "normalized to", n[1])
 
                 normalized.append(normalized_df)
@@ -136,7 +202,8 @@ class PeptideGroups(object):
             for n in linked_fractions:
                 fptm = self.ptm_abundance.filter(regex=n[0])
                 finp = self.input_abundance.filter(regex=n[1])
-                normalized_df = normalizeTo(fptm, finp)
+                # normalized_df = normalizeTo(fptm, finp)
+                normalized_df = fptm.normalize_to(finp)
                 normalized.append(normalized_df)
                 print(n[0], "normalized to", n[1])
             self.normalized_abundances = normalized

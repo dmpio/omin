@@ -11,23 +11,35 @@ Provides
 
 How to use the documentation
 ----------------------------
-FIXME: Add content.
+FIXME: ADD BRIEF OVERVIEW
 
 Available subpackages
 ---------------------
+
+utils
+    Utilites for manaing omics data.
 core
     Provides core classes.
 databases
     Locally stored databases and tools to read and convert them.
+visualize
+    Data graphing tools.
 export
     Tools for explorting processed data.
 stats
     Statistical methods.
 
+
 Utilities
 ---------
 __version__
     omin version string
+
+DEVELOPMENT PROTIPS
+===================
+
+PROTIP: Define variables used at the lowest possible class level.
+
 """
 
 # LICENSE
@@ -51,37 +63,52 @@ __version__
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, print_function
+# BOILERPLATE
+
 import os
 import sys
 import warnings
 from .version import version
+
+# # PYTHON COMPATIBILITY
+# from __future__ import division, absolute_import, print_function
+# if sys.version_info[0] >= 3:
+#     from builtins import bool, int, float, complex, object, str
+#     unicode = str
+# else:
+#     from __builtin__ import bool, int, float, complex, object, unicode, str
+
+# UTILS IMPORTS
 from .utils import StringTools
 from .utils import SelectionTools
 from .utils import IOTools
 from .utils import UniProtTools
+
+# CORE IMPORTS
 from . import core
 from .core.handles import *
-from . import normalize
+
+# STATS IMPORTS
 from . import stats
 from .stats import Compare
+
+# VISUALIZE IMPORTS
 from . import visualize
+
+# EXPORT IMPORTS
 from . import export
+
+# DATABASE IMPORTS
 from . import databases
 from .databases import MitoCarta
-from . import gui
-# from .gui import timestamp
-# from .gui import OminNotebook as nb
-from .gui import OminNotebookController as nb
-from . import pathfinder
 from .databases import MitoCartaTwo
 
-if sys.version_info[0] >= 3:
-    from builtins import bool, int, float, complex, object, str
-    unicode = str
-else:
-    from __builtin__ import bool, int, float, complex, object, unicode, str
+# GUI IMPORTS
+from . import gui
+from .gui import OminNotebookController as nb
+
+# FIXME: DEPRECATE THE FOLLOWING
+from . import pathfinder
+from . import normalize
 
 __docformat__ = 'restructuredtext'
-
-# __dir_path__ = os.path.dirname(os.path.realpath(__file__))

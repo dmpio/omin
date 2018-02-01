@@ -22,13 +22,10 @@ SOFTWARE.
 import re
 import pandas as pd
 import numpy as np
-from scipy.stats import ttest_ind
+# from scipy.stats import ttest_ind
 from ..utils import StringTools
 from ..utils import SelectionTools
 
-# FIXME: Add the functions below to the methods file in this directory.
-# FIXME: Delete the functions below.
-# FIXME: Make the class below use the compareToPool method.
 
 def logNormToAve(pepdf):
     """Takes a DataFrame composed of a fraction of peptide abundances and then
@@ -70,104 +67,6 @@ def normToPool(log2_div_ave):
     # Rename the columns to reflect the operations on them.
     lda_div_pool.columns = [re.sub("Log2-AVE", "Log2-AVE-Pool", i) for i in lda_div_pool.columns]
     return lda_div_pool
-
-# === CLASSES DEFINED HERE ===
-
-
-# class FracParse:
-#     """
-#     Attributes
-#     ----------
-#     abundance : DataFrame
-#     log_div_ave : DataFrame
-#     pool_normalized : DataFrame
-#     [selected conditions] : DataFrame
-#         These are created dynamically from the list the user selects.
-#     """
-#
-#     def __init__(self, abundance, treatment):
-#         """
-#         Parameters
-#         ----------
-#         abundance : DataFrame
-#         treatment : list
-#         """
-#         self.abundance = abundance
-#         self.log_div_ave = logNormToAve(self.abundance)
-#         self.pool_normalized = normToPool(self.log_div_ave)
-#
-#         for select in treatment:
-#             # Remove numbers and spaces from selected term
-#             # term = phraseWasher(select,number_separator="_",word_separator="_").lower()
-#             term = StringTools.phraseWasher(select, number_separator="_",
-#                                             word_separator="_").lower()
-#             # term = re.sub(" ", "_", select)
-#             self.__dict__[term] = omin.sep(self.pool_normalized, select)
-#
-#     def addAttribute(self, attribute_name, attribute_data):
-#         self.__dict__[attribute_name] = attribute_data
-#
-#     def __repr__(self):
-#         return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
-
-# class PoolMod:
-#     """
-#
-#     Attributes
-#     ----------
-#     abundance : DataFrame
-#     [genotype] : (:obj)
-#         FracParse object.
-#     """
-#     def __init__(self, abundance, mod, genotypes, treatment):
-#         self.abundance = omin.sep(abundance, mod)
-#         for geno in genotypes:
-#             self.__dict__[geno] = FracParse(omin.sep(self.abundance, geno),
-#                                             treatment)
-#
-#     def addAttribute(self, attribute_name, attribute_data):
-#         self.__dict__[attribute_name] = attribute_data
-#
-#     def __repr__(self):
-#         return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
-# === OLD MAINCLASS ===
-
-
-# class WithPool(object):
-#     """
-#     Attributes
-#     ----------
-#     raw : DataFrame
-#         The raw DataFrame with all information.
-#     abundance : DataFrame
-#         Abundance columns from raw DataFrame.
-#     """
-#
-#     def __init__(self, raw, modifications, genotypes, treatment):
-#
-#         """
-#
-#         Parameters
-#         ----------
-#         raw: DataFrame
-#
-#         """
-#         self.raw = raw
-#         self.abundance = omin.sep(raw, "Abundance:")
-#
-#         for mod in modifications:
-#             self.__dict__[omin.mod_dict[mod]] = PoolMod(self.abundance, mod,
-#                                                         genotypes, treatment)
-#
-#     def addAttribute(self, attribute_name, attribute_data):
-#         self.__dict__[attribute_name] = attribute_data
-#
-#     def __repr__(self):
-#         return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
-# === NEW MAIN CLASS ===
 
 
 class NormalizedToPool(object):

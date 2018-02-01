@@ -19,10 +19,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import pandas as pd
-from ..gui import save
+# import pandas as pd
+# from ..gui import save
 from ..utils import objectWalker
-from ..utils import StringTools
+# from ..utils import StringTools
 
 
 class StdOut(object):

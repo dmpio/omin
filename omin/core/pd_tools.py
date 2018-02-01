@@ -1,28 +1,8 @@
-import glob
-import re
-import os
-import tkinter
-from tkinter import filedialog
+# -*- coding: utf-8 -*-
+
+import guipyter
 from xml.etree import cElementTree as et
 
-# Find the cureent working directory.
-here = os.getcwd()
-
-def directory_selector():
-    root = tkinter.Tk()
-    # Hide the main window.
-    root.withdraw()
-    directory = filedialog.askdirectory(initialdir=here)
-    root.call('wm', 'attributes', ".", '-topmost', True)
-    return directory
-
-def file_selector():
-    root = tkinter.Tk()
-    # Hide the main window.
-    root.withdraw()
-    result = filedialog.askopenfilename(initialdir=here)
-    root.call('wm', 'attributes', ".", '-topmost', True)
-    return result
 
 class PDStudyTools(object):
 
@@ -34,7 +14,7 @@ class PDStudyTools(object):
 
     def file_reader(self):
         if self.file_name == None:
-            self.file_name = file_selector()
+            self.file_name = guipyter.filedialog.askopenfilenames()
 
         with open(self.file_name, 'rb') as f:
             # NOTE: ENCODED AS BYTES!

@@ -24,11 +24,10 @@ import os
 import pickle
 import numpy as np
 import pandas as pd
+import guipyter
 from pandas import ExcelWriter
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
-
-from ..gui import save
 from ..utils import objectWalker
 from ..utils import StringTools
 
@@ -58,7 +57,7 @@ class StdOut(object):
         parent_file: str
         """
 
-        file_name = file_name or save.select()
+        file_name = file_name or guipyter.filedialog.asksaveasfilename()
 
         # Make sure the string has the file extension added on
         if not file_name.endswith(".xlsx"):

@@ -22,10 +22,32 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
-from .object_tools import inspectObject
+import re
+# from .object_tools import inspectObject
+
 
 class IOTools(object):
     """Tools for file handling and dir building."""
+
+    @staticmethod
+    def sanitize_file_path(path):
+        """Return an os safe file string.
+        """
+        result = re.sub('[^0-9a-zA-Z]+', '_', path)
+        return result
+
+    @classmethod
+    def file_path_here(cls, path, ext=None):
+        """Return a sanitized file path for the current working directory.
+        """
+        path = cls.sanitize_file_path(path)
+
+        if ext is not None:
+            path = '.'.join([path, ext])
+
+        here = os.path.abspath('.')
+        result = os.path.join(here, path)
+        return result
 
     @staticmethod
     def mkdir(directory):
@@ -45,24 +67,3 @@ class IOTools(object):
         else:
             # print(directory, "already exists.")
             return directory
-# Testing
-
-
-# if __name__ == "__main__":
-#     print("Testing utils.py ...")
-#     from omin.core.handles import RawData
-#
-#     try:
-#         data = RawData(
-#             "ExampleData\crat_ex\_E749_4154_010716_PeptideGroups.txt",
-#             "ExampleData\crat_ex\_E749_4154_010716_Proteins.txt"
-#             )
-#         if data.raw_peptides.shape == (8712, 277):
-#             print("ExampleData has loaded correctly.")
-#     except Exception:
-#         print("Loading ExampleData failed.")
-#     try:
-#         if type(inspectObject(data)) == list:
-#             print("inspectObject works!")
-#     except Exception:
-#         print("inspectObject has failed.")

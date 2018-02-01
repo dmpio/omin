@@ -147,6 +147,7 @@ class Compare(object):
         bh_funct = functools.partial(multipletests,
                                      method="fdr_bh",
                                      alpha=alpha)
+
         p_adj = bh_funct(pvals=p_val.dropna().values.T[0])
         # p_adj = bh_funct(pvals=p_val.values.T[0])
         p_adj = pd.DataFrame([p_adj[0], p_adj[1]]).T
@@ -195,6 +196,15 @@ class Compare(object):
         nonmito_sig = nonmito_over_cutoff.values.sum()
         print("Total of non-mitochondrial peptides with -Log10(p-values) > Log10(.05):",
               nonmito_sig)
+
+    @classmethod
+    def simple_comparison(cls, numer, denom):
+        """Returns DataFrame containing LFC, p-value, and p-adjusted."""
+        lfc = cls.log2FC(numer, denom)
+        pvl = cls.ttester(numer, denom)
+        pad = cls.bh_fdr(pvl)
+        result = pd.concat([lfc, pvl, pad], axis=1)
+        return result
 
     @classmethod
     def annotated_comparison(cls, numerator, denominator, master_index,

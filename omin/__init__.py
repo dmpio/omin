@@ -107,6 +107,9 @@ from .databases import MitoCartaTwo
 from . import gui
 from .gui import OminNotebookController as nb
 
+# CLI IMPORTS
+from . import cli
+
 # FIXME: DEPRECATE THE FOLLOWING
 from . import pathfinder
 from . import normalize

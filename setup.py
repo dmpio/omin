@@ -8,7 +8,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='omin',
-    version='0.0.17',
+    version='0.0.18',
     description='Tools for omics analysis',
     url='https://github.com/draperjames/skunkworks',
     author='James Draper',
@@ -36,4 +36,9 @@ setup(
 							 'databases/mitocarta/*.xlsx',
 							 'databases/mitocarta/*.gz'],},
     install_requires=['pandas', 'xlrd', 'numpy', 'guipyter', 'dominate', 'matplotlib_venn'],
+    entry_points = {
+        'console_scripts': [
+            'omin=omin.cli.cli:main',
+            ],
+        },
 )

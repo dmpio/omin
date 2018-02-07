@@ -76,28 +76,3 @@ def main():
                          proteins_file=fh.get_proteins_file_name())
 
     print(om.raw_proteins.shape)
-
-# parser = argparse.ArgumentParser()
-# parser.add_argument("-o", "--organism",
-#                     type=str,
-#                     help="The desired organism.",
-#                     nargs='?')
-#
-# parser.add_argument("-s", "--select_file",
-#                     type=bool,
-#                     nargs='?',
-#                     const=True,)
-#                     # default=True)
-#
-# args = parser.parse_args()
-
-# def file_setter(setter_funct):
-#     user_inp = input("Select files:(y/n)")
-#     if user_inp == 'y':
-#         setter_funct()
-#     if user_inp == 'n':
-#         pass
-
-
-# if __name__ == '__main__':
-#     main()

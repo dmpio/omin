@@ -22,6 +22,7 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+# FIXME: Rewrite the functions below into a base class for handles.
 
 def inspect_object(obj):
     """Return list of object attributes and their types.

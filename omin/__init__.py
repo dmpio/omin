@@ -64,11 +64,10 @@ PROTIP: Define variables used at the lowest possible class level.
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # BOILERPLATE
-
+__version__ = "0.0.19"
 import os
 import sys
 import warnings
-from .version import version
 
 # # PYTHON COMPATIBILITY
 # from __future__ import division, absolute_import, print_function

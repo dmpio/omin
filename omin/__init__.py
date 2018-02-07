@@ -64,7 +64,8 @@ PROTIP: Define variables used at the lowest possible class level.
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # BOILERPLATE
-__version__ = "0.0.19"
+# __version__ = "0.0.19"
+
 import os
 import sys
 import warnings
@@ -114,3 +115,7 @@ from . import pathfinder
 from . import normalize
 
 __docformat__ = 'restructuredtext'
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions

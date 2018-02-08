@@ -26,14 +26,9 @@ from dominate import tags
 from ipywidgets import widgets
 from IPython.display import display
 from functools import partial
-
 from ..utils.string_tools import StringTools
-
 from .super_selection_container import SuperAccordion
-
 from .widget_utils import widget_append
-from .widget_utils import focus_new_child
-from .widget_utils import SelectFilesButton
 from .widget_utils import RunButton
 from .widget_utils import SelectFilesPanel
 
@@ -65,41 +60,10 @@ class OminNotebookController(object):
         self.accordion = SuperAccordion()
         # [self.accordion.set_title(i, title) for i, title in enumerate(self._sections)]
         self.accordion['Select Files'] = self.new_analysis
-        # # Load the partial function for focussing on the new child widget.
-        # loaded_focus_new_child = partial(focus_new_child,
-        #                                  target=self.accordion)
-        # # On the addition of a new child widget the accordion will focus on it.
-        # self.accordion.observe(loaded_focus_new_child,
-        #                        names='children',
-        #                        type='change')
-
-        # Create the header panel
         self.header_panel = widgets.VBox()
         self.header_panel.children = [self.header[0], self.header[1]]
         # Compose the main widget box.
         self.main = widgets.VBox([self.header_panel, self.accordion])
-
-        # Observers
-
-        # # Quick Stats observer
-        # add_qs = partial(widget_append,
-        #                  new_widget=self.quick_stats,
-        #                  target=self.accordion)
-        #
-        # self.new_analysis.select_files.observe(add_qs,
-        #                                        names='files',
-        #                                        type='change')
-
-        # # Set up for the Run Button.
-        # add_rb = partial(widget_append,
-        #                  new_widget=self.run_button,
-        #                  target=self.accordion)
-        #
-        # self.new_analysis.select_files.observe(add_rb,
-        #                                        names='files',
-        #                                        type='change')
-
-        # Set up for the Run Button.
         add_rb = partial(widget_append,
                          new_widget=self.run_button,
                          target=self.accordion,

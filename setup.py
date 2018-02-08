@@ -4,11 +4,16 @@ from setuptools import setup, find_packages
 
 from os import path
 
-here = path.abspath(path.dirname(__file__))
+# from . import omin
+import versioneer
+
+# here = path.abspath(path.dirname(__file__))
+# __version__ = "0.0.19"
 
 setup(
     name='omin',
-    version='0.0.17',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description='Tools for omics analysis',
     url='https://github.com/draperjames/skunkworks',
     author='James Draper',
@@ -35,5 +40,15 @@ setup(
 							 'databases/mitocarta/*.xls',
 							 'databases/mitocarta/*.xlsx',
 							 'databases/mitocarta/*.gz'],},
-    install_requires=['guipyter', 'dominate', 'matplotlib_venn'],
+    install_requires=['pandas',
+                      'xlrd',
+                      'numpy',
+                      'guipyter',
+                      'dominate',
+                      'matplotlib_venn'],
+    entry_points = {
+        'console_scripts': [
+            'omin=omin.cli.cli:main',
+            ],
+        },
 )

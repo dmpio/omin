@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Tools ipywidget based hybrid gui."""
 
 # LICENSE
 # -------
 
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
 # Blair Chesnut, and Elizabeth Hauser.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,20 +20,3 @@
 # FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-import traitlets
-from dominate import tags
-from ipywidgets import widgets
-from IPython.display import display
-from functools import partial
-from ..utils.string_tools import StringTools
-
-
-class QuickStats(widgets.HTML):
-    """A heads up display of your stats."""
-
-    def __init__(self, *args, **kwargs):
-        """Initialize quick stats."""
-        super(QuickStats, self).__init__(*args, **kwargs)
-        # TODO: possibly take dict as arg throw into HTML table with dominate.
-        # Actually I can just make a DataFrame and then do to_html

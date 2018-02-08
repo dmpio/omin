@@ -45,7 +45,7 @@ PROTIP: Define variables used at the lowest possible class level.
 # LICENSE
 # -------
 
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
 # Blair Chesnut, and Elizabeth Hauser.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -64,11 +64,11 @@ PROTIP: Define variables used at the lowest possible class level.
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # BOILERPLATE
+# __version__ = "0.0.19"
 
 import os
 import sys
 import warnings
-from .version import version
 
 # # PYTHON COMPATIBILITY
 # from __future__ import division, absolute_import, print_function
@@ -107,8 +107,15 @@ from .databases import MitoCartaTwo
 from . import gui
 from .gui import OminNotebookController as nb
 
+# CLI IMPORTS
+from . import cli
+
 # FIXME: DEPRECATE THE FOLLOWING
 from . import pathfinder
 from . import normalize
 
 __docformat__ = 'restructuredtext'
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions

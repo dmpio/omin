@@ -2,18 +2,15 @@
 """
 from setuptools import setup, find_packages
 
-from os import path
+import os
+here = os.getcwd()
 
-# from . import omin
-import versioneer
-
-# here = path.abspath(path.dirname(__file__))
-# __version__ = "0.0.19"
+with open(os.path.join(here, 'omin', '__version__')) as f:
+    __version__ = f.read()
 
 setup(
     name='omin',
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version=__version__,
     description='Tools for omics analysis',
     url='https://github.com/draperjames/skunkworks',
     author='James Draper',

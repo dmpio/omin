@@ -64,7 +64,6 @@ PROTIP: Define variables used at the lowest possible class level.
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # BOILERPLATE
-# __version__ = "0.0.19"
 
 import os
 import sys
@@ -114,8 +113,14 @@ from . import cli
 from . import pathfinder
 from . import normalize
 
+here = os.getcwd()
+
+with open(os.path.join(here, 'omin', '__version__')) as f:
+    __version__ = f.read()
+
+
 __docformat__ = 'restructuredtext'
 
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+# from ._version import get_versions
+# __version__ = get_versions()['version']
+# del get_versions

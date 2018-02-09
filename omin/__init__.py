@@ -120,7 +120,3 @@ with open(os.path.join(here, 'omin', '__version__')) as f:
 
 
 __docformat__ = 'restructuredtext'
-
-# from ._version import get_versions
-# __version__ = get_versions()['version']
-# del get_versions

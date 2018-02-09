@@ -37,6 +37,21 @@ class Handle(object):
         """Initalize the core handle."""
         self.numbers = dict()
 
+    def inspect_object(self):
+        """Return list of object attributes and their types.
+        """
+        obj_ids = dict()
+        # Try to make a list of the types of things inside obj.
+        try:
+            # Make list all things inside of an object
+            for name, thing in self.__dict__.items():
+                obj_ids[name] = type(thing).__name__
+
+            return obj_ids
+
+        except Exception:
+            pass
+
     def __repr__(self):
         """Show all attributes."""
         return "Attributes: "+", ".join(list(self.__dict__.keys()))

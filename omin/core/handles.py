@@ -17,6 +17,13 @@ user.
 # FIXME: Include paragraph description of the types of filtering.
 
 import re
+import os
+import guipyter as gptr
+
+# import the Handle super class.
+from .base import Handle
+
+from ..utils import IOTools
 from ..utils import StringTools
 from ..utils import SelectionTools
 from ..utils import FilterTools
@@ -30,31 +37,54 @@ from ..utils.pandas_tools import pd
 # These are essentially containers for DataFrames.
 
 
-class Handle(object):
-    """The core omin handle base class."""
-
-    def __init__(self):
-        """Initalize the core handle."""
-        self.numbers = dict()
-
-    def inspect_object(self):
-        """Return list of object attributes and their types.
-        """
-        obj_ids = dict()
-        # Try to make a list of the types of things inside obj.
-        try:
-            # Make list all things inside of an object
-            for name, thing in self.__dict__.items():
-                obj_ids[name] = type(thing).__name__
-
-            return obj_ids
-
-        except Exception:
-            pass
-
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+# class Handle(object):
+#     """The core omin handle base class."""
+#
+#     def __init__(self):
+#         """Initalize the core handle."""
+#         self.numbers = dict()
+#
+#     def _introspect(self):
+#         """Return list of object attributes and their types.
+#         """
+#         obj_ids = dict()
+#         # Try to make a list of the types of things inside obj.
+#         try:
+#             # Make list all things inside of an object
+#             for name, thing in self.__dict__.items():
+#                 obj_ids[name] = type(thing).__name__
+#
+#             return obj_ids
+#
+#         except Exception:
+#             pass
+#
+#     def export(self, desired_type=None, parent_dir=None):
+#
+#         desired_type = desired_type or "DataFrame"
+#
+#         if parent_dir == None:
+#             parent_dir = gptr.filedialog.asksaveasfilename()
+#
+#         no_list = dir(__builtins__)
+#         no_list.append("DataFrame")
+#
+#         for i in self._introspect().items():
+#             if i[-1] == desired_type:
+#                 self.__dict__[i[0]].to_csv(parent_dir+"/{}.csv".format(i[0]),
+#                                            index=False)
+#
+#             if i[-1] not in no_list:
+#                 dirn = os.path.join(parent_dir, i[0])
+#                 IOTools.mkdir(dirn)
+#                 try:
+#                     self.__dict__[i[0]].export(desired_type, dirn)
+#                 except:
+#                     pass
+#
+#     def __repr__(self):
+#         """Show all attributes."""
+#         return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class ProteomeDiscovererRaw(Handle):

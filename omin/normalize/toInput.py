@@ -26,6 +26,7 @@ import itertools
 from operator import itemgetter
 from ..utils import StringTools
 from ..utils import SelectionTools
+from ..core import Handle
 
 
 # MACHINE LEARNING LINKAGE METHODS
@@ -103,7 +104,7 @@ class MachLink(object):
         return linked
 
 
-class NormalizedToInput(object):
+class NormalizedToInput(Handle):
     """Claculate the normalized relative abundance and relative occupancy.
 
     Attributes
@@ -111,15 +112,13 @@ class NormalizedToInput(object):
     peptide_groups : obj:
         An instance of the peptide_groups class.
     """
-
     def __init__(self, parent_self):
         """Initalize NormalizedToInput class.
-
-        Parameters
-        ----------
-        parent_self : obj:
-            The self argument of the parent class.
         """
+        Handle.__init__(self)
+
+    # def __init__(self, parent_self):
+
         try:
             self.peptide_groups = PeptideGroups(parent_self)
 
@@ -131,10 +130,10 @@ class NormalizedToInput(object):
         except Exception:
             print("omin.normalize.toInput.Proteins FAILED")
 
-    def __repr__(self):
-        """Show all attributes.
-        """
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+    # def __repr__(self):
+    #     """Show all attributes.
+    #     """
+    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class PeptideGroups(object):

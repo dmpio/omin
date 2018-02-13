@@ -36,57 +36,6 @@ from ..utils.pandas_tools import pd
 # ---------------------------
 # These are essentially containers for DataFrames.
 
-
-# class Handle(object):
-#     """The core omin handle base class."""
-#
-#     def __init__(self):
-#         """Initalize the core handle."""
-#         self.numbers = dict()
-#
-#     def _introspect(self):
-#         """Return list of object attributes and their types.
-#         """
-#         obj_ids = dict()
-#         # Try to make a list of the types of things inside obj.
-#         try:
-#             # Make list all things inside of an object
-#             for name, thing in self.__dict__.items():
-#                 obj_ids[name] = type(thing).__name__
-#
-#             return obj_ids
-#
-#         except Exception:
-#             pass
-#
-#     def export(self, desired_type=None, parent_dir=None):
-#
-#         desired_type = desired_type or "DataFrame"
-#
-#         if parent_dir == None:
-#             parent_dir = gptr.filedialog.asksaveasfilename()
-#
-#         no_list = dir(__builtins__)
-#         no_list.append("DataFrame")
-#
-#         for i in self._introspect().items():
-#             if i[-1] == desired_type:
-#                 self.__dict__[i[0]].to_csv(parent_dir+"/{}.csv".format(i[0]),
-#                                            index=False)
-#
-#             if i[-1] not in no_list:
-#                 dirn = os.path.join(parent_dir, i[0])
-#                 IOTools.mkdir(dirn)
-#                 try:
-#                     self.__dict__[i[0]].export(desired_type, dirn)
-#                 except:
-#                     pass
-#
-#     def __repr__(self):
-#         """Show all attributes."""
-#         return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
-
 class ProteomeDiscovererRaw(Handle):
     """Base class for Proteome Discoverer raw files."""
 
@@ -104,6 +53,12 @@ class PeptideGroups(ProteomeDiscovererRaw):
     def __init__(self, *args, **kwargs):
         """Initialize the base class."""
         super(PeptideGroups, self).__init__(*args, **kwargs)
+
+        if 'Modifications' in self.raw.columns:
+            # Replace any NaNs that might be present in Modifications.
+            self.raw.Modifications.fillna('', inplace=True)
+        else:
+            print("No Modifications column found in Peptide Groups data.")
         # Find invivo modifications.
         in_vivo_mods = SelectionTools.findInVivoModifications(self.raw)
         # Declare varible
@@ -133,6 +88,9 @@ class Proteins(ProteomeDiscovererRaw):
     def __init__(self, *args, **kwargs):
         """Initalize the base class."""
         super(Proteins, self).__init__(*args, **kwargs)
+        # Filter for master proteins and high confidence.
+        self._high_confidence = FilterTools.high_confidence(self.raw)
+        self.master_high_confidence = FilterTools.is_master_protein(self._high_confidence)
 
 
 class RawData(Handle):
@@ -250,7 +208,7 @@ class PreProcess(RawData):
         # pep_sel, prot_sel = FilterTools.vLook(self.raw_peptides,
         #                                       self.raw_proteins)
         pep_sel, prot_sel = FilterTools.bridge(self.peptide_groups.raw,
-                                               self.proteins.raw)
+                                               self.proteins.master_high_confidence)
 
         # Used to index filter to statistically relevent PeptideGroups
         self.pep_sel = pep_sel
@@ -274,15 +232,15 @@ class PreProcess(RawData):
         self.master_index = None
         try:
             # Get the Gene Symbol
-            if "Gene ID" in self.proteins.raw: # PD2.1
-                entrez_gene_id = self.proteins.raw["Gene ID"].iloc[self.prot_sel.index]
+            if "Gene ID" in self.proteins.master_high_confidence: # PD2.1
+                entrez_gene_id = self.proteins.master_high_confidence["Gene ID"].iloc[self.prot_sel.index]
                 entrez_gene_id.index = self.peptide_groups.raw.index
-            if "Entrez Gene ID" in self.proteins.raw: # PD2.2
-                entrez_gene_id = self.proteins.raw["Entrez Gene ID"].iloc[self.prot_sel.index]
+            if "Entrez Gene ID" in self.proteins.master_high_confidence: # PD2.2
+                entrez_gene_id = self.proteins.master_high_confidence["Entrez Gene ID"].iloc[self.prot_sel.index]
                 entrez_gene_id.index = self.peptide_groups.raw.index
 
             # Get Gene Description.
-            ga = self.proteins.raw["Description"].ix[self.prot_sel.index]
+            ga = self.proteins.master_high_confidence["Description"].ix[self.prot_sel.index]
             ga.index = self.peptide_groups.raw.index
             mdex = pd.concat([self.unidex.ix[:, -4],
                               self.unidex.ix[:, -2:]],

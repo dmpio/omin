@@ -33,6 +33,7 @@ from .fasta_tools import UniProtTools
 from .string_tools import StringTools
 from .selection_tools import SelectionTools
 from .io_tools import IOTools
+from .intermine_tools import IntermineTools
 from .pd_tools import PDStudyTools
 from .object_tools import inspectObject
 from .object_tools import objectWalker

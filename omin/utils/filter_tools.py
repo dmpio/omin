@@ -43,16 +43,17 @@ class FilterTools(object):
     def high_confidence(df):
         "Return a DataFrame of high confidence proteins."
         result = None
-        try: # PD 2.1
-            mask = df["Exp. q-value"] < .01
-            result =df.loc[mask]
-            return result
-        except KeyError: # PD 2.2
-            mask = df['Protein FDR Confidence: Combined'] == "High"
-            result = df.loc[mask]
-            return result
-        finally:
-            print("Can't filter for FDR")
+        try:
+            try: # PD 2.1
+                mask = df["Exp. q-value"] < .01
+                result =df.loc[mask]
+                return result
+            except KeyError: # PD 2.2
+                mask = df['Protein FDR Confidence: Combined'] == "High"
+                result = df.loc[mask]
+                return result
+        except Exception as err:
+            print("Could not filter for FDR")
             return df
 
     @staticmethod
@@ -109,6 +110,7 @@ class FilterTools(object):
         try:
             mask = protein_df.Master.str.endswith("IsMasterProtein")
             clean = protein_df.ix[mask]
+
         except Exception:
             pass
         return clean

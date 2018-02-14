@@ -48,9 +48,3 @@ class MitoCartaTwo(object):
     def look_up(cls, syn_list):
         """Look-up a given accession number in MitoCarta 2.0."""
         return cls.data[cls.data.Synonyms.str.contains('|'.join(syn_list))]
-
-
-if __name__ == "__main__":
-    mc = MitoCartaTwo()
-    print(len(mc.data.columns) == 46)
-    print(MitoCartaTwo.data.shape)

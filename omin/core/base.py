@@ -28,6 +28,9 @@ def export(obj, desired_type=None, parent_dir=None):
             IOTools.mkdir(dirn)
             export(obj.__dict__[i[0]], desired_type, dirn)
 
+# Omin's core handle
+# ---------------------------
+# Essentially container for DataFrames.
 
 class Handle(object):
     """The core omin handle base class."""

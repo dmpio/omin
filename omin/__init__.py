@@ -69,6 +69,20 @@ import os
 import sys
 import warnings
 
+# TO DO LIST
+# ----------
+# FIXME: Investigate a SQLite/Json file method in APPDATA or linux eqv.
+# FIXME: Store each handle class as SQLite database in same parent dir.
+# FIXME: Include paragraph description of the types of filtering.
+# FIXME: Add Python 2 compat layer.
+
+# PROTIPS
+# -------
+# PROTIP: Also ways set your returns in a function.
+# PROTIP: Add more type checking.
+# PROTIP: Add more try and excepts but try to put them on function level
+
+
 # # PYTHON COMPATIBILITY
 # from __future__ import division, absolute_import, print_function
 # if sys.version_info[0] >= 3:

@@ -39,6 +39,8 @@ class MitoCartaTwo(object):
     carta_file_path = os.path.join(this_dir, db_name)
     # load the MitoCarta 2.0 database
     data = pd.read_pickle(carta_file_path)
+    # Change the incorrectly labeled column from MouseGeneID to EntrezGeneID
+    data.rename(columns={"MouseGeneID": "EntrezGeneID"}, inplace=True)
     # Load the modified mitocarta2.0 database.
     ukb = 'uniprotkb_mitocarta2.p.gz'
     ukb_file_path = os.path.join(this_dir, ukb)
@@ -48,9 +50,3 @@ class MitoCartaTwo(object):
     def look_up(cls, syn_list):
         """Look-up a given accession number in MitoCarta 2.0."""
         return cls.data[cls.data.Synonyms.str.contains('|'.join(syn_list))]
-
-
-if __name__ == "__main__":
-    mc = MitoCartaTwo()
-    print(len(mc.data.columns) == 46)
-    print(MitoCartaTwo.data.shape)

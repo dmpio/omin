@@ -29,6 +29,34 @@ class FilterTools(object):
     """Tools for filtering"""
 
     @staticmethod
+    def is_master_protein(df):
+        "Filter raw protein DataFrame for master proteins."
+        try:
+            mask = df.Master == "IsMasterProtein"
+            result = df.loc[mask]
+            return result
+        except Exception as err:
+            print('Could not Filter for master proteins.', err)
+            return df
+
+    @staticmethod
+    def high_confidence(df):
+        "Return a DataFrame of high confidence proteins."
+        result = None
+        try:
+            try: # PD 2.1
+                mask = df["Exp. q-value"] < .01
+                result =df.loc[mask]
+                return result
+            except KeyError: # PD 2.2
+                mask = df['Protein FDR Confidence: Combined'] == "High"
+                result = df.loc[mask]
+                return result
+        except Exception as err:
+            print("Could not filter for FDR")
+            return df
+
+    @staticmethod
     def filterRow(dataframe_in=None, on=None, term=None, *args, **kwargs):
         """Return DataFrame that contains a given term on specific column.
 
@@ -82,6 +110,7 @@ class FilterTools(object):
         try:
             mask = protein_df.Master.str.endswith("IsMasterProtein")
             clean = protein_df.ix[mask]
+
         except Exception:
             pass
         return clean

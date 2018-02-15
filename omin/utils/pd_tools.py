@@ -14,7 +14,7 @@ class PDStudyTools(object):
 
     def file_reader(self):
         if self.file_name == None:
-            self.file_name = guipyter.filedialog.askopenfilenames()
+            self.file_name = guipyter.filedialog.askopenfilename()
 
         with open(self.file_name, 'rb') as f:
             # NOTE: ENCODED AS BYTES!

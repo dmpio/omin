@@ -23,10 +23,11 @@
 
 import os
 import re
-import pandas as pd
+# import pandas as pd
 import numpy as np
 from ..utils import SelectionTools
 from ..utils import FilterTools
+from ..utils.pandas_tools import pd
 
 # Create a string from the local copy of the MitoCarta2.0 xlsx file.
 this_dir, _ = os.path.split(__file__)
@@ -51,7 +52,7 @@ def mitoProt(protdata):
     Parameters
     ----------
     protdata : DataFrame
-        Protien DataFrame
+        Protein DataFrame
 
     Returns
 

@@ -378,11 +378,16 @@ class SelectionTools(object):
         simplified = None
         if any(dataframe.columns == "Modifications"):
             # Compile the regular expression to be used in findall
-            rx = re.compile("x(\w+)\s")
-            simplified = dataframe.Modifications.apply(rx.findall)
+            # rx = re.compile("x(\w+)\s")
+            # simplified = dataframe.Modifications.apply(rx.findall)
+            try:
+                simplified = dataframe.Modifications.str.findall("x(\w+)\s")
+                simplified = simplified.apply(lambda x: x if isinstance(x, list) else [])
+                return simplified
+            except Exception as err:
+                print(err)
         else:
-            print("omin.utils.SelectionTools.simplifyModifications FAILED")
-        return simplified
+            print("No Modifications column found in Peptide Groups data.")
 
     @classmethod
     def findModifications(cls, df):

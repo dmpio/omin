@@ -113,14 +113,11 @@ from . import cli
 from . import pathfinder
 from . import normalize
 
-here = os.getcwd()
+# here = os.getcwd()
+here = pathfinder.find_path()
 
-with open(os.path.join(here, 'omin', '__version__')) as f:
+with open(os.path.join(here, '__version__')) as f:
     __version__ = f.read()
 
 
 __docformat__ = 'restructuredtext'
-
-# from ._version import get_versions
-# __version__ = get_versions()['version']
-# del get_versions

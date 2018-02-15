@@ -36,19 +36,18 @@ from ..utils.pandas_tools import pd
 # ---------------------------
 # These are essentially containers for DataFrames.
 
-class ThermoFisherTable(Handle):
+class ProteomeDiscovererRaw(Handle):
     """Base class for Proteome Discoverer raw files."""
 
-    def __init__(self, raw_data, *args, **kwargs):
+    def __init__(self, raw_data):
         """Initalize base class for Proteome Discoverer raw files."""
-        # super(ThermoFisherTable, self).__init__()
-        ThermoFisherTable.__init__(self)
+        super(ProteomeDiscovererRaw, self).__init__()
         self.raw = raw_data.copy()
         self.abundance = self.raw.filter(regex="Abundance:")
-        self.metadata['Shape'] = self.raw.shape[0]
+        self.numbers['total_ids'] = self.raw.shape[0]
 
 
-class PeptideGroups(ThermoFisherTable):
+class PeptideGroups(ProteomeDiscovererRaw):
     """Base class for Peptide Groups."""
 
     def __init__(self, *args, **kwargs):
@@ -75,7 +74,7 @@ class PeptideGroups(ThermoFisherTable):
                     df = SelectionTools.filterRow(self.raw,
                                                   on="Modifications",
                                                   term=i)
-                    self.metadata[mod] = df.shape[0]
+                    self.numbers[mod] = df.shape[0]
                     self.__dict__[mod] = df
             else:
                 pass
@@ -83,7 +82,7 @@ class PeptideGroups(ThermoFisherTable):
             pass
 
 
-class Proteins(ThermoFisherTable):
+class Proteins(ProteomeDiscovererRaw):
     """Base class for Proteins."""
 
     def __init__(self, *args, **kwargs):
@@ -255,7 +254,7 @@ class PreProcess(RawData):
                                            self.peptide_groups.raw["Modifications in Proteins"],
                                            self.peptide_groups.raw.Sequence,
                                            mdex], axis=1)
-            self.metadata['mitocarta_hits'] = self.master_index.MitoCarta2_List.sum()
+            self.numbers['mitocarta_hits'] = self.master_index.MitoCarta2_List.sum()
 
         except Exception:
             print("Could not create master_index")

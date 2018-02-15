@@ -34,7 +34,7 @@ class Handle(object):
 
     def __init__(self):
         """Initalize the core handle."""
-        self.numbers = dict()
+        self.metadata = dict()
         self.type = type(self)
 
     def _introspect(self):

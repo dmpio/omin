@@ -31,6 +31,9 @@ for the lab rats.
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pandas as pd
+import pandas
+from pandas import Series
+from pandas import DataFrame
 import numpy as np
 
 

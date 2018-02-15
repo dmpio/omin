@@ -78,10 +78,14 @@ import warnings
 #     from __builtin__ import bool, int, float, complex, object, unicode, str
 
 # UTILS IMPORTS
+# from . import utils
+
 from .utils import StringTools
 from .utils import SelectionTools
 from .utils import IOTools
 from .utils import UniProtTools
+from .utils.pandas_tools import DataFrame, Series, pandas
+# from .utils.pandas_tools import *
 
 # CORE IMPORTS
 from . import core

@@ -35,6 +35,10 @@ from .selection_tools import SelectionTools
 from .io_tools import IOTools
 from .intermine_tools import IntermineTools
 from .pd_tools import PDStudyTools
+
+from . import pandas_tools
+
 from .object_tools import inspectObject
 from .object_tools import objectWalker
+
 from .warnings import deprecated

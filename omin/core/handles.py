@@ -27,40 +27,20 @@ from ..normalize.toInput import NormalizedToInput
 from ..databases import mitoCartaCall
 from ..utils.pandas_tools import pd
 
+# class Aquire(Handle):
+#     def __init__(self, buffer_or_string=None, *args, **kwargs):
+#
+#         Aquire.__init__(self)
+#
+#         if buffer_or_string is not None:
+
 
 class RawData(Handle):
     """Converts Proteome Discoverer .txt files into pandas DataFrames.
-
-    Attributes
-    ----------
-    peptides :  DataFrame
-        Raw data from Proteome Discoverer peptides data.
-    proteins : DataFrame
-        Raw data Proteome Discoverer corresponding proteins data.
-    _numbers : tuple
     """
 
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None):
         """Load data for peptides_file and proteins_file as pandas DataFrames.
-
-        Parameters
-        ----------
-        file_list : list
-            A list of files.
-        peptides_file : str
-            Name of Proteome Discoverer Peptides file as string.
-        proteins_file : str
-            Name of Proteome Discoverer Proteins file as string.
-
-        Examples
-        --------
-        Load file strings:
-        >>>peptides_file = "mydatafolder/peptides.txt"
-        >>>proteins_file = "mydatafolder/proteins.txt"
-
-        Create RawData object:
-        >>>raw_data = RawData(peptides_file,proteins_file)
-
         """
         super(RawData, self).__init__()
         if file_list is not None:

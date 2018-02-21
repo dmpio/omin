@@ -135,7 +135,7 @@ from . import normalize
 here = pathfinder.find_path()
 
 with open(os.path.join(here, '__version__')) as f:
-    __version__ = f.read()
+    __version__ = f.read().strip()
 
 
 __docformat__ = 'restructuredtext'

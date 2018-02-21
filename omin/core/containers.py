@@ -4,7 +4,8 @@
 
 import re
 import os
-import guipyter as gptr
+# import guipyter as gptr
+from guipyter import DataLoader
 
 # import the Handle super class.
 from .base import Handle
@@ -18,16 +19,20 @@ from ..normalize.toInput import NormalizedToInput
 from ..databases import mitoCartaCall
 from ..utils.pandas_tools import pd
 
+
 # FIXME: Find out what words are on limits.
-class ProteomeDiscovererRaw(Handle):
+class ProteomeDiscovererRaw(DataLoader, Handle):
     """Base class for Proteome Discoverer raw files."""
 
-    def __init__(self, raw_data):
-        """Initalize base class for Proteome Discoverer raw files."""
-        super(ProteomeDiscovererRaw, self).__init__()
-        self.raw = raw_data.copy()
-        self.abundance = self.raw.filter(regex="Abundance:")
-        self.numbers['total_ids'] = self.raw.shape[0]
+    def __init__(self, *args, **kwargs):
+        """Initalize base class for Proteome Discoverer raw files.
+        """
+        super(ProteomeDiscovererRaw, self).__init__(**kwargs)
+        # DataLoader.__init__(self, *args, **kwargs)
+        # self.raw = raw_data.copy()
+
+        #self.abundance = self.raw.filter(regex="Abundance:")
+        #self.numbers['total_ids'] = self.raw.shape[0]
 
 
 class PeptideGroups(ProteomeDiscovererRaw):
@@ -35,8 +40,8 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
     def __init__(self, *args, **kwargs):
         """Initialize the base class."""
-        super(PeptideGroups, self).__init__(*args, **kwargs)
-
+        # super(PeptideGroups, self).__init__(*args, **kwargs)
+        ProteomeDiscovererRaw.__init__(self, *args, **kwargs)
         if 'Modifications' in self.raw.columns:
             # Replace any NaNs that might be present in Modifications.
             self.raw.Modifications.fillna('', inplace=True)

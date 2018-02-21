@@ -21,3 +21,5 @@ SOFTWARE.
 
 from .base import Handle
 from . import handles
+from . import containers
+from . import base

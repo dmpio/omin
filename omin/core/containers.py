@@ -35,6 +35,7 @@ class Container(DataLoader, Handle):
         self.metadata["file_path"] = self.file_path
         self.metadata["file_ext"] = self.file_ext
 
+
 class ProteomeDiscovererRaw(Container):
     """Base class for Proteome Discoverer raw files."""
 

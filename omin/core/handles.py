@@ -27,16 +27,10 @@ from ..normalize.toInput import NormalizedToInput
 from ..databases import mitoCartaCall
 from ..utils.pandas_tools import pd
 
-# class Aquire(Handle):
-#     def __init__(self, buffer_or_string=None, *args, **kwargs):
-#
-#         Aquire.__init__(self)
-#
-#         if buffer_or_string is not None:
 
 
 class RawData(Handle):
-    """Converts Proteome Discoverer .txt files into pandas DataFrames.
+    """Handler for raw data.
     """
 
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None):
@@ -51,23 +45,9 @@ class RawData(Handle):
             rx = re.compile("[Pp]roteins")
             proteins_file = list(filter(rx.findall, file_list))[0]
 
-        # Load your peptide groups file as a pandas DataFrame.
-        self.raw_peptides = pd.read_csv(peptides_file,
-                                        delimiter="\t",
-                                        low_memory=False)
-        # Load your protein file as a pandas DataFrame.
-        self.raw_proteins = pd.read_csv(proteins_file,
-                                        delimiter="\t",
-                                        low_memory=False)
-        # Load the RawData into their respective classes.
-        self.peptide_groups = PeptideGroups(raw_data=self.raw_peptides)
-        self.proteins = Proteins(raw_data=self.raw_proteins)
-        # Store the shape of the respective DataFrames.
-        self._numbers = (self.raw_peptides.shape, self.raw_proteins.shape)
+        self.peptide_groups = PeptideGroups(peptides_file)
+        self.proteins = Proteins(proteins_file)
 
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 
 class PreProcess(RawData):
@@ -91,11 +71,6 @@ class PreProcess(RawData):
 
     See Also
     --------
-    omin.utils.SelectionTools.vLook
-    omin.utils.SelectionTools.masterCleanse
-    """
-
-    """Handles Proteome Discoverer search results.
     """
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None,
                  modifications=None):

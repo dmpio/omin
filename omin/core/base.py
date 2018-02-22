@@ -35,20 +35,25 @@ def export(obj, desired_type=None, parent_dir=None):
 class Handle(object):
     """The core omin handle base class."""
 
-    def __init__(self):
-        """Initalize the core handle."""
-        self.numbers = dict()
-        self.metadata = dict()
-        self.type = type(self)
+    numbers = dict()
+    metadata = dict()
+    # type = type(self)
 
-    def _introspect(self):
+    # def __init__(self):
+    #     """Initalize the core handle."""
+    #     self.numbers = dict()
+    #     self.metadata = dict()
+    #     self.type = type(self)
+
+    @classmethod
+    def _introspect(cls):
         """Return list of object attributes and their types.
         """
         obj_ids = dict()
         # Try to make a list of the types of things inside obj.
         try:
             # Make list all things inside of an object
-            for name, thing in self.__dict__.items():
+            for name, thing in cls.__dict__.items():
                 obj_ids[name] = type(thing)
 
             return obj_ids
@@ -56,9 +61,11 @@ class Handle(object):
         except Exception:
             pass
 
-    def export_all(self, **kwargs):
-        export(self, **kwargs)
+    @classmethod
+    def export_all(cls, **kwargs):
+        export(cls, **kwargs)
 
-    def __repr__(self):
+    @classmethod
+    def __repr__(cls):
         """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+        return "Attributes: "+", ".join(list(cls.__dict__.keys()))

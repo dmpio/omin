@@ -21,18 +21,39 @@ from ..utils.pandas_tools import pd
 
 
 # FIXME: Find out what words are on limits.
-class ProteomeDiscovererRaw(DataLoader, Handle):
+
+
+class Container(DataLoader, Handle):
     """Base class for Proteome Discoverer raw files."""
 
     def __init__(self, *args, **kwargs):
         """Initalize base class for Proteome Discoverer raw files.
         """
-        super(ProteomeDiscovererRaw, self).__init__(**kwargs)
-        # DataLoader.__init__(self, *args, **kwargs)
-        # self.raw = raw_data.copy()
+        super(Container, self).__init__(**kwargs)
 
-        #self.abundance = self.raw.filter(regex="Abundance:")
-        #self.numbers['total_ids'] = self.raw.shape[0]
+        self.metadata["file_name"] = self.file_name
+        self.metadata["file_path"] = self.file_path
+        self.metadata["file_ext"] = self.file_ext
+
+class ProteomeDiscovererRaw(Container):
+    """Base class for Proteome Discoverer raw files."""
+
+    def __init__(self, *args, **kwargs):
+        """Initalize base class for Proteome Discoverer raw files.
+        """
+        super(ProteomeDiscovererRaw, self).__init__(low_memory=False,
+                                                    delimiter='\t',
+                                                    **kwargs)
+
+        self.thermo_catagory_values = set([i.split(":")[0] for i in self.raw.columns])
+        self.thermo_catagory_keys = list(map(StringTools.remove_punctuation, self.thermo_catagory_values))
+        self.thermo_catagory_keys = list(map(lambda x: x.strip().replace(" ", "_"), self.thermo_catagory_keys))
+        self.thermo_catagory = dict(zip(self.thermo_catagory_keys, self.thermo_catagory_values))
+        for k,v in self.thermo_catagory.items():
+            self.__dict__[k] = self.raw.filter(regex=v+":")
+
+        self.metadata['total_ids_no_filter'] = self.raw.shape[0]
+        self.metadata['total_id_with_quant'] = self.Abundance.dropna(axis=0, how='all').shape[0]
 
 
 class PeptideGroups(ProteomeDiscovererRaw):
@@ -40,13 +61,15 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
     def __init__(self, *args, **kwargs):
         """Initialize the base class."""
-        # super(PeptideGroups, self).__init__(*args, **kwargs)
         ProteomeDiscovererRaw.__init__(self, *args, **kwargs)
-        if 'Modifications' in self.raw.columns:
-            # Replace any NaNs that might be present in Modifications.
+
+        try:
             self.raw.Modifications.fillna('', inplace=True)
-        else:
-            print("No Modifications column found in Peptide Groups data.")
+
+        except Exception as err:
+            print("No Modifications column found in Peptide Groups data.", err)
+
+        # FIXME: Rethink this part.
         # Find invivo modifications.
         in_vivo_mods = SelectionTools.findInVivoModifications(self.raw)
         # Declare varible
@@ -62,7 +85,8 @@ class PeptideGroups(ProteomeDiscovererRaw):
                     df = SelectionTools.filterRow(self.raw,
                                                   on="Modifications",
                                                   term=i)
-                    self.numbers[mod] = df.shape[0]
+                    # METADATA: Total Peptide Group IDs
+                    self.metadata[mod+"_total_peptide_ids"] = df.shape[0]
                     self.__dict__[mod] = df
             else:
                 pass
@@ -75,7 +99,9 @@ class Proteins(ProteomeDiscovererRaw):
 
     def __init__(self, *args, **kwargs):
         """Initalize the base class."""
-        super(Proteins, self).__init__(*args, **kwargs)
+        ProteomeDiscovererRaw.__init__(self, *args, **kwargs)
+
         # Filter for master proteins and high confidence.
         self._high_confidence = FilterTools.high_confidence(self.raw)
         self.master_high_confidence = FilterTools.is_master_protein(self._high_confidence)
+        self.metadata['high_confidence_ids'] = self.master_high_confidence.shape[0]

@@ -51,9 +51,7 @@ class Handle(object):
             # Make list all things inside of an object
             for name, thing in self.__dict__.items():
                 obj_ids[name] = type(thing)
-
             return obj_ids
-
         except Exception:
             pass
 

@@ -3,15 +3,16 @@
 # Blair Chesnut, and Elizabeth Hauser.
 import re
 import os
-import pandas as pd
+# import pandas as pd
 import guipyter as gptr
+from pandomics import pandas
 from ..utils import IOTools
 
 
 def export(obj, desired_type=None, parent_dir=None):
     """Export all attributes of an object that are DataFrames as csv files.
     """
-    desired_type = desired_type or pd.DataFrame
+    desired_type = desired_type or pandas.core.frame.DataFrame
 
     if parent_dir == None:
         parent_dir = gptr.filedialog.askdirectory()
@@ -20,7 +21,7 @@ def export(obj, desired_type=None, parent_dir=None):
     for i in obj._introspect().items():
         if i[-1] == desired_type:
             path = os.path.join(parent_dir, "{}.csv".format(i[0]))
-
+            obj.__dict__[i[0]].to_csv(path)
 
         if issubclass(i[-1], Handle):
             dirn = os.path.join(parent_dir, i[0])
@@ -35,25 +36,20 @@ def export(obj, desired_type=None, parent_dir=None):
 class Handle(object):
     """The core omin handle base class."""
 
-    numbers = dict()
-    metadata = dict()
-    # type = type(self)
+    def __init__(self):
+        """Initalize the core handle."""
+        self.numbers = dict()
+        self.metadata = dict()
+        self.type = type(self)
 
-    # def __init__(self):
-    #     """Initalize the core handle."""
-    #     self.numbers = dict()
-    #     self.metadata = dict()
-    #     self.type = type(self)
-
-    @classmethod
-    def _introspect(cls):
+    def _introspect(self):
         """Return list of object attributes and their types.
         """
         obj_ids = dict()
         # Try to make a list of the types of things inside obj.
         try:
             # Make list all things inside of an object
-            for name, thing in cls.__dict__.items():
+            for name, thing in self.__dict__.items():
                 obj_ids[name] = type(thing)
 
             return obj_ids
@@ -61,11 +57,9 @@ class Handle(object):
         except Exception:
             pass
 
-    @classmethod
-    def export_all(cls, **kwargs):
-        export(cls, **kwargs)
+    def export_all(self, **kwargs):
+        export(self, **kwargs)
 
-    @classmethod
-    def __repr__(cls):
+    def __repr__(self):
         """Show all attributes."""
-        return "Attributes: "+", ".join(list(cls.__dict__.keys()))
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))

@@ -29,7 +29,9 @@ class Container(DataLoader, Handle):
     def __init__(self, *args, **kwargs):
         """Initalize base class for Proteome Discoverer raw files.
         """
-        super(Container, self).__init__(**kwargs)
+        # super(Container, self).__init__(**kwargs)
+        DataLoader.__init__(self, *args, **kwargs)
+        Handle.__init__(self)
 
         self.metadata["file_name"] = self.file_name
         self.metadata["file_path"] = self.file_path
@@ -58,9 +60,10 @@ class ProteomeDiscovererRaw(Container):
 class PeptideGroups(ProteomeDiscovererRaw):
     """Base class for Peptide Groups."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, filepath_or_buffer, *args, **kwargs):
         """Initialize the base class."""
-        ProteomeDiscovererRaw.__init__(self, title="Select peptide groups file", *args, **kwargs)
+        filepath_or_buffer = filepath_or_buffer or None
+        ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select peptide groups file", *args, **kwargs)
         # Create the master_index
         self.master_index = None
         # Fill all of the modifications with NaNs with a blank string
@@ -97,9 +100,10 @@ class PeptideGroups(ProteomeDiscovererRaw):
 class Proteins(ProteomeDiscovererRaw):
     """Base class for Proteins."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, filepath_or_buffer, *args, **kwargs):
         """Initalize the base class."""
-        ProteomeDiscovererRaw.__init__(self, title="Select peptide groups file", *args, **kwargs)
+        filepath_or_buffer = filepath_or_buffer or None
+        ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
         # Create the master_index
         self.master_index = None
         # Filter for master proteins and high confidence.

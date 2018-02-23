@@ -52,42 +52,12 @@ class RawData(Handle):
 
 class PreProcess(RawData):
     """A metaclass that uses RawData attempting several filtering steps.
-
-    Attributes
-    ----------
-    _invivo_modifications : list
-        A list of invivo modifications.
-    pep_sel : DataFrame
-        DataFrame to filter raw peptide groups DataFrame by indexing.
-    prot_sel : DataFrame
-        DataFrame to filter raw proteins DataFrame by indexing.
-    mitodex : DataFrame
-        For filtering mitochondrial peptide groups DataFrame by indexing.
-    nonmitodex : DataFrame
-        For filtering non-mitochondrial peptide groups DataFrame by indexing.
-
-    Notes
-    -----
-
-    See Also
-    --------
     """
-    def __init__(self, file_list=None, peptides_file=None, proteins_file=None,
-                 modifications=None):
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None, modifications=None, *args, **kwargs):
         """Initalize instance of PreProcess class.
-
-        Parameters
-        ----------
-        peptides_file : str
-            The location of peptide groups file.
-        proteins_file : str
-            The location of peptide groups file.
-        modifications : list
-            List of derived or given modifications.
         """
         # Initalize the RawData base class.
-        super(PreProcess, self).__init__(file_list, peptides_file,
-                                         proteins_file)
+        super(PreProcess, self).__init__(file_list, peptides_file, proteins_file, *args, **kwargs)
         # Find invivo modifications
         invivos = SelectionTools.findInVivoModifications(self.raw_peptides)
         self._invivo_modifications = invivos
@@ -157,45 +127,13 @@ class PreProcess(RawData):
 
 class Process(PreProcess):
     """A metaclass that uses PreProcess attempting several normalization steps.
-
-    Attributes
-    ----------
-    _invivo_modifications : list
-        A list of invivo modifications.
-    pep_sel : DataFrame
-        DataFrame to filter raw peptide groups DataFrame by indexing.
-    prot_sel : DataFrame
-        DataFrame to filter raw proteins DataFrame by indexing.
-    mitodex : DataFrame
-        For filtering mitochondrial peptide groups DataFrame by indexing.
-    nonmitodex : DataFrame
-        For filtering non-mitochondrial peptide groups DataFrame by indexing.
-
-    Notes
-    -----
-    FIXME: Include paragraph description of the types of filtering.
-
-    See Also
-    --------
-    omin.utils.SelectionTools.vLook
-    omin.utils.SelectionTools.masterCleanse
     """
 
-    def __init__(self, file_list=None, peptides_file=None, proteins_file=None,
-                 modifications=None):
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None, modifications=None, *args, **kwargs):
         """Initalize Process class.
-
-        Parameters
-        ----------
-        peptides_file : str
-            The location of peptide groups file.
-        proteins_file : str
-            The location of peptide groups file.
-        modifications : list
-            List of derived or given modifications.
         """
         self.normalized = None
-        super(Process, self).__init__(file_list, peptides_file, proteins_file)
+        super(Process, self).__init__(file_list, peptides_file, proteins_file, *args, **kwargs)
 
         # FIXME: Make the selection more specifically target abundance columns
         if self._input_number > 0:

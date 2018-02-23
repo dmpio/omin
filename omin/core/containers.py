@@ -42,9 +42,7 @@ class ProteomeDiscovererRaw(Container):
     def __init__(self, *args, **kwargs):
         """Initalize base class for Proteome Discoverer raw files.
         """
-        super(ProteomeDiscovererRaw, self).__init__(low_memory=False,
-                                                    delimiter='\t',
-                                                    **kwargs)
+        super(ProteomeDiscovererRaw, self).__init__(low_memory=False, delimiter='\t', **kwargs)
 
         self.thermo_catagory_values = set([i.split(":")[0] for i in self.raw.columns])
         self.thermo_catagory_keys = list(map(StringTools.remove_punctuation, self.thermo_catagory_values))
@@ -62,11 +60,12 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
     def __init__(self, *args, **kwargs):
         """Initialize the base class."""
-        ProteomeDiscovererRaw.__init__(self, *args, **kwargs)
-
+        ProteomeDiscovererRaw.__init__(self, title="Select peptide groups file", *args, **kwargs)
+        # Create the master_index
+        self.master_index = None
+        # Fill all of the modifications with NaNs with a blank string
         try:
             self.raw.Modifications.fillna('', inplace=True)
-
         except Exception as err:
             print("No Modifications column found in Peptide Groups data.", err)
 
@@ -100,8 +99,9 @@ class Proteins(ProteomeDiscovererRaw):
 
     def __init__(self, *args, **kwargs):
         """Initalize the base class."""
-        ProteomeDiscovererRaw.__init__(self, *args, **kwargs)
-
+        ProteomeDiscovererRaw.__init__(self, title="Select peptide groups file", *args, **kwargs)
+        # Create the master_index
+        self.master_index = None
         # Filter for master proteins and high confidence.
         self._high_confidence = FilterTools.high_confidence(self.raw)
         self.master_high_confidence = FilterTools.is_master_protein(self._high_confidence)

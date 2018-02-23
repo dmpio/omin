@@ -4,12 +4,11 @@
 
 import re
 import os
+import numpy as np
 # import guipyter as gptr
 from guipyter import DataLoader
-
 # import the Handle super class.
 from .base import Handle
-
 from ..utils import IOTools
 from ..utils import StringTools
 from ..utils import SelectionTools

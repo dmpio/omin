@@ -8,7 +8,12 @@ Using python to squeeze the biomarkers out of your big data.
 
 ## Requirements
 
-> Anaconda -> Python 3.x
+> Anaconda(or Miniconda) -> Python 3.x
+
+[Download Anaconda3](https://docs.anaconda.com/anaconda/install/)
+
+[Download Miniconda3](https://conda.io/miniconda.html)
+
 
 ---
 
@@ -33,8 +38,7 @@ FIXME: ADD UPDATED STATE DIAGRAM
 ![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)
 
 LICENSE:
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-Blair Chesnut, and Elizabeth Hauser.
+Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files, Omics Modeling Integrating

@@ -55,11 +55,14 @@ class PreProcess(RawData):
 
     DEPRECATED
     ----------
+
     Most of these steps will be carried out by:
 
         omin.core.containers.PeptideGroups
 
         omin.core.containers.Proteins
+
+    The rest will be done in the Process class.
 
     """
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None, modifications=None, *args, **kwargs):
@@ -76,15 +79,16 @@ class PreProcess(RawData):
 
         # Set modifications with given or derived.
         modifications = modifications or self._invivo_modifications
-        # Create 2 Dataframes that map specific peptide or protein Uniprot ID to it's relevent mitocarta index.
 
-        pep_sel, prot_sel = FilterTools.bridge(self.peptide_groups.raw,
-                                               self.proteins.master_high_confidence)
+        # Create 2 Dataframes that map specific peptide or protein Uniprot ID to it's relevent mitocarta index.
+        pep_sel, prot_sel = FilterTools.bridge(self.peptide_groups.raw, self.proteins.master_high_confidence)
 
         # Used to index filter to statistically relevant PeptideGroups
         self.pep_sel = pep_sel
+
         # Used to index filter to statistically relevant Proteins
         self.prot_sel = prot_sel
+
         # MitoCarta calls made
         mito, nonmito = mitoCartaCall.mitoCartaPepOut(self,
                                                       mods=modifications,

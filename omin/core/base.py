@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-# Blair Chesnut, and Elizabeth Hauser.
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
+
 import re
 import os
-# import pandas as pd
 import guipyter as gptr
+# FIXME: Should this be a try and except for pandas
 from pandomics import pandas
 from ..utils import IOTools
 

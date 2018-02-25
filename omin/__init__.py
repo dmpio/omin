@@ -13,6 +13,7 @@ How to use the documentation
 ----------------------------
 FIXME: ADD BRIEF OVERVIEW
 
+
 Available subpackages
 ---------------------
 
@@ -41,7 +42,7 @@ DEVELOPMENT PROTIPS
 PROTIP: Define variables used at the lowest possible class level.
 
 """
-
+# -------
 # LICENSE
 # -------
 
@@ -63,27 +64,31 @@ PROTIP: Define variables used at the lowest possible class level.
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+# -----------
 # BOILERPLATE
+# -----------
 
-import os
-import sys
-import warnings
+import os, sys, warnings
 
 # TO DO LIST
 # ----------
+# FIXME: *** update the readme ** [ ] How to install,
+# FIXME: *** Document dependencies *** [ ] guipyter, [ ] panomics
 # FIXME: Investigate a SQLite/Json file method in APPDATA or linux eqv.
 # FIXME: Store each handle class as SQLite database in same parent dir.
 # FIXME: Include paragraph description of the types of filtering.
 # FIXME: Add Python 2 compat layer.
 
+# -------
 # PROTIPS
 # -------
 # PROTIP: Also ways set your returns in a function.
 # PROTIP: Add more type checking.
 # PROTIP: Add more try and excepts but try to put them on function level
 
-
-# # PYTHON COMPATIBILITY
+# --------------------
+# PYTHON COMPATIBILITY
+# --------------------
 # from __future__ import division, absolute_import, print_function
 # if sys.version_info[0] >= 3:
 #     from builtins import bool, int, float, complex, object, str
@@ -91,7 +96,9 @@ import warnings
 # else:
 #     from __builtin__ import bool, int, float, complex, object, unicode, str
 
+# -------------
 # UTILS IMPORTS
+# -------------
 # from . import utils
 
 from .utils import StringTools
@@ -101,41 +108,65 @@ from .utils import UniProtTools
 from .utils.pandas_tools import DataFrame, Series, pandas
 # from .utils.pandas_tools import *
 
+# ------------
 # CORE IMPORTS
+# ------------
 from . import core
 from .core.handles import *
 
+# -------------
 # STATS IMPORTS
+# -------------
 from . import stats
 from .stats import Compare
 
+# -----------------
 # VISUALIZE IMPORTS
+# -----------------
 from . import visualize
 
+# --------------
 # EXPORT IMPORTS
+# --------------
 from . import export
 
+# ----------------
 # DATABASE IMPORTS
+# ----------------
 from . import databases
 from .databases import MitoCarta
 from .databases import MitoCartaTwo
 
+# -----------
 # GUI IMPORTS
+# -----------
 from . import gui
 from .gui import OminNotebookController as nb
 
+# -----------
 # CLI IMPORTS
+# -----------
 from . import cli
 
-# FIXME: DEPRECATE THE FOLLOWING
-from . import pathfinder
+# ---------
+# DEPRECATE
+# ---------
+# from . import pathfinder
 from . import normalize
 
-# here = os.getcwd()
-here = pathfinder.find_path()
 
-with open(os.path.join(here, '__version__')) as f:
+# -------
+# VERSION
+# -------
+def find_path():
+    """Find the location of omin package in any given file system."""
+    __dir_path__ = os.path.dirname(os.path.realpath(__file__))
+    return __dir_path__
+
+# here = os.getcwd()
+# here = find_path()
+
+with open(os.path.join(find_path(), '__version__')) as f:
     __version__ = f.read().strip()
 
-
-__docformat__ = 'restructuredtext'
+__docformat__ = 'numpy'

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-# Blair Chesnut, and Elizabeth Hauser.
+# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 import re
 import os
@@ -24,13 +23,28 @@ from ..utils.intermine_tools import IntermineTools
 
 
 class Container(DataLoader, Handle):
-    """Base class for Proteome Discoverer raw files."""
+    """Base class for Proteome Discoverer raw files.
+    """
 
     def __init__(self, *args, **kwargs):
-        """Initalize base class for Proteome Discoverer raw files.
+        """Initialize base class for Proteome Discoverer raw files.
+
+        This class inherits attributes from the DataLoader and Handle classes respectfully.
+
+        Attributes
+        ----------
+        raw : pandas.DataFrame
+            With pandomics plugin.
+        file_path : str
+        file_name : str
+        file_ext : str
+        metadata : dict
+
         """
-        # super(Container, self).__init__(**kwargs)
+
+        # Initialize the DataLoader class with args and kwargs
         DataLoader.__init__(self, *args, **kwargs)
+        # Initialize the Handle class.
         Handle.__init__(self)
 
         self.metadata["file_name"] = self.file_name
@@ -38,19 +52,36 @@ class Container(DataLoader, Handle):
         self.metadata["file_ext"] = self.file_ext
 
 
+class MaxQuantRaw(Container):
+    """Base class for MaxQuant raw files.
+
+    This class inherits attributes from the Container class.
+
+    HARD HAT AREA: Under construction.
+    """
+    def __init__(self, *args, **kwargs):
+        # Fixme: Add functional algorithms.
+        Container.__init__(self, *args, **kwargs)
+
+
 class ProteomeDiscovererRaw(Container):
-    """Base class for Proteome Discoverer raw files."""
+    """Base class for Proteome Discoverer raw files.
+
+    This class inherits attributes from the Container class.
+    """
 
     def __init__(self, *args, **kwargs):
-        """Initalize base class for Proteome Discoverer raw files.
+        """Initialize base class for Proteome Discoverer raw files.
         """
         super(ProteomeDiscovererRaw, self).__init__(low_memory=False, delimiter='\t', **kwargs)
 
-        thermo_catagory_values = set([i.split(":")[0] for i in self.raw.columns])
-        thermo_catagory_keys = list(map(StringTools.remove_punctuation, thermo_catagory_values))
-        thermo_catagory_keys = list(map(lambda x: x.strip().replace(" ", "_"), thermo_catagory_keys))
-        thermo_catagory = dict(zip(thermo_catagory_keys, thermo_catagory_values))
-        for k,v in thermo_catagory.items():
+        thermo_category_values = set([i.split(":")[0] for i in self.raw.columns])
+        thermo_category_keys = list(map(StringTools.remove_punctuation, thermo_category_values))
+        thermo_category_keys = list(map(lambda x: x.strip().replace(" ", "_"), thermo_category_keys))
+        thermo_category = dict(zip(thermo_category_keys, thermo_category_values))
+        # This loop creates DataFrames for each category that Thermo has decided is important.
+        # 
+        for k,v in thermo_category.items():
             filter_with_colon = self.raw.filter(regex=v+":")
             if filter_with_colon.shape[-1] > 0:
                 self.__dict__[k] = filter_with_colon
@@ -77,12 +108,12 @@ class PeptideGroups(ProteomeDiscovererRaw):
         except Exception as err:
             print("No Modifications column found in Peptide Groups data.", err)
 
-        # FIXME: Rethink this part.
+        # FIXME: Rethink this part. Should this be done in the ProteomeDiscovererRaw class?
         # Find invivo modifications.
         in_vivo_mods = SelectionTools.findInVivoModifications(self.raw)
-        # Declare varible
+        # Declare variable
         self._in_vivo_modifications = []
-        # Check if None.
+        # Check if in_vivo modifications is None.
         if in_vivo_mods is not None:
             # If the list is greater than zero then set varible.
             if len(in_vivo_mods) > 0:
@@ -106,8 +137,18 @@ class Proteins(ProteomeDiscovererRaw):
     """Base class for Proteins."""
 
     def __init__(self, filepath_or_buffer, attempt_rescue_entrez_ids=True, *args, **kwargs):
-        """Initalize the base class."""
+        """
+
+        Parameters
+        ----------
+        filepath_or_buffer: str or _io.TextWrapper
+
+        attempt_rescue_entrez_ids: Bool
+            Defaults to True.
+
+        """
         filepath_or_buffer = filepath_or_buffer or None
+        # FIXME: Add verbose argument.
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
         # Create the master_index
         self.master_index = None
@@ -123,7 +164,11 @@ class Proteins(ProteomeDiscovererRaw):
         if "Entrez Gene ID" in self.master_high_confidence: # PD2.2
             self.master_high_confidence.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
 
-        self.master_index = pd.concat([self.master_high_confidence.Accession, self.master_high_confidence.EntrezGeneID], axis=1)
+        # FIXME: Add try and except for each of these columns.
+        try:
+            self.master_index = pd.concat([self.master_high_confidence.Accession, self.master_high_confidence.EntrezGeneID, self.master_high_confidence.Description], axis=1)
+        except Exception as err:
+            print(err)
 
         if attempt_rescue_entrez_ids:
             IntermineTools.rescue_entrez_ids(self.master_index)

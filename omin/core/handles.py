@@ -52,27 +52,38 @@ class RawData(Handle):
 
 class PreProcess(RawData):
     """A metaclass that uses RawData attempting several filtering steps.
+
+    DEPRECATED
+    ----------
+    Most of these steps will be carried out by:
+
+        omin.core.containers.PeptideGroups
+
+        omin.core.containers.Proteins
+
     """
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None, modifications=None, *args, **kwargs):
-        """Initalize instance of PreProcess class.
+        """Initialize instance of PreProcess class.
         """
         # Initalize the RawData base class.
-        super(PreProcess, self).__init__(file_list, peptides_file, proteins_file, *args, **kwargs)
+        # super(PreProcess, self).__init__(file_list, peptides_file, proteins_file, *args, **kwargs)
+        RawData.__init__(self, file_list, peptides_file, proteins_file, *args, **kwargs)
+
+
         # Find invivo modifications
         invivos = SelectionTools.findInVivoModifications(self.raw_peptides)
         self._invivo_modifications = invivos
+
         # Set modifications with given or derived.
         modifications = modifications or self._invivo_modifications
-        # Create 2 Dataframes that map specific peptide or protien uniprot ID
-        # to it's relevent mitocarta index. Simillar to vlookup in excel.
-        # pep_sel, prot_sel = FilterTools.vLook(self.raw_peptides,
-        #                                       self.raw_proteins)
+        # Create 2 Dataframes that map specific peptide or protein Uniprot ID to it's relevent mitocarta index.
+
         pep_sel, prot_sel = FilterTools.bridge(self.peptide_groups.raw,
                                                self.proteins.master_high_confidence)
 
-        # Used to index filter to statistically relevent PeptideGroups
+        # Used to index filter to statistically relevant PeptideGroups
         self.pep_sel = pep_sel
-        # Used to index filter to statistically relevent Proteins
+        # Used to index filter to statistically relevant Proteins
         self.prot_sel = prot_sel
         # MitoCarta calls made
         mito, nonmito = mitoCartaCall.mitoCartaPepOut(self,

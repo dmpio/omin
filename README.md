@@ -62,5 +62,6 @@ SOFTWARE.
 # TO DO LIST
 ![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)
 ---
-
+- [ ] Build separate site to host the msi and/or exe.
+- [ ] Build PyInstaller NSI pipeline for packaging
 - [ ] Find all FIXME flags and add them here.

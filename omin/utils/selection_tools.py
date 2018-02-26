@@ -29,8 +29,9 @@ import numpy as np
 import pandas as pd
 from difflib import SequenceMatcher
 from .string_tools import StringTools
-from ..pathfinder import find_path
 
+
+# from ..pathfinder import find_path
 
 # this_dir, _ = os.path.split(__file__)
 #
@@ -51,6 +52,8 @@ chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex',
 
 class SelectionTools(object):
     """
+    DEPRECATED
+    ----------
     """
 
     @staticmethod

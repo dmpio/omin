@@ -157,7 +157,7 @@ class ProteomeDiscovererRaw(Container):
         """Return the study_factor_table as a flattened dict.
         """
         study_factor_dict = dict()
-        for i in range(1, self.study_factor_table.columns.shape[0]):
+        for i in range(2, self.study_factor_table.columns.shape[0]):
             usf = self.study_factor_table.iloc[:, i].unique()
             usf = list(map(lambda x: x.strip(), usf))
             study_factor_dict[self.study_factor_table.iloc[:, i].name] = usf

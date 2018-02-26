@@ -145,6 +145,11 @@ class ProteomeDiscovererRaw(Container):
                 study_factors.append(study_factor)
 
         column_names.columns = ['_TMT_tag'] + study_factors
+        # Prepend the fraction number.
+        fn = [i.split(":")[1].strip() for i in self.Abundance.columns]
+        fn = pd.DataFrame(fn, columns=["_Fn"])
+
+        column_names = pd.concat([fn, column_names],axis=1)
         return column_names
 
     @property

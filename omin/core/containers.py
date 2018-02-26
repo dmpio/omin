@@ -29,6 +29,17 @@ from pandomics import pandas as pd
 
 # FIXME: Find out what words are on limits.
 
+class Normalized(object):
+    """Empty class that catches results from normalization methods.
+    """
+    def __init__(self, *args, **kwargs):
+        for k,v in kwargs.items():
+            self.__dict__[k] = v
+
+    def __repr__(self):
+        """Show all attributes."""
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
 
 class Container(DataLoader, Handle):
     """Base class for Proteome Discoverer raw files.
@@ -201,6 +212,26 @@ class ProteomeDiscovererRaw(Container):
             print("utils.SelectionTools.find_number_input failed")
         return number_input
 
+    def fraction_tag(self, fraction_number=None):
+        """Return a characteristic string for a fraction.
+        """
+        by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
+
+        rx = re.compile('(.+)\s\(.+\)')
+
+        tag_for_fraction = ""
+        for i in by_fn:
+            terms = by_fn[i].unique()
+            terms = list(map(lambda x:x.strip(), terms))
+            if len(terms) == 1:
+                term = terms[0]
+                term = rx.findall(term)
+                if len(term) == 1:
+                    term = term[0].lower()
+                    tag_for_fraction = "_".join([tag_for_fraction, term])
+
+        return tag_for_fraction
+
 
 class PeptideGroups(ProteomeDiscovererRaw):
     """Base class for Peptide Groups.
@@ -212,19 +243,50 @@ class PeptideGroups(ProteomeDiscovererRaw):
         """Initialize the base class."""
         filepath_or_buffer = filepath_or_buffer or None
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select peptide groups file", *args, **kwargs)
-        # Create the master_index
-        self.master_index = None
+
         # Fill all of the modifications with NaNs with a blank string
         try:
             self.raw.Modifications.fillna('', inplace=True)
         except Exception as err:
             print("No Modifications column found in Peptide Groups data.", err)
+        # Create the master_index
+        self.master_index = None
+        self.set_master_index()
 
+        # Declare variable
+        self._in_vivo_modifications = []
+        self.set_in_vivo_modifications()
+
+
+    def set_master_index(self):
+        """Attempt to set the master index for the Proteins.
+        """
+        # FIXME: Add try and except for each of these columns.
+        master_index_components = ["Sequence", "Modifications", "Modifications in Proteins"]
+
+        # Start the master index with the the first master protein accession.
+        self.master_index = pd.DataFrame(self.raw["Master Protein Accessions"].first_member())
+        # Change the name of "Master Protein Accessions" to "Accession".
+        try:
+            self.master_index.rename(columns={"Master Protein Accessions":"Accession"}, inplace=True)
+        except Exception as err:
+            pass
+
+        for i in master_index_components:
+            try:
+                self.master_index = pd.concat([self.master_index, self.raw[i]],axis=1)
+            except Exception as err:
+                # print(err)
+                pass
+        return
+
+
+    def set_in_vivo_modifications(self):
+        """FIXME: Add docs.
+        """
         # FIXME: Rethink this part. Should this be done in the ProteomeDiscovererRaw class?
         # Find invivo modifications.
         in_vivo_mods = SelectionTools.findInVivoModifications(self.raw)
-        # Declare variable
-        self._in_vivo_modifications = []
         # Check if in_vivo modifications is None.
         if in_vivo_mods is not None:
             # If the list is greater than zero then set varible.
@@ -243,6 +305,64 @@ class PeptideGroups(ProteomeDiscovererRaw):
                 pass
         else:
             pass
+
+    @property
+    def study_factor_with_input(self):
+        """Return the study factor that contains "Input" or "input".
+
+        PROTIP: In your when creating study factors stick with the conventions: Input (Fraction), Acetyl (Fraction), ect.
+        NOTE: For this to work correctly there must be only one study factor that contains the terms: "Input" or "input".
+
+        """
+        #FIXME: Inputase-proof this function or provide informative error handling with messages.
+        rx = re.compile("[Ii]nput")
+        study_factor_with_input = None
+        for k,v in self.study_factor_dict.items():
+            #FIXME: BIG ASSUMPTION HERE -> There will be only one study factor that contains a term including [Ii]nput.
+            li = bool(sum(list(map(lambda x:bool(len(rx.findall(x))), v))))
+            if li:
+                study_factor_with_input = k
+            else:
+                pass
+        return study_factor_with_input
+
+    @property
+    def load_normalized(self):
+        """Return object with load normalzed pd.DataFrames as attributes.
+        """
+        input_mask = self.study_factor_table[self.study_factor_with_input].str.contains("[Ii]nput")
+        # FIXME: Replace the bobo method to find input fraction numbers
+        number_input_fractions = len(self.study_factor_table.loc[input_mask]._Fn.unique())
+
+        inps = self.study_factor_table.loc[input_mask]
+        inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
+        frcs = self.study_factor_table.loc[~input_mask]
+        frcs = [frcs.loc[frcs._Fn.str.contains(i)] for i in frcs._Fn.unique()]
+
+        linked = []
+        for i in inps:
+            for j in frcs:
+                score = sum(sum(j.as_matrix() == i.as_matrix()))
+                link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
+                score_df = pd.DataFrame([i.shape[0]*[score]]).T
+                score_df.columns = ["Score"]
+                score_df.index = j.index
+                j_prime = pd.concat([j, link, score_df], axis=1)
+                linked.append(j_prime)
+
+        scores = np.array([i.Score.unique()[0] for i in linked])
+        linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
+
+        normalized = dict()
+        for link in linked:
+            inp = self.Abundance[self.Abundance.columns[link.Link]]
+            other = self.Abundance[self.Abundance.columns[link.index]]
+            other_label = self.fraction_tag(link._Fn.unique()[0])
+            #other_label = [i.split(":")[1] for i in other.columns]
+            load_normalized = other.normalize_to(inp)
+            normalized[other_label] = load_normalized
+        # Throwing the normalized dict into the Normalized class
+        return Normalized(**normalized)
 
 
 class Proteins(ProteomeDiscovererRaw):

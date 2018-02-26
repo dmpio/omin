@@ -43,6 +43,7 @@ setup(
                       'numpy',
                       'guipyter',
                       'dominate',
+                      'pandomics',
                       'matplotlib_venn'],
     entry_points = {
         'console_scripts': [

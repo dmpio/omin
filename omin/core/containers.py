@@ -82,8 +82,19 @@ class ProteomeDiscovererRaw(Container):
     def __init__(self, *args, **kwargs):
         """Initialize base class for Proteome Discoverer raw files.
         """
-        super(ProteomeDiscovererRaw, self).__init__(low_memory=False, delimiter='\t', **kwargs)
+        # super(ProteomeDiscovererRaw, self).__init__(low_memory=False, delimiter='\t', **kwargs)
+        Container.__init__(self, low_memory=False, delimiter='\t', **kwargs)
+        # Calling the function below.
+        self.expose_thermo_categories()
+        # METADATA: Number of IDs no filter.
+        self.metadata['total_ids'] = self.raw.shape[0]
+        # METADATA: Number of IDs with quantification.
+        self.metadata['total_ids_with_quant'] = self.Abundance.dropna(axis=0, how='all').shape[0]
 
+
+    def expose_thermo_categories(self):
+        """Creates attribute DataFrames based on Thermo's categories.
+        """
         thermo_category_values = set([i.split(":")[0] for i in self.raw.columns])
         thermo_category_keys = list(map(StringTools.remove_punctuation, thermo_category_values))
         thermo_category_keys = list(map(lambda x: x.strip().replace(" ", "_"), thermo_category_keys))
@@ -97,9 +108,6 @@ class ProteomeDiscovererRaw(Container):
             else:
                 filter_without_colon = self.raw.filter(regex=v)
                 self.__dict__[k] = filter_without_colon
-
-        self.metadata['total_ids_no_filter'] = self.raw.shape[0]
-        self.metadata['total_id_with_quant'] = self.Abundance.dropna(axis=0, how='all').shape[0]
 
     # ------------------
     # STUDY FACTOR TOOLS
@@ -147,7 +155,7 @@ class ProteomeDiscovererRaw(Container):
         for i in range(1, self.study_factor_table.columns.shape[0]):
             usf = self.study_factor_table.iloc[:, i].unique()
             usf = list(map(lambda x: x.strip(), usf))
-            study_factor_dict[self.study_factor_table().iloc[:, i].name] = usf
+            study_factor_dict[self.study_factor_table.iloc[:, i].name] = usf
         return study_factor_dict
 
     @property
@@ -163,6 +171,30 @@ class ProteomeDiscovererRaw(Container):
             print(err)
 
         return plex_number
+
+    @property
+    def input_number(self):
+        """Return number of inputs as a float.
+
+        Parameters
+        ----------
+        dataframe : DataFrame
+
+        Returns
+        -------
+        number_input : float
+        """
+        number_input = 0.0
+        try:
+            plex_number = self.tmt_plex_number
+            # FIXME: Proof this against Inputase ect.
+            # To do that that load the regex with ~ [Ii]nput[\w[punctuation]]
+            # FIXME: Redundant filtering of raw DataFrames = memory leak
+            input_abundance = self.Abundance.filter(regex="[Ii]nput").shape[1]
+            number_input = input_abundance/plex_number
+        except Exception:
+            print("utils.SelectionTools.find_number_input failed")
+        return number_input
 
 
 class PeptideGroups(ProteomeDiscovererRaw):
@@ -227,34 +259,49 @@ class Proteins(ProteomeDiscovererRaw):
         filepath_or_buffer = filepath_or_buffer or None
         # FIXME: Add verbose argument.
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
-        # Create the master_index
-        self.master_index = None
+
         # Filter for master proteins and high confidence.
         self._high_confidence = FilterTools.high_confidence(self.raw)
         self.master_high_confidence = FilterTools.is_master_protein(self._high_confidence).copy()
         # METADATA: Number of high confidence protein.
         self.metadata['high_confidence_ids'] = self.master_high_confidence.shape[0]
+
         # Find and relabel the Entrez Gene ID column.
+        self.set_entrez()
+
+        # Create the master_index
+        self.set_master_index()
+        # Attempt to rescue Entrez Gene IDs
+        if attempt_rescue_entrez_ids:
+            IntermineTools.rescue_entrez_ids(self.master_index)
+        # Attach MitoCarta2 data to the master_index.
+        self.add_database(MitoCartaTwo.essential)
+
+    def set_entrez(self):
+        """Find and relabel the Entrez Gene ID column.
+        """
         if "Gene ID" in self.master_high_confidence: # PD2.1
             self.master_high_confidence.rename(columns={'Gene ID':'EntrezGeneID'}, inplace=True)
 
         if "Entrez Gene ID" in self.master_high_confidence: # PD2.2
             self.master_high_confidence.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
 
+    def set_master_index(self):
+        """Attempt to set the master index for the Proteins.
+        """
         # FIXME: Add try and except for each of these columns.
         try:
             self.master_index = pd.concat([self.master_high_confidence.Accession, self.master_high_confidence.EntrezGeneID, self.master_high_confidence.Description], axis=1)
         except Exception as err:
             print(err)
 
-        if attempt_rescue_entrez_ids:
-            IntermineTools.rescue_entrez_ids(self.master_index)
-
-        # Attach MitoCarta2 data to the master_index.
+    def add_database(self, DataFrame):
+        """Add databases to master_index.
+        """
         try:
             self.master_index.dropna(inplace=True)
             self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member().apply(np.int64)
-            self.master_index = self.master_index.merge(MitoCartaTwo.essential.copy(), on="EntrezGeneID", how="left")
+            self.master_index = self.master_index.merge(DataFrame.copy(), on="EntrezGeneID", how="left")
 
             self.master_index.index = self.master_index.index
             self.master_index.fillna(False, inplace=True)

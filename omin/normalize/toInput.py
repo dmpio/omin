@@ -1,24 +1,10 @@
 # -*- coding: utf-8 -*-
 """Normalization to input classes and functions.
 
-LICENSE:
-Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio
+DEPRECATED
+----------
+Use built-in pandomics normalization functions.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files, Omics Modeling Integrating
-Normalization (OMIN), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish, distribute,
-sublicense, and/or sell copies of the Software, and to permit persons to whom
-the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 """
 
 import difflib
@@ -29,11 +15,12 @@ from ..utils import SelectionTools
 from ..core import Handle
 
 
-# MACHINE LEARNING LINKAGE METHODS
 class MachLink(object):
     """Machine learning based DataFrame linkage methods.
 
-    This class will most likely be DEPRECATED
+    DEPRECATED
+    ----------
+    Use better idea.
     """
 
     @staticmethod
@@ -107,6 +94,10 @@ class MachLink(object):
 class NormalizedToInput(Handle):
     """Claculate the normalized relative abundance and relative occupancy.
 
+    DEPRECATED
+    ----------
+    Use omin.core.containers
+
     Attributes
     ----------
     peptide_groups : obj:
@@ -130,14 +121,13 @@ class NormalizedToInput(Handle):
         except Exception:
             print("omin.normalize.toInput.Proteins FAILED")
 
-    # def __repr__(self):
-    #     """Show all attributes.
-    #     """
-    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))
-
 
 class PeptideGroups(object):
     """Normalize the abundance of the peptide groups.
+
+    DEPRECATED
+    ----------
+    Use omin.core.containers.PeptideGroups
 
     Attributes
     ----------
@@ -215,6 +205,10 @@ class PeptideGroups(object):
 
 class Proteins(object):
     """Calculate the relative occupancy.
+
+    DEPRECATED
+    ----------
+    Use omin.core.containers.Proteins
 
     Attributes
     ----------

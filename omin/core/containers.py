@@ -240,7 +240,7 @@ class ProteomeDiscovererRaw(Container):
     def fraction_tag(self, fraction_number=None):
         """Return a characteristic string for a fraction.
         """
-        # FIXME: Add try and excepts with some kind of unique string passed 
+        # FIXME: Add try and excepts with some kind of unique string passed
         by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
 
         rx = re.compile('(.+)\s\(.+\)')
@@ -419,15 +419,15 @@ class Proteins(ProteomeDiscovererRaw):
     Derived from the ProteomeDiscovererRaw class
     """
 
-    def __init__(self, filepath_or_buffer=None, attempt_rescue_entrez_ids=True, *args, **kwargs):
+    def __init__(self, filepath_or_buffer=None, rescue_entrez_ids=False, *args, **kwargs):
         """
 
         Parameters
         ----------
         filepath_or_buffer: str or _io.TextWrapper
 
-        attempt_rescue_entrez_ids: Bool
-            Defaults to True.
+        rescue_entrez_ids: Bool
+            Defaults to False.
 
         """
         # filepath_or_buffer = filepath_or_buffer or None
@@ -447,7 +447,7 @@ class Proteins(ProteomeDiscovererRaw):
         # Create the master_index
         self.set_master_index()
         # Attempt to rescue Entrez Gene IDs
-        if attempt_rescue_entrez_ids:
+        if rescue_entrez_ids:
             IntermineTools.rescue_entrez_ids(self.master_index)
         # Attach MitoCarta2 data to the master_index.
         self.add_database(MitoCartaTwo.essential)

@@ -34,10 +34,27 @@ from .containers import PeptideGroups, Proteins
 class Project(object):
     """
     """
-    def __init__(self, file_list=None, peptides_file=None, proteins_file=None, verbose=None, *args, **kwargs):
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None, rescue_entrez_ids=None, verbose=None, *args, **kwargs):
         """Load data for peptides_file and proteins_file
-        """
 
+        Parameters
+        ----------
+        file_list: str
+            A list of files
+
+        peptides_file: str or _io.TextWrapper
+
+        proteins_file: str or _io.TextWrapper
+
+       rescue_entrez_ids: bool
+            Attempts to query the Intermine database for proteins that have
+            Master Protein Accessions but no Entrez Gene ID. This process can
+            take several minutes. Defaults to False.
+
+        verbose: bool
+            Defaults to True.
+        """
+        #rescue_entrez_ids =rescue_entrez_ids or False
         verbose = verbose or True
         # FIXME: For some reason even if a list is provided guipyter is stil triggered.
         if file_list is not None:
@@ -61,12 +78,12 @@ class Project(object):
         # Load the Proteins file.
         if proteins_file is not None:
             try:
-                self.proteins = Proteins(filepath_or_buffer=proteins_file, attempt_rescue_entrez_ids=False)
+                self.proteins = Proteins(filepath_or_buffer=proteins_file, rescue_entrez_ids=rescue_entrez_ids)
             except Exception as err:
                 if verbose:
                     print(err)
         else:
-            self.proteins = Proteins(attempt_rescue_entrez_ids=False, *args, **kwargs)
+            self.proteins = Proteins(rescue_entrez_ids=rescue_entrez_ids, *args, **kwargs)
 
 # =============
 # PROCESS CLASS
@@ -75,8 +92,7 @@ class Project(object):
 class Process(Project):
     """A metaclass that uses PreProcess attempting several normalization steps.
 
-    WARNING: This class is under construction switch to stable branch it you need to work.
-
+    WARNING: This class is under construction switch to stable branch if you need to work.
     """
 
     # PROTIP: Wait util the last possible moment to link databases.

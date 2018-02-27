@@ -118,7 +118,7 @@ class ProteomeDiscovererRaw(Container):
     def __init__(self, *args, **kwargs):
         """Initialize base class for Proteome Discoverer raw files.
         """
-        # super(ProteomeDiscovererRaw, self).__init__(low_memory=False, delimiter='\t', **kwargs)
+        # Initialize the Container class
         Container.__init__(self, low_memory=False, delimiter='\t', **kwargs)
         # Calling the function below.
         self.expose_thermo_categories()
@@ -267,9 +267,9 @@ class PeptideGroups(ProteomeDiscovererRaw):
     Derived from the ProteomeDiscovererRaw class
     """
 
-    def __init__(self, filepath_or_buffer, *args, **kwargs):
+    def __init__(self, filepath_or_buffer=None, *args, **kwargs):
         """Initialize the base class."""
-        filepath_or_buffer = filepath_or_buffer or None
+        # filepath_or_buffer = filepath_or_buffer or None
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select peptide groups file", *args, **kwargs)
 
         # Fill all of the modifications with NaNs with a blank string
@@ -401,7 +401,7 @@ class Proteins(ProteomeDiscovererRaw):
     Derived from the ProteomeDiscovererRaw class
     """
 
-    def __init__(self, filepath_or_buffer, attempt_rescue_entrez_ids=True, *args, **kwargs):
+    def __init__(self, filepath_or_buffer=None, attempt_rescue_entrez_ids=True, *args, **kwargs):
         """
 
         Parameters
@@ -412,11 +412,12 @@ class Proteins(ProteomeDiscovererRaw):
             Defaults to True.
 
         """
-        filepath_or_buffer = filepath_or_buffer or None
+        # filepath_or_buffer = filepath_or_buffer or None
         # FIXME: Add verbose argument.
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
 
         # Filter for master proteins and high confidence.
+        # FIXME: FilterTools.is_master_protein fails on PD2.2 files
         self._high_confidence = FilterTools.high_confidence(self.raw)
         self.master_high_confidence = FilterTools.is_master_protein(self._high_confidence).copy()
         # METADATA: Number of high confidence protein.
@@ -424,7 +425,7 @@ class Proteins(ProteomeDiscovererRaw):
 
         # Find and relabel the Entrez Gene ID column.
         self.set_entrez()
-
+        self.set_master_protein_accession()
         # Create the master_index
         self.set_master_index()
         # Attempt to rescue Entrez Gene IDs
@@ -432,6 +433,7 @@ class Proteins(ProteomeDiscovererRaw):
             IntermineTools.rescue_entrez_ids(self.master_index)
         # Attach MitoCarta2 data to the master_index.
         self.add_database(MitoCartaTwo.essential)
+
 
     def set_entrez(self):
         """Find and relabel the Entrez Gene ID column.
@@ -442,14 +444,34 @@ class Proteins(ProteomeDiscovererRaw):
         if "Entrez Gene ID" in self.master_high_confidence: # PD2.2
             self.master_high_confidence.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
 
+
+    def set_master_protein_accession(self):
+        """Find and relabel the Master Protein Accession column as Accession.
+        """
+        if "Accession" in self.master_high_confidence: # PD2.1
+            pass
+
+        if "Master Protein Accessions" in self.master_high_confidence: # PD2.2
+            self.master_high_confidence.rename(columns={'Master Protein Accessions':'Accession'}, inplace=True)
+
+
     def set_master_index(self):
         """Attempt to set the master index for the Proteins.
         """
         # FIXME: Add try and except for each of these columns.
-        try:
-            self.master_index = pd.concat([self.master_high_confidence.Accession, self.master_high_confidence.EntrezGeneID, self.master_high_confidence.Description], axis=1)
-        except Exception as err:
-            print(err)
+        master_index_components = ["EntrezGeneID", "Description]"]
+
+        # Start the master index with the the first master protein accession.
+        self.master_index = pd.DataFrame(self.master_high_confidence["Accession"].first_member())
+
+        for i in master_index_components:
+            try:
+                self.master_index = pd.concat([self.master_index, self.master_high_confidence[i]], axis=1)
+            except Exception as err:
+                # print(err)
+                pass
+        return
+
 
     def add_database(self, DataFrame):
         """Add databases to master_index.

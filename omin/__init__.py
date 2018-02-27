@@ -36,11 +36,6 @@ Utilities
 __version__
     omin version string
 
-DEVELOPMENT PROTIPS
-===================
-
-PROTIP: Define variables used at the lowest possible class level.
-
 """
 # -------
 # LICENSE
@@ -64,14 +59,10 @@ PROTIP: Define variables used at the lowest possible class level.
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# -----------
-# BOILERPLATE
-# -----------
-
-import os, sys, warnings
-
+# ----------
 # TO DO LIST
 # ----------
+# FIXME: DOCUMENT OR DIE #DOD
 # FIXME: *** update the readme ** [ ] How to install,
 # FIXME: *** Document dependencies *** [ ] guipyter, [ ] panomics
 # FIXME: Investigate a SQLite/Json file method in APPDATA or linux eqv.
@@ -82,9 +73,17 @@ import os, sys, warnings
 # -------
 # PROTIPS
 # -------
+
+# PROTIP: Define variables used at the lowest possible class level.
 # PROTIP: Also ways set your returns in a function.
 # PROTIP: Add more type checking.
 # PROTIP: Add more try and excepts but try to put them on function level
+
+# ----------------
+# EXTERNAL IMPORTS
+# ----------------
+import os, sys, warnings
+
 
 # --------------------
 # PYTHON COMPATIBILITY
@@ -106,7 +105,6 @@ from .utils import SelectionTools
 from .utils import IOTools
 from .utils import UniProtTools
 from .utils.pandas_tools import DataFrame, Series, pandas
-# from .utils.pandas_tools import *
 
 # ------------
 # CORE IMPORTS
@@ -152,7 +150,7 @@ from . import cli
 # DEPRECATE
 # ---------
 # from . import pathfinder
-from . import normalize
+# from . import normalize
 
 
 # -------

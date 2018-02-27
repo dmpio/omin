@@ -240,6 +240,7 @@ class ProteomeDiscovererRaw(Container):
     def fraction_tag(self, fraction_number=None):
         """Return a characteristic string for a fraction.
         """
+        # FIXME: Add try and excepts with some kind of unique string passed 
         by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
 
         rx = re.compile('(.+)\s\(.+\)')
@@ -358,15 +359,21 @@ class PeptideGroups(ProteomeDiscovererRaw):
     def load_normalized(self):
         """Return object with load normalzed pd.DataFrames as attributes.
         """
+        # FIXME: NORMALIZE INPUT TO ITS SELF.
+
         input_mask = self.study_factor_table[self.study_factor_with_input].str.contains("[Ii]nput")
         # FIXME: Replace the bobo method to find input fraction numbers
         number_input_fractions = len(self.study_factor_table.loc[input_mask]._Fn.unique())
 
+        # isolate the input fractions study factors.
         inps = self.study_factor_table.loc[input_mask]
         inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
+
+        # isolate the other fractions study factors.
         frcs = self.study_factor_table.loc[~input_mask]
         frcs = [frcs.loc[frcs._Fn.str.contains(i)] for i in frcs._Fn.unique()]
 
+        # Create a list of linkage DataFrames.
         linked = []
         for i in inps:
             for j in frcs:
@@ -381,14 +388,25 @@ class PeptideGroups(ProteomeDiscovererRaw):
         scores = np.array([i.Score.unique()[0] for i in linked])
         linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
 
+        # Normalize the inputs to themselves and add them to the normalized dict.
+        # NOTE: Inputs are normalized to themselves in order to calculate relative occupancy
+        # and looking into the whole proteome. Inputs that have been normalized to themselves
+        # are not used to normalize enriched fractions non-normalized inputs are.
         normalized = dict()
+        for inp in inps:
+            inp_df = self.Abundance[self.Abundance.columns[i.index]]
+            inp_df = inp_df.normalize_to(inp_df)
+            inp_label = self.fraction_tag(inp._Fn.unique()[0])
+            normalized[inp_label] = inp_df
+
+        # Normalize the
         for link in linked:
             inp = self.Abundance[self.Abundance.columns[link.Link]]
             other = self.Abundance[self.Abundance.columns[link.index]]
             other_label = self.fraction_tag(link._Fn.unique()[0])
-            #other_label = [i.split(":")[1] for i in other.columns]
             load_normalized = other.normalize_to(inp)
             normalized[other_label] = load_normalized
+
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)
 

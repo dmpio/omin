@@ -84,17 +84,6 @@ __version__
 # ----------------
 import os, sys, warnings
 
-
-# --------------------
-# PYTHON COMPATIBILITY
-# --------------------
-# from __future__ import division, absolute_import, print_function
-# if sys.version_info[0] >= 3:
-#     from builtins import bool, int, float, complex, object, str
-#     unicode = str
-# else:
-#     from __builtin__ import bool, int, float, complex, object, unicode, str
-
 # -------------
 # UTILS IMPORTS
 # -------------
@@ -110,7 +99,7 @@ from .utils.pandas_tools import DataFrame, Series, pandas
 # CORE IMPORTS
 # ------------
 from . import core
-from .core.handles import *
+from .core.handles import Process
 
 # -------------
 # STATS IMPORTS
@@ -126,13 +115,13 @@ from . import visualize
 # --------------
 # EXPORT IMPORTS
 # --------------
-from . import export
+# from . import export
 
 # ----------------
 # DATABASE IMPORTS
 # ----------------
-from . import databases
-from .databases import MitoCarta
+# from . import databases
+# from .databases import MitoCarta
 from .databases import MitoCartaTwo
 
 # -----------

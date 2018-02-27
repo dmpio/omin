@@ -15,7 +15,7 @@ user.
 # TO DO LIST
 # ----------
 # FIXME: DOCUMENT OR DIE #DOD
-
+# FIXME: Add relative occupancy method to Process
 
 # ----------------
 # EXTERNAL IMPORTS
@@ -88,3 +88,30 @@ class Process(Project):
         """
         # Initialize the Project class.
         Project.__init__(self, *args, **kwargs)
+        # Connect master index from peptide groups to proteins.
+        self.peptide_groups_master_index_update()
+        self.peptide_groups_mitocart_fillna()
+
+    def peptide_groups_master_index_update(self):
+        """Merge the proteins.master_index with the peptide_groups.master_index.
+        """
+        try:
+            updated_master_index = self.peptide_groups.master_index.merge(self.proteins.master_index, on="Accession", how="left")
+            self.peptide_groups.master_index = updated_master_index
+
+        except Exception as err:
+            if verbose:
+                print(err)
+
+    def peptide_groups_mitocart_fillna(self):
+        """Attempts to fill missing values (NaNs) created by merging the proteins.master_index with the peptide_groups.master_index.
+        """
+        if "MitoCarta2_List" in self.peptide_groups.master_index:
+            try:
+                # ASSUMPTION: If MitoCarta2_List is present then IMS and Matrix will be aswell.
+                self.peptide_groups.master_index["MitoCarta2_List"].fillna(False, inplace=True)
+                self.peptide_groups.master_index["IMS"].fillna(False, inplace=True)
+                self.peptide_groups.master_index["Matrix"].fillna(False, inplace=True)
+            except Exception as err:
+                if verbose:
+                    print(err)

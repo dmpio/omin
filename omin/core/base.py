@@ -1,11 +1,29 @@
 # -*- coding: utf-8 -*-
+"""omin.core.base
+Provides the Base class used in the Container classes.
+"""
+# -------
+# LiCENSE
+# -------
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
+# ----------
+# TO DO LIST
+# ----------
+# FIXME: DOCUMENT OR DIE #DOD
+
+# ----------------
+# EXTERNAL IMPORTS
+# ----------------
 import re
 import os
 import guipyter as gptr
 # FIXME: Should this be a try and except for pandas
 from pandomics import pandas
+
+# ----------------
+# INTERNAL IMPORTS
+# ----------------
 from ..utils import IOTools
 
 

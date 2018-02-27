@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
-"""
+"""omin.core.containers
+
+Provides Container, Normalized, MaxQuantRaw, ProteomeDiscovererRaw,
+PeptideGroups, and Proteins classes.
 
 """
+# -------
+# LiCENSE
+# -------
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
+
+# ----------
+# TO DO LIST
+# ----------
 # FIXME: DOCUMENT OR DIE #DOD
 
-# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 # ----------------
 # EXTERNAL IMPORTS
@@ -39,6 +49,10 @@ from pandomics import pandas as pd
 
 
 # FIXME: Find out what words are on limits.
+
+# ================
+# NORMALIZED CLASS
+# ================
 
 class Normalized(object):
     """Empty class that catches results from normalization methods.
@@ -243,6 +257,9 @@ class ProteomeDiscovererRaw(Container):
 
         return tag_for_fraction
 
+# ===================
+# PEPTIDEGROUPS CLASS
+# ===================
 
 class PeptideGroups(ProteomeDiscovererRaw):
     """Base class for Peptide Groups.
@@ -375,6 +392,9 @@ class PeptideGroups(ProteomeDiscovererRaw):
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)
 
+# ==============
+# PROTEINS CLASS
+# ==============
 
 class Proteins(ProteomeDiscovererRaw):
     """Base class for Proteins.

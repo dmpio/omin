@@ -1,52 +1,35 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
-
-"""Omin core handles.
+"""
+Omin core handles.
 
 Handle in this context is a class composed of several pandas DataFrames, and
 other varibles that are either derived from the DataFrames or provided by the
 user.
-
 """
+# -------
+# LiCENSE
+# -------
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
+
+# ----------
+# TO DO LIST
+# ----------
+# FIXME: DOCUMENT OR DIE #DOD
+
 
 # ----------------
 # EXTERNAL IMPORTS
 # ----------------
 import re
-import os
-import guipyter as gptr
 
 # ----------------
 # INTERNAL IMPORTS
 # ----------------
-# import the Handle super class.
-from .base import Handle
 from .containers import PeptideGroups, Proteins
 
-# -------------
-# UTILS IMPORTS
-# -------------
-from ..utils import IOTools
-from ..utils import StringTools
-from ..utils import SelectionTools
-from ..utils import FilterTools
-
-# -------------
-# NORMALIZATION
-# -------------
-from ..normalize.toPool import NormalizedToPool
-from ..normalize.toInput import NormalizedToInput
-
-# --------
-# DATBASES
-# --------
-from ..databases import mitoCartaCall
-from ..utils.pandas_tools import pd
-
-
-# ------------
+# =============
 # PROJECT CLASS
-# ------------
+# =============
 
 class Project(object):
     """
@@ -78,6 +61,9 @@ class Project(object):
                 print(err)
             self.proteins = Proteins(*args, **kwargs)
 
+# =============
+# PROCESS CLASS
+# =============
 
 class Process(Project):
     """A metaclass that uses PreProcess attempting several normalization steps.

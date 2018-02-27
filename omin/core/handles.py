@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-# Blair Chesnut, and Elizabeth Hauser.
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 """Omin core handles.
 
@@ -10,20 +9,37 @@ user.
 
 """
 
+# ----------------
+# EXTERNAL IMPORTS
+# ----------------
 import re
 import os
 import guipyter as gptr
 
+# ----------------
+# INTERNAL IMPORTS
+# ----------------
 # import the Handle super class.
 from .base import Handle
 from .containers import PeptideGroups, Proteins
 
+# -------------
+# UTILS IMPORTS
+# -------------
 from ..utils import IOTools
 from ..utils import StringTools
 from ..utils import SelectionTools
 from ..utils import FilterTools
+
+# -------------
+# NORMALIZATION
+# -------------
 from ..normalize.toPool import NormalizedToPool
 from ..normalize.toInput import NormalizedToInput
+
+# --------
+# DATBASES
+# --------
 from ..databases import mitoCartaCall
 from ..utils.pandas_tools import pd
 
@@ -142,32 +158,42 @@ class PreProcess(RawData):
 
 class Process(PreProcess):
     """A metaclass that uses PreProcess attempting several normalization steps.
+
+    WARNING: This class is under construction switch to stable branch it you need to work.
+
     """
+
+    # PROTIP: Wait util the last possible moment to link databases.
+    # microprotip: Exceptions are the rule here.
+    # PROTIP: TRY NOT TO SET VARS AT THIS LEVEL.
 
     def __init__(self, file_list=None, peptides_file=None, proteins_file=None, modifications=None, *args, **kwargs):
         """Initalize Process class.
         """
-        self.normalized = None
+        # self.normalized = None
         super(Process, self).__init__(file_list, peptides_file, proteins_file, *args, **kwargs)
-
         # FIXME: Make the selection more specifically target abundance columns
-        if self._input_number > 0:
-            inp_notify = "{} input fraction(s) found. Normalizing now..."
-            inp_notify = inp_notify.format(self._input_number)
-            print(inp_notify)
-            try:
-                self.normalized = NormalizedToInput(self)
-            except Exception:
-                print("omin.normalize.toInput.NormalizedToInput FAILED.")
+        # FIXME: UPDATE this may be fixed now. Kill the vars set at ths level
+        # FIXME: Remove all trace of the vile PreProcess class.
+        # FIXME: Please dark lord of omics guide my hand as I destroy this class and rebuild it from scratch.
 
-        elif self.raw_peptides.columns.str.contains("pool|control",
-                                                    case=False).any():
-
-            print("Pool columns. Omin will attempt to compare the data to it.")
-            try:
-                self.normalized = NormalizedToPool(self.raw_peptides)
-            except Exception:
-                print("omin.normalize.toPool.NormalizedToPool FAILED.")
-        else:
-            # FIXME: Make this a place where the user could specify.
-            print("Cannot find anything to normalize to.")
+        # if self._input_number > 0:
+        #     inp_notify = "{} input fraction(s) found. Normalizing now..."
+        #     inp_notify = inp_notify.format(self._input_number)
+        #     print(inp_notify)
+        #     try:
+        #         self.normalized = NormalizedToInput(self)
+        #     except Exception:
+        #         print("omin.normalize.toInput.NormalizedToInput FAILED.")
+        #
+        # elif self.raw_peptides.columns.str.contains("pool|control",
+        #                                             case=False).any():
+        #
+        #     print("Pool columns. Omin will attempt to compare the data to it.")
+        #     try:
+        #         self.normalized = NormalizedToPool(self.raw_peptides)
+        #     except Exception:
+        #         print("omin.normalize.toPool.NormalizedToPool FAILED.")
+        # else:
+        #     # FIXME: Make this a place where the user could specify.
+        #     print("Cannot find anything to normalize to.")

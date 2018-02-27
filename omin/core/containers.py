@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
+"""
 
+"""
+# FIXME: DOCUMENT OR DIE #DOD
+
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
+
+# ----------------
+# EXTERNAL IMPORTS
+# ----------------
 import re
 import os
 import numpy as np
@@ -10,14 +18,17 @@ from guipyter import DataLoader
 # INTERNAL IMPORTS
 # ----------------
 from .base import Handle
+# -------------
 # UTILS IMPORTS
+# -------------
 from ..utils import IOTools
 from ..utils import StringTools
 from ..utils import SelectionTools
 from ..utils import FilterTools
 from ..utils import IntermineTools
-
+# --------
 # DATBASES
+# --------
 from ..databases import MitoCartaTwo
 # import pandas with the pandomics plug-in
 from pandomics import pandas as pd

@@ -25,7 +25,7 @@ import re
 # ----------------
 # INTERNAL IMPORTS
 # ----------------
-from .containers import PeptideGroups, Proteins
+from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 
 # =============
 # PROJECT CLASS
@@ -103,10 +103,17 @@ class Process(Project):
         """Initalize Process class.
         """
         # Initialize the Project class.
+        if "verbose" in kwargs:
+            verbose = kwargs['verbose']
+        else:
+            verbose = False
+
         Project.__init__(self, *args, **kwargs)
         # Connect master index from peptide groups to proteins.
         self.peptide_groups_master_index_update()
         self.peptide_groups_mitocart_fillna()
+        # # Attempt to calculate the relative occupancy
+        self.calculate_relative_occupancy(verbose=verbose)
 
     def peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
@@ -118,6 +125,7 @@ class Process(Project):
         except Exception as err:
             if verbose:
                 print(err)
+
 
     def peptide_groups_mitocart_fillna(self):
         """Attempts to fill missing values (NaNs) created by merging the proteins.master_index with the peptide_groups.master_index.
@@ -131,3 +139,42 @@ class Process(Project):
             except Exception as err:
                 if verbose:
                     print(err)
+
+
+    def calculate_relative_occupancy(self, verbose=False):
+        """Calculate the relative occupancy is possible.
+        """
+        self.peptide_groups.relative_occupancy = Occupancy()
+        self.proteins.load_normalized = Normalized()
+        self.proteins.relative_occupancy = Occupancy()
+
+        if self.proteins.input_number > 0:
+            if verbose:
+                print("Input fractions found calculating relative occupancy...")
+
+            input_mask = self.proteins.study_factor_table[self.proteins.study_factor_with_input].str.contains("[Ii]nput")
+
+            number_input_fractions = len(self.proteins.study_factor_table.loc[input_mask]._Fn.unique())
+
+            # isolate the input fractions study factors.
+            inps = self.proteins.study_factor_table.loc[input_mask]
+            inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
+            normalized = dict()
+            for inp in inps:
+                if len(inp._Fn.unique()) == 1:
+                    inp_fn = inp._Fn.unique()[0]
+                    inp_tag = self.proteins.fraction_tag(inp_fn)
+                    # print(inp_tag)
+                    if inp_tag in self.peptide_groups.load_normalized.__dict__:
+
+                        inp_pr_linked = self.proteins.Abundance[self.proteins.Abundance.columns[inp.index]]
+
+                        inp_pg_linked = self.peptide_groups.Abundance[self.peptide_groups.Abundance.columns[inp.index]]
+
+                        load_norm = inp_pr_linked.normalize_to(inp_pg_linked)
+                        normalized[inp_tag] = load_norm
+
+            self.proteins.load_normalized = Normalized(**normalized)
+        # No input fractions found.
+        else:
+            pass

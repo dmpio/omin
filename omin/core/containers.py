@@ -14,7 +14,7 @@ PeptideGroups, and Proteins classes.
 # TO DO LIST
 # ----------
 # FIXME: DOCUMENT OR DIE #DOD
-
+# FIXME: Find out what words we can use to name classes and functions.
 
 # ----------------
 # EXTERNAL IMPORTS
@@ -28,6 +28,7 @@ from guipyter import DataLoader
 # INTERNAL IMPORTS
 # ----------------
 from .base import Handle
+
 # -------------
 # UTILS IMPORTS
 # -------------
@@ -36,6 +37,7 @@ from ..utils import StringTools
 from ..utils import SelectionTools
 from ..utils import FilterTools
 from ..utils import IntermineTools
+
 # --------
 # DATBASES
 # --------
@@ -46,9 +48,6 @@ from pandomics import pandas as pd
 # FIXME: Add the same try and except as seen in the guipyter module.
 # # The line below could be used as a backup.
 # from ..utils.pandas_tools import pd
-
-
-# FIXME: Find out what words are on limits.
 
 # ================
 # NORMALIZED CLASS
@@ -65,6 +64,26 @@ class Normalized(object):
         """Show all attributes."""
         return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
+# ===============
+# OCCUPANCY CLASS
+# ===============
+
+class Occupancy(object):
+    """Empty class that catches results from relative methods.
+
+    NOTE: This is imported and applied by handles.Process.
+    """
+    def __init__(self, *args, **kwargs):
+        for k,v in kwargs.items():
+            self.__dict__[k] = v
+
+    def __repr__(self):
+        """Show all attributes."""
+        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+
+# ===============
+# CONTAINER CLASS
+# ===============
 
 class Container(DataLoader, Handle):
     """Base class for Proteome Discoverer raw files.
@@ -131,6 +150,7 @@ class ProteomeDiscovererRaw(Container):
     def expose_thermo_categories(self):
         """Creates attribute DataFrames based on Thermo's categories.
         """
+        # FIXME: This method could potentially create collisions, figure out a way to safe gard against this.
         thermo_category_values = set([i.split(":")[0] for i in self.raw.columns])
         thermo_category_keys = list(map(StringTools.remove_punctuation, thermo_category_values))
         thermo_category_keys = list(map(lambda x: x.strip().replace(" ", "_"), thermo_category_keys))
@@ -213,6 +233,7 @@ class ProteomeDiscovererRaw(Container):
 
         return plex_number
 
+
     @property
     def input_number(self):
         """Return number of inputs as a float.
@@ -237,8 +258,40 @@ class ProteomeDiscovererRaw(Container):
             print("utils.SelectionTools.find_number_input failed")
         return number_input
 
+
+    @property
+    def study_factor_with_input(self):
+        """Return the study factor that contains "Input" or "input".
+
+        PROTIP: In your when creating study factors stick with the conventions:
+
+            Input (Fraction), Acetyl (Fraction), ect.
+
+        NOTE: For this to work correctly there must be only one study factor
+        that contains the terms: "Input" or "input".
+
+        """
+        # FIXME: Ensure that the methods that use this know what to do with None.
+        # FIXME: Inputase-proof this function or provide informative error handling with messages.
+        rx = re.compile("[Ii]nput")
+        study_factor_with_input = None
+        for k,v in self.study_factor_dict.items():
+            #FIXME: BIG ASSUMPTION HERE -> There will be only one study factor that contains a term including [Ii]nput.
+            li = bool(sum(list(map(lambda x:bool(len(rx.findall(x))), v))))
+            if li:
+                study_factor_with_input = k
+            else:
+                pass
+        return study_factor_with_input
+
+
     def fraction_tag(self, fraction_number=None):
         """Return a characteristic string for a fraction.
+
+        Parameters
+        ----------
+        fraction_number: str
+            Must be the form Fn e.g. F1, F2, ect.
         """
         # FIXME: Add try and excepts with some kind of unique string passed
         by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
@@ -257,6 +310,13 @@ class ProteomeDiscovererRaw(Container):
                     tag_for_fraction = "_".join([tag_for_fraction, term])
 
         return tag_for_fraction
+
+    @property
+    def fraction_number2fraction_tag(self):
+        """Returns a dict with fraction numbers as keys and fraction tags as values.
+        """
+        result = dict([(i,self.fraction_tag(i)) for i in self.study_factor_table._Fn.unique()])
+        return result
 
 # ===================
 # PEPTIDEGROUPS CLASS
@@ -335,25 +395,30 @@ class PeptideGroups(ProteomeDiscovererRaw):
         else:
             pass
 
-    @property
-    def study_factor_with_input(self):
-        """Return the study factor that contains "Input" or "input".
-
-        PROTIP: In your when creating study factors stick with the conventions: Input (Fraction), Acetyl (Fraction), ect.
-        NOTE: For this to work correctly there must be only one study factor that contains the terms: "Input" or "input".
-
-        """
-        #FIXME: Inputase-proof this function or provide informative error handling with messages.
-        rx = re.compile("[Ii]nput")
-        study_factor_with_input = None
-        for k,v in self.study_factor_dict.items():
-            #FIXME: BIG ASSUMPTION HERE -> There will be only one study factor that contains a term including [Ii]nput.
-            li = bool(sum(list(map(lambda x:bool(len(rx.findall(x))), v))))
-            if li:
-                study_factor_with_input = k
-            else:
-                pass
-        return study_factor_with_input
+    # @property
+    # def study_factor_with_input(self):
+    #     """Return the study factor that contains "Input" or "input".
+    #
+    #     PROTIP: In your when creating study factors stick with the conventions:
+    #
+    #         Input (Fraction), Acetyl (Fraction), ect.
+    #
+    #     NOTE: For this to work correctly there must be only one study factor
+    #     that contains the terms: "Input" or "input".
+    #
+    #     """
+    #     # FIXME: Ensure that the methods that use this lated on can handle the None object.
+    #     # FIXME: Inputase-proof this function or provide informative error handling with messages.
+    #     rx = re.compile("[Ii]nput")
+    #     study_factor_with_input = None
+    #     for k,v in self.study_factor_dict.items():
+    #         #FIXME: BIG ASSUMPTION HERE -> There will be only one study factor that contains a term including [Ii]nput.
+    #         li = bool(sum(list(map(lambda x:bool(len(rx.findall(x))), v))))
+    #         if li:
+    #             study_factor_with_input = k
+    #         else:
+    #             pass
+    #     return study_factor_with_input
 
     @property
     def load_normalized(self):
@@ -429,6 +494,13 @@ class Proteins(ProteomeDiscovererRaw):
         rescue_entrez_ids: Bool
             Defaults to False.
 
+        Attributes
+        ----------
+        metadata: dict
+
+        master_high_confidence: pandas.DataFrame
+            Filtered for high confidence master proteins (USE THIS ONE FOR COMPUTATION).
+
         """
         # filepath_or_buffer = filepath_or_buffer or None
         # FIXME: Add verbose argument.
@@ -451,6 +523,8 @@ class Proteins(ProteomeDiscovererRaw):
             IntermineTools.rescue_entrez_ids(self.master_index)
         # Attach MitoCarta2 data to the master_index.
         self.add_database(MitoCartaTwo.essential)
+        # Filter the abundance by master_high_confidence
+        self.filter_abundance()
 
 
     def set_entrez(self):
@@ -503,3 +577,12 @@ class Proteins(ProteomeDiscovererRaw):
             self.master_index.fillna(False, inplace=True)
         except Exception as err:
             print(err)
+
+    def filter_abundance(self):
+        if "Abundance" in self.__dict__:
+            try:
+                self.Abundance = self.Abundance.loc[self.master_high_confidence.index]
+            except Exception as err:
+                print("Could not filter protein abundance by high confidence master proteins.", err)
+        else:
+            print("Could not filter protein abundance by high confidence master proteins.")

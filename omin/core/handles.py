@@ -115,6 +115,7 @@ class Process(Project):
         # # Attempt to calculate the relative occupancy
         self.calculate_relative_occupancy(verbose=verbose)
 
+
     def peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
         """

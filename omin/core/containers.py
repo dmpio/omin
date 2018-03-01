@@ -311,6 +311,7 @@ class ProteomeDiscovererRaw(Container):
 
         return tag_for_fraction
 
+
     @property
     def fraction_number2fraction_tag(self):
         """Returns a dict with fraction numbers as keys and fraction tags as values.

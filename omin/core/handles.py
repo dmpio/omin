@@ -112,6 +112,10 @@ class Process(Project):
         # Connect master index from peptide groups to proteins.
         self.peptide_groups_master_index_update()
         self.peptide_groups_mitocart_fillna()
+
+        # Link proteins to peptides
+        self.link_proteins_to_peptides()
+
         # # Attempt to calculate the relative occupancy
         self.calculate_relative_occupancy(verbose=verbose)
 
@@ -142,6 +146,14 @@ class Process(Project):
                     print(err)
 
 
+    def link_proteins_to_peptides(self):
+        """Links protiens to peptides.
+        """
+        link_to_peptides = self.peptide_groups.master_index.merge(self.proteins.master_index, on="Accession", how="left", left_index=True)
+        link_to_peptides = link_to_peptides.Accession
+        self.proteins.link_to_peptides = link_to_peptides
+
+
     def calculate_relative_occupancy(self, verbose=False):
         """Calculate the relative occupancy is possible.
         """
@@ -152,11 +164,8 @@ class Process(Project):
         if self.proteins.input_number > 0:
             if verbose:
                 print("Input fractions found calculating relative occupancy...")
-
             input_mask = self.proteins.study_factor_table[self.proteins.study_factor_with_input].str.contains("[Ii]nput")
-
             number_input_fractions = len(self.proteins.study_factor_table.loc[input_mask]._Fn.unique())
-
             # isolate the input fractions study factors.
             inps = self.proteins.study_factor_table.loc[input_mask]
             inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
@@ -165,17 +174,28 @@ class Process(Project):
                 if len(inp._Fn.unique()) == 1:
                     inp_fn = inp._Fn.unique()[0]
                     inp_tag = self.proteins.fraction_tag(inp_fn)
-                    # print(inp_tag)
+
                     if inp_tag in self.peptide_groups.load_normalized.__dict__:
-
                         inp_pr_linked = self.proteins.Abundance[self.proteins.Abundance.columns[inp.index]]
-
                         inp_pg_linked = self.peptide_groups.Abundance[self.peptide_groups.Abundance.columns[inp.index]]
-
                         load_norm = inp_pr_linked.normalize_to(inp_pg_linked)
                         normalized[inp_tag] = load_norm
 
             self.proteins.load_normalized = Normalized(**normalized)
+            related_proteins_dict = dict()
+            for k,v in self.proteins.load_normalized.__dict__.items():
+                related_proteins = v.iloc[self.proteins.link_to_peptides.index]
+                related_proteins.index = self.peptide_groups.raw.index
+                related_proteins_dict[k] = related_proteins
+            self.peptide_groups.load_normalized_related_proteins = Normalized(**related_proteins_dict)
+            occupancy = dict()
+            for k,v in self.peptide_groups._linked_fractions.items():
+                peptide_norm = self.peptide_groups.load_normalized.__dict__[k].log2_normalize()
+                proteins_related_norm = self.peptide_groups.load_normalized_related_proteins.__dict__[v].log2_normalize()
+                result = peptide_norm.subtract_by_matrix(proteins_related_norm, prepend_cols="Relative Occupancy: ")
+                occupancy[k] = result
+            self.peptide_groups.relative_occupancy = Occupancy(**occupancy)
+
         # No input fractions found.
         else:
             pass

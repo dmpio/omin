@@ -41,6 +41,8 @@ class MitoCartaTwo(object):
     data = pd.read_pickle(carta_file_path)
     # Change the incorrectly labeled column from MouseGeneID to EntrezGeneID
     data.rename(columns={"MouseGeneID": "EntrezGeneID"}, inplace=True)
+    # Collect the essential columns.
+    essential = data[["EntrezGeneID", "MitoCarta2_List", "Matrix", "IMS"]]
     # Load the modified mitocarta2.0 database.
     ukb = 'uniprotkb_mitocarta2.p.gz'
     ukb_file_path = os.path.join(this_dir, ukb)

@@ -41,7 +41,9 @@ class FilterTools(object):
 
     @staticmethod
     def high_confidence(df):
-        "Return a DataFrame of high confidence proteins."
+        """
+        Return a DataFrame of high confidence proteins.
+        """
         result = None
         try:
             try: # PD 2.1
@@ -59,7 +61,8 @@ class FilterTools(object):
     @staticmethod
     def filterRow(dataframe_in=None, on=None, term=None, *args, **kwargs):
         """Return DataFrame that contains a given term on specific column.
-
+        DEPRECATED
+        ----------
         Parameters
         ----------
         dataframe : DataFrame
@@ -90,6 +93,9 @@ class FilterTools(object):
     @classmethod
     def master_cleanse(cls, protein_df):
         """Filter raw protein DataFrame for master proteins.
+
+        DEPRECATED
+        ----------
 
         The raw protein data from Proteome Discoverer there is a column with
         the title 'Master' this funtion scans through that column and selects

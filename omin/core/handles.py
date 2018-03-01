@@ -1,245 +1,180 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-# Blair Chesnut, and Elizabeth Hauser.
-
-"""Omin core handles.
+"""
+Omin core handles.
 
 Handle in this context is a class composed of several pandas DataFrames, and
 other varibles that are either derived from the DataFrames or provided by the
 user.
-
 """
+# -------
+# LiCENSE
+# -------
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
+# ----------
+# TO DO LIST
+# ----------
+# FIXME: DOCUMENT OR DIE #DOD
+# FIXME: Add relative occupancy method to Process
+
+# ----------------
+# EXTERNAL IMPORTS
+# ----------------
 import re
-import os
-import guipyter as gptr
 
-# import the Handle super class.
-from .base import Handle
-from .containers import PeptideGroups, Proteins
+# ----------------
+# INTERNAL IMPORTS
+# ----------------
+from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 
-from ..utils import IOTools
-from ..utils import StringTools
-from ..utils import SelectionTools
-from ..utils import FilterTools
-from ..normalize.toPool import NormalizedToPool
-from ..normalize.toInput import NormalizedToInput
-from ..databases import mitoCartaCall
-from ..utils.pandas_tools import pd
+# =============
+# PROJECT CLASS
+# =============
 
-# class Aquire(Handle):
-#     def __init__(self, buffer_or_string=None, *args, **kwargs):
-#
-#         Aquire.__init__(self)
-#
-#         if buffer_or_string is not None:
-
-
-class RawData(Handle):
-    """Converts Proteome Discoverer .txt files into pandas DataFrames.
+class Project(object):
     """
+    """
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None, rescue_entrez_ids=None, verbose=None, *args, **kwargs):
+        """Load data for peptides_file and proteins_file
 
-    def __init__(self, file_list=None, peptides_file=None, proteins_file=None):
-        """Load data for peptides_file and proteins_file as pandas DataFrames.
+        Parameters
+        ----------
+        file_list: str
+            A list of files
+
+        peptides_file: str or _io.TextWrapper
+
+        proteins_file: str or _io.TextWrapper
+
+       rescue_entrez_ids: bool
+            Attempts to query the Intermine database for proteins that have
+            Master Protein Accessions but no Entrez Gene ID. This process can
+            take several minutes. Defaults to False.
+
+        verbose: bool
+            Defaults to True.
         """
-        super(RawData, self).__init__()
+        #rescue_entrez_ids =rescue_entrez_ids or False
+        verbose = verbose or True
+        # FIXME: For some reason even if a list is provided guipyter is stil triggered.
         if file_list is not None:
             rx = re.compile("[Pp]eptide")
-
             peptides_file = list(filter(rx.findall, file_list))[0]
 
             rx = re.compile("[Pp]roteins")
             proteins_file = list(filter(rx.findall, file_list))[0]
 
-        # Load your peptide groups file as a pandas DataFrame.
-        self.raw_peptides = pd.read_csv(peptides_file,
-                                        delimiter="\t",
-                                        low_memory=False)
-        # Load your protein file as a pandas DataFrame.
-        self.raw_proteins = pd.read_csv(proteins_file,
-                                        delimiter="\t",
-                                        low_memory=False)
-        # Load the RawData into their respective classes.
-        self.peptide_groups = PeptideGroups(raw_data=self.raw_peptides)
-        self.proteins = Proteins(raw_data=self.raw_proteins)
-        # Store the shape of the respective DataFrames.
-        self._numbers = (self.raw_peptides.shape, self.raw_proteins.shape)
+        # FIXME: Put in kwargs switch like in guipyter.
+        # Load the Peptide Groups file.
+        if peptides_file is not None:
+            try:
+                self.peptide_groups = PeptideGroups(filepath_or_buffer=peptides_file)
+            except Exception as err:
+                if verbose:
+                    print(err)
+        else:
+            self.peptide_groups = PeptideGroups(*args, **kwargs)
 
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+        # Load the Proteins file.
+        if proteins_file is not None:
+            try:
+                self.proteins = Proteins(filepath_or_buffer=proteins_file, rescue_entrez_ids=rescue_entrez_ids)
+            except Exception as err:
+                if verbose:
+                    print(err)
+        else:
+            self.proteins = Proteins(rescue_entrez_ids=rescue_entrez_ids, *args, **kwargs)
 
+# =============
+# PROCESS CLASS
+# =============
 
-class PreProcess(RawData):
-    """A metaclass that uses RawData attempting several filtering steps.
-
-    Attributes
-    ----------
-    _invivo_modifications : list
-        A list of invivo modifications.
-    pep_sel : DataFrame
-        DataFrame to filter raw peptide groups DataFrame by indexing.
-    prot_sel : DataFrame
-        DataFrame to filter raw proteins DataFrame by indexing.
-    mitodex : DataFrame
-        For filtering mitochondrial peptide groups DataFrame by indexing.
-    nonmitodex : DataFrame
-        For filtering non-mitochondrial peptide groups DataFrame by indexing.
-
-    Notes
-    -----
-
-    See Also
-    --------
-    omin.utils.SelectionTools.vLook
-    omin.utils.SelectionTools.masterCleanse
-    """
-
-    """Handles Proteome Discoverer search results.
-    """
-    def __init__(self, file_list=None, peptides_file=None, proteins_file=None,
-                 modifications=None):
-        """Initalize instance of PreProcess class.
-
-        Parameters
-        ----------
-        peptides_file : str
-            The location of peptide groups file.
-        proteins_file : str
-            The location of peptide groups file.
-        modifications : list
-            List of derived or given modifications.
-        """
-        # Initalize the RawData base class.
-        super(PreProcess, self).__init__(file_list, peptides_file,
-                                         proteins_file)
-        # Find invivo modifications
-        invivos = SelectionTools.findInVivoModifications(self.raw_peptides)
-        self._invivo_modifications = invivos
-        # Set modifications with given or derived.
-        modifications = modifications or self._invivo_modifications
-        # Create 2 Dataframes that map specific peptide or protien uniprot ID
-        # to it's relevent mitocarta index. Simillar to vlookup in excel.
-        # pep_sel, prot_sel = FilterTools.vLook(self.raw_peptides,
-        #                                       self.raw_proteins)
-        pep_sel, prot_sel = FilterTools.bridge(self.peptide_groups.raw,
-                                               self.proteins.master_high_confidence)
-
-        # Used to index filter to statistically relevent PeptideGroups
-        self.pep_sel = pep_sel
-        # Used to index filter to statistically relevent Proteins
-        self.prot_sel = prot_sel
-        # MitoCarta calls made
-        mito, nonmito = mitoCartaCall.mitoCartaPepOut(self,
-                                                      mods=modifications,
-                                                      dex=True)
-        # Mitocarta hits DataFrame
-        self.mitodex = mito
-        # Mitocarta non hits DataFrame
-        self.nonmitodex = nonmito
-        # Create a unified index of mitocarta calls.
-        self.unidex = None
-        try:
-            unidex = pd.concat([self.mitodex, self.nonmitodex]).sort_index()
-            self.unidex = unidex.reindex(index=self.peptide_groups.raw.index)
-        except Exception:
-            pass
-        self.master_index = None
-        try:
-            # Get the Gene Symbol
-            if "Gene ID" in self.proteins.master_high_confidence: # PD2.1
-                entrez_gene_id = self.proteins.master_high_confidence["Gene ID"].iloc[self.prot_sel.index]
-                entrez_gene_id.index = self.peptide_groups.raw.index
-            if "Entrez Gene ID" in self.proteins.master_high_confidence: # PD2.2
-                entrez_gene_id = self.proteins.master_high_confidence["Entrez Gene ID"].iloc[self.prot_sel.index]
-                entrez_gene_id.index = self.peptide_groups.raw.index
-
-            # Get Gene Description.
-            ga = self.proteins.master_high_confidence["Description"].ix[self.prot_sel.index]
-            ga.index = self.peptide_groups.raw.index
-            mdex = pd.concat([self.unidex.ix[:, -4],
-                              self.unidex.ix[:, -2:]],
-                             axis=1)
-            mdex = pd.DataFrame(mdex.fillna(0.0), dtype="bool")
-
-            self.master_index = pd.concat([self.pep_sel,
-                                           entrez_gene_id,
-                                           ga,
-                                           self.peptide_groups.raw.Modifications,
-                                           self.peptide_groups.raw["Modifications in Proteins"],
-                                           self.peptide_groups.raw.Sequence,
-                                           mdex], axis=1)
-            self.numbers['mitocarta_hits'] = self.master_index.MitoCarta2_List.sum()
-
-        except Exception:
-            print("Could not create master_index")
-            pass
-        # Find the number of inputs.
-        self._input_number = SelectionTools.find_number_input(self.raw_peptides)
-        # Find the number of PTMs present in the PeptideGroups
-        self._ptm_fraction_numbers = SelectionTools.find_fractions(self.raw_peptides)
-
-
-class Process(PreProcess):
+class Process(Project):
     """A metaclass that uses PreProcess attempting several normalization steps.
 
-    Attributes
-    ----------
-    _invivo_modifications : list
-        A list of invivo modifications.
-    pep_sel : DataFrame
-        DataFrame to filter raw peptide groups DataFrame by indexing.
-    prot_sel : DataFrame
-        DataFrame to filter raw proteins DataFrame by indexing.
-    mitodex : DataFrame
-        For filtering mitochondrial peptide groups DataFrame by indexing.
-    nonmitodex : DataFrame
-        For filtering non-mitochondrial peptide groups DataFrame by indexing.
-
-    Notes
-    -----
-    FIXME: Include paragraph description of the types of filtering.
-
-    See Also
-    --------
-    omin.utils.SelectionTools.vLook
-    omin.utils.SelectionTools.masterCleanse
+    WARNING: This class is under construction switch to stable branch if you need to work.
     """
 
-    def __init__(self, file_list=None, peptides_file=None, proteins_file=None,
-                 modifications=None):
+    # PROTIP: Wait util the last possible moment to link databases.
+    # microprotip: Exceptions are the rule here.
+    # PROTIP: TRY NOT TO SET VARS AT THIS LEVEL.
+
+    def __init__(self, *args, **kwargs):
         """Initalize Process class.
-
-        Parameters
-        ----------
-        peptides_file : str
-            The location of peptide groups file.
-        proteins_file : str
-            The location of peptide groups file.
-        modifications : list
-            List of derived or given modifications.
         """
-        self.normalized = None
-        super(Process, self).__init__(file_list, peptides_file, proteins_file)
-
-        # FIXME: Make the selection more specifically target abundance columns
-        if self._input_number > 0:
-            inp_notify = "{} input fraction(s) found. Normalizing now..."
-            inp_notify = inp_notify.format(self._input_number)
-            print(inp_notify)
-            try:
-                self.normalized = NormalizedToInput(self)
-            except Exception:
-                print("omin.normalize.toInput.NormalizedToInput FAILED.")
-
-        elif self.raw_peptides.columns.str.contains("pool|control",
-                                                    case=False).any():
-
-            print("Pool columns. Omin will attempt to compare the data to it.")
-            try:
-                self.normalized = NormalizedToPool(self.raw_peptides)
-            except Exception:
-                print("omin.normalize.toPool.NormalizedToPool FAILED.")
+        # Initialize the Project class.
+        if "verbose" in kwargs:
+            verbose = kwargs['verbose']
         else:
-            # FIXME: Make this a place where the user could specify.
-            print("Cannot find anything to normalize to.")
+            verbose = False
+
+        Project.__init__(self, *args, **kwargs)
+        # Connect master index from peptide groups to proteins.
+        self.peptide_groups_master_index_update()
+        self.peptide_groups_mitocart_fillna()
+        # # Attempt to calculate the relative occupancy
+        self.calculate_relative_occupancy(verbose=verbose)
+
+    def peptide_groups_master_index_update(self):
+        """Merge the proteins.master_index with the peptide_groups.master_index.
+        """
+        try:
+            updated_master_index = self.peptide_groups.master_index.merge(self.proteins.master_index, on="Accession", how="left")
+            self.peptide_groups.master_index = updated_master_index
+
+        except Exception as err:
+            if verbose:
+                print(err)
+
+
+    def peptide_groups_mitocart_fillna(self):
+        """Attempts to fill missing values (NaNs) created by merging the proteins.master_index with the peptide_groups.master_index.
+        """
+        if "MitoCarta2_List" in self.peptide_groups.master_index:
+            try:
+                # ASSUMPTION: If MitoCarta2_List is present then IMS and Matrix will be aswell.
+                self.peptide_groups.master_index["MitoCarta2_List"].fillna(False, inplace=True)
+                self.peptide_groups.master_index["IMS"].fillna(False, inplace=True)
+                self.peptide_groups.master_index["Matrix"].fillna(False, inplace=True)
+            except Exception as err:
+                if verbose:
+                    print(err)
+
+
+    def calculate_relative_occupancy(self, verbose=False):
+        """Calculate the relative occupancy is possible.
+        """
+        self.peptide_groups.relative_occupancy = Occupancy()
+        self.proteins.load_normalized = Normalized()
+        self.proteins.relative_occupancy = Occupancy()
+
+        if self.proteins.input_number > 0:
+            if verbose:
+                print("Input fractions found calculating relative occupancy...")
+
+            input_mask = self.proteins.study_factor_table[self.proteins.study_factor_with_input].str.contains("[Ii]nput")
+
+            number_input_fractions = len(self.proteins.study_factor_table.loc[input_mask]._Fn.unique())
+
+            # isolate the input fractions study factors.
+            inps = self.proteins.study_factor_table.loc[input_mask]
+            inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
+            normalized = dict()
+            for inp in inps:
+                if len(inp._Fn.unique()) == 1:
+                    inp_fn = inp._Fn.unique()[0]
+                    inp_tag = self.proteins.fraction_tag(inp_fn)
+                    # print(inp_tag)
+                    if inp_tag in self.peptide_groups.load_normalized.__dict__:
+
+                        inp_pr_linked = self.proteins.Abundance[self.proteins.Abundance.columns[inp.index]]
+
+                        inp_pg_linked = self.peptide_groups.Abundance[self.peptide_groups.Abundance.columns[inp.index]]
+
+                        load_norm = inp_pr_linked.normalize_to(inp_pg_linked)
+                        normalized[inp_tag] = load_norm
+
+            self.proteins.load_normalized = Normalized(**normalized)
+        # No input fractions found.
+        else:
+            pass

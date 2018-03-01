@@ -173,3 +173,19 @@ class IntermineTools(object):
             if verbose:
                 print(err)
             return entrez_gene_id
+
+    @classmethod
+    def rescue_entrez_ids(cls, protein_master_index):
+        """Attempts to fill in missing Entrez Gene IDs from Intermine.
+        """
+        print("Fetching missing Entrez Gene IDs from intermine. This may take a few minutes...")
+        c=0
+        for i in protein_master_index.index:
+            if protein_master_index.loc[i].EntrezGeneID is np.nan:
+                entrez_id = cls.mousemine_accession_to_entrez(protein_master_index.loc[i].Accession)
+                if entrez_id is not np.nan:
+                    c+=1
+                    protein_master_index.loc[i].EntrezGeneID = entrez_id
+
+        print(c,"Retrieved Entrez Gene IDs from availible protein accession numbers.")
+        print(protein_master_index.EntrezGeneID.isnull().sum(), "Entrez Gene IDs could not be determined.")

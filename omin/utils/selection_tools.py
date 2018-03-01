@@ -29,28 +29,15 @@ import numpy as np
 import pandas as pd
 from difflib import SequenceMatcher
 from .string_tools import StringTools
-from ..pathfinder import find_path
 
 
-# this_dir, _ = os.path.split(__file__)
-#
-# # Load the modifications dictionary.
-# mod_dict_local = "/databases/mod_dict.p"
-#
-# # If using windows replace "/" with "\\"
-# if os.name == "nt":
-#     mod_dict_local = mod_dict_local.replace("/", "\\")
-#
 
-# mod_dict_local = os.path.join(find_path(), "databases", "mod_dict.p")
-
-# modification_terms = pickle.load(open(mod_dict_local, "rb"))
-
-chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex',
-                          'TMT10plex'}
+chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
 
 class SelectionTools(object):
     """
+    DEPRECATED
+    ----------
     """
 
     @staticmethod
@@ -245,47 +232,6 @@ class SelectionTools(object):
             selected = np.nan
         return selected
 
-    # @staticmethod
-    # def manyModSel(pepdf=None, terms=None, verbose=False):
-        # """Returns searched peptide a tuple of searched DataFrames with [a] given
-        # modification(s).
-
-        # Parameters
-        # ----------
-        # pepdf : DataFrame
-            # With peptides information.
-        # terms : list
-            # Can be any number of modifications as a string. Case does not
-            # matter and regex special characters can be used e.g.
-            # 'acetyl', 'Phospho',hydroxy...methyl.glutaryl,'ect'
-
-        # Returns
-        # -------
-        # selected : tuple
-            # Entering more than one term last element of the tuple will contain
-            # all modified peptides.
-
-        # """
-        # selected = ()
-        # for term in terms:
-            # # term = omin.mod_dict[term]
-            # term = modification_terms[term]
-            # moddex = pepdf.Modifications.str.contains(pat=term, case=False)
-            # if moddex.sum() > 0:
-                # selected += (pepdf.ix[moddex],)
-                # if verbose:
-                    # print(moddex.sum(), "peptides with",
-                          # term, "modification found.")
-            # else:
-                # if verbose:
-                    # print("No peptides with", term, "modification were found.")
-                # pass
-        # if len(selected) > 1:
-            # all_select = np.bitwise_or.reduce([df.index for df in selected])
-            # all_selected = pepdf.ix[all_select]
-            # selected = selected + (all_selected,)
-        # return selected
-
     @classmethod
     def sevSel(cls, dataframe=None, term_list=None, match=False):
         """
@@ -452,6 +398,12 @@ class SelectionTools(object):
     def find_plex_number(cls, dataframe):
         """Return the TMT plex number as an int.
 
+        DEPRECATED
+        ----------
+        Use omin.core.containers.ProteomeDiscovererRaw built-in method:
+
+            obj.tmt_plex_number
+
         Counts the number of fractions and then uses that number to devide by
         the number of abundance columns.
 
@@ -471,6 +423,12 @@ class SelectionTools(object):
     @classmethod
     def find_number_input(cls, dataframe):
         """Return number of inputs as a float.
+
+        DEPRECATED
+        ----------
+        Use omin.core.containers.ProteomeDiscovererRaw built-in method:
+
+            obj.input_number
 
         Parameters
         ----------

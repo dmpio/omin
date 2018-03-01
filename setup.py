@@ -6,7 +6,7 @@ import os
 here = os.getcwd()
 
 with open(os.path.join(here, 'omin', '__version__')) as f:
-    __version__ = f.read()
+    __version__ = f.read().strip()
 
 setup(
     name='omin',
@@ -26,22 +26,24 @@ setup(
     ],
     keywords='pandas',
     packages=find_packages(),
-	package_data = {'omin': ['databases/*.txt',
-	                         'databases/*.p',
-							 'databases/*.pickle',
-	                         'databases/*.xls',
-							 'databases/*.xlsx',
-							 'databases/mitocarta/*.ipynb',
-							 'databases/mitocarta/*.p',
-							 'databases/mitocarta/*.pickle',
-							 'databases/mitocarta/*.xls',
-							 'databases/mitocarta/*.xlsx',
-							 'databases/mitocarta/*.gz'],},
+	package_data = {'omin': ['__version__',
+                             'databases/*.txt',
+                             'databases/*.p',
+                             'databases/*.pickle',
+                             'databases/*.xls',
+                             'databases/*.xlsx',
+                             'databases/mitocarta/*.ipynb',
+                             'databases/mitocarta/*.p',
+                             'databases/mitocarta/*.pickle',
+                             'databases/mitocarta/*.xls',
+                             'databases/mitocarta/*.xlsx',
+                             'databases/mitocarta/*.gz'],},
     install_requires=['pandas',
                       'xlrd',
                       'numpy',
                       'guipyter',
                       'dominate',
+                      'pandomics',
                       'matplotlib_venn'],
     entry_points = {
         'console_scripts': [

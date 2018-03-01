@@ -1,17 +1,36 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
-# Blair Chesnut, and Elizabeth Hauser.
+"""omin.core.base
+Provides the Base class used in the Container classes.
+"""
+# -------
+# LiCENSE
+# -------
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
+
+# ----------
+# TO DO LIST
+# ----------
+# FIXME: DOCUMENT OR DIE #DOD
+
+# ----------------
+# EXTERNAL IMPORTS
+# ----------------
 import re
 import os
-import pandas as pd
 import guipyter as gptr
+# FIXME: Should this be a try and except for pandas
+from pandomics import pandas
+
+# ----------------
+# INTERNAL IMPORTS
+# ----------------
 from ..utils import IOTools
 
 
 def export(obj, desired_type=None, parent_dir=None):
     """Export all attributes of an object that are DataFrames as csv files.
     """
-    desired_type = desired_type or pd.DataFrame
+    desired_type = desired_type or pandas.core.frame.DataFrame
 
     if parent_dir == None:
         parent_dir = gptr.filedialog.askdirectory()
@@ -20,7 +39,7 @@ def export(obj, desired_type=None, parent_dir=None):
     for i in obj._introspect().items():
         if i[-1] == desired_type:
             path = os.path.join(parent_dir, "{}.csv".format(i[0]))
-
+            obj.__dict__[i[0]].to_csv(path)
 
         if issubclass(i[-1], Handle):
             dirn = os.path.join(parent_dir, i[0])
@@ -50,9 +69,7 @@ class Handle(object):
             # Make list all things inside of an object
             for name, thing in self.__dict__.items():
                 obj_ids[name] = type(thing)
-
             return obj_ids
-
         except Exception:
             pass
 

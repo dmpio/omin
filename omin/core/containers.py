@@ -69,7 +69,7 @@ class Normalized(object):
 # ===============
 
 class Occupancy(object):
-    """Empty class that catches results from relative methods.
+    """Empty class that catches results from relative occupancy methods.
 
     NOTE: This is imported and applied by handles.Process.
     """
@@ -86,7 +86,10 @@ class Occupancy(object):
 # ===============
 
 class Container(DataLoader, Handle):
-    """Base class for Proteome Discoverer raw files.
+    """Base class for handling raw files.
+
+    Accepted Raw files currently limited to
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -148,7 +151,7 @@ class ProteomeDiscovererRaw(Container):
 
 
     def expose_thermo_categories(self):
-        """Creates attribute DataFrames based on Thermo's categories.
+        """Creates attributes that are pandas DataFrames based on Thermo's categories.
         """
         # FIXME: This method could potentially create collisions, figure out a way to safe gard against this.
         thermo_category_values = set([i.split(":")[0] for i in self.raw.columns])
@@ -156,7 +159,6 @@ class ProteomeDiscovererRaw(Container):
         thermo_category_keys = list(map(lambda x: x.strip().replace(" ", "_"), thermo_category_keys))
         thermo_category = dict(zip(thermo_category_keys, thermo_category_values))
         # This loop creates DataFrames for each category that Thermo has decided is important.
-        #
         for k,v in thermo_category.items():
             filter_with_colon = self.raw.filter(regex=v+":")
             if filter_with_colon.shape[-1] > 0:
@@ -396,30 +398,6 @@ class PeptideGroups(ProteomeDiscovererRaw):
         else:
             pass
 
-    # @property
-    # def study_factor_with_input(self):
-    #     """Return the study factor that contains "Input" or "input".
-    #
-    #     PROTIP: In your when creating study factors stick with the conventions:
-    #
-    #         Input (Fraction), Acetyl (Fraction), ect.
-    #
-    #     NOTE: For this to work correctly there must be only one study factor
-    #     that contains the terms: "Input" or "input".
-    #
-    #     """
-    #     # FIXME: Ensure that the methods that use this lated on can handle the None object.
-    #     # FIXME: Inputase-proof this function or provide informative error handling with messages.
-    #     rx = re.compile("[Ii]nput")
-    #     study_factor_with_input = None
-    #     for k,v in self.study_factor_dict.items():
-    #         #FIXME: BIG ASSUMPTION HERE -> There will be only one study factor that contains a term including [Ii]nput.
-    #         li = bool(sum(list(map(lambda x:bool(len(rx.findall(x))), v))))
-    #         if li:
-    #             study_factor_with_input = k
-    #         else:
-    #             pass
-    #     return study_factor_with_input
 
     @property
     def load_normalized(self):

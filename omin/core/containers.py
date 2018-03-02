@@ -311,6 +311,7 @@ class ProteomeDiscovererRaw(Container):
 
         return tag_for_fraction
 
+
     @property
     def fraction_number2fraction_tag(self):
         """Returns a dict with fraction numbers as keys and fraction tags as values.
@@ -452,6 +453,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
         scores = np.array([i.Score.unique()[0] for i in linked])
         linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
+        # self._linked_fractions = linked
 
         # Normalize the inputs to themselves and add them to the normalized dict.
         # NOTE: Inputs are normalized to themselves in order to calculate relative occupancy
@@ -464,13 +466,18 @@ class PeptideGroups(ProteomeDiscovererRaw):
             inp_label = self.fraction_tag(inp._Fn.unique()[0])
             normalized[inp_label] = inp_df
 
-        # Normalize the
+        # Normalize the linked fractions
+        self._linked_fractions = dict()
         for link in linked:
             inp = self.Abundance[self.Abundance.columns[link.Link]]
+            # Get the input label again.
+            inp_label = self.fraction_tag(self.study_factor_table.iloc[link.Link]._Fn.unique()[0])
             other = self.Abundance[self.Abundance.columns[link.index]]
             other_label = self.fraction_tag(link._Fn.unique()[0])
             load_normalized = other.normalize_to(inp)
             normalized[other_label] = load_normalized
+
+            self._linked_fractions[other_label] = inp_label
 
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)

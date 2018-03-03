@@ -4,10 +4,9 @@ Omin.
 
 ====
 
-Provides
-  1. Rapid normalization of proteomics data.
-  2. State of the art visualiazion tools for proteomics data.
-  3. Interactive web ready objects for investigation of omics data.
+Provides:
+    Rapid normalization of proteomics data. Visualiazion tools of proteomics
+    data.
 
 How to use the documentation
 ----------------------------
@@ -87,13 +86,10 @@ import os, sys, warnings
 # -------------
 # UTILS IMPORTS
 # -------------
-# from . import utils
-
 from .utils import StringTools
 from .utils import SelectionTools
 from .utils import IOTools
 from .utils import UniProtTools
-# from .utils.pandas_tools import DataFrame, Series, pandas
 
 # ------------
 # CORE IMPORTS
@@ -112,35 +108,15 @@ from .stats import Compare
 # -----------------
 from . import visualize
 
-# --------------
-# EXPORT IMPORTS
-# --------------
-# from . import export
-
 # ----------------
 # DATABASE IMPORTS
 # ----------------
-# from . import databases
-# from .databases import MitoCarta
 from .databases import MitoCartaTwo
-
-# -----------
-# GUI IMPORTS
-# -----------
-# from . import gui
-# from .gui import OminNotebookController as nb
 
 # -----------
 # CLI IMPORTS
 # -----------
 from . import cli
-
-# ---------
-# DEPRECATE
-# ---------
-# from . import pathfinder
-# from . import normalize
-
 
 # -------
 # VERSION
@@ -149,9 +125,6 @@ def find_path():
     """Find the location of omin package in any given file system."""
     __dir_path__ = os.path.dirname(os.path.realpath(__file__))
     return __dir_path__
-
-# here = os.getcwd()
-# here = find_path()
 
 with open(os.path.join(find_path(), '__version__')) as f:
     __version__ = f.read().strip()

@@ -24,7 +24,8 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import numpy as np
-import pandas as pd
+# import pandas as pd
+from pandomics import pandas as pd
 from scipy.stats import ttest_ind
 from scipy.stats import f_oneway
 import functools

@@ -22,11 +22,9 @@ from .intermine_tools import IntermineTools
 
 from .pd_tools import PDStudyTools
 
-from . import pandas_tools
+# from . import pandas_tools
 
 # SHIT LIST
-
-# from .filter_tools import FilterTools
 
 # from .object_tools import inspectObject
 

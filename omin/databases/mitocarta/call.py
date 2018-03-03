@@ -25,7 +25,8 @@
 import os
 # import pickle
 # import pandas as pd
-from ...utils.pandas_tools import pd
+# from ...utils.pandas_tools import pd
+from pandomics import pandas as pd
 
 
 class MitoCartaTwo(object):

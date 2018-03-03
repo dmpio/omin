@@ -21,7 +21,8 @@ SOFTWARE.
 # FIXME: ADD DEPRECATION WARNING TO ALL FUNCTIONS AND classes
 
 # import warnings
-import pandas as pd
+# import pandas as pd
+from pandomics import pandas as pd
 # from ..utils.warnings import deprecated
 
 

@@ -23,4 +23,4 @@ SOFTWARE.
 # from . import dashboard
 # from . import widget_utils
 # from .notebook import OminNotebook
-from .dashboard import OminNotebookController
+# from .dashboard import OminNotebookController

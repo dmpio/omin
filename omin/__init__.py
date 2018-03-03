@@ -127,8 +127,8 @@ from .databases import MitoCartaTwo
 # -----------
 # GUI IMPORTS
 # -----------
-from . import gui
-from .gui import OminNotebookController as nb
+# from . import gui
+# from .gui import OminNotebookController as nb
 
 # -----------
 # CLI IMPORTS

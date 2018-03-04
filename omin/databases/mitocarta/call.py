@@ -26,9 +26,9 @@ class MitoCartaTwo(object):
     # Collect the essential columns.
     essential = data[["EntrezGeneID", "MitoCarta2_List", "Matrix", "IMS"]]
     # Load the modified mitocarta2.0 database.
-    ukb = 'uniprotkb_mitocarta2.p.gz'
-    ukb_file_path = os.path.join(this_dir, ukb)
-    ukb2mito = pd.read_pickle(ukb_file_path, compression='gzip')
+    # ukb = 'uniprotkb_mitocarta2.p.gz'
+    # ukb_file_path = os.path.join(this_dir, ukb)
+    # ukb2mito = pd.read_pickle(ukb_file_path, compression='gzip')
 
     @classmethod
     def look_up(cls, syn_list):

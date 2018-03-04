@@ -118,6 +118,13 @@ class Container(DataLoader, Handle):
         self.metadata["file_ext"] = self.file_ext
 
 
+    def show_metadata(self):
+        exculsions = set(["file_path", "file_ext"])
+        for k,v in self.metadata.items():
+            if k not in exculsions:
+                print(k,":",v)
+
+
 class MaxQuantRaw(Container):
     """Base class for MaxQuant raw files.
 

@@ -5,7 +5,7 @@
 # LICENSE
 # -------
 
-# Copyright 2017 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach,
 # Blair Chesnut, and Elizabeth Hauser.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,6 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import numpy as np
-# import pandas as pd
 from pandomics import pandas as pd
 from scipy.stats import ttest_ind
 from scipy.stats import f_oneway

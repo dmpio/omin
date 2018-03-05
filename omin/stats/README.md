@@ -2,4 +2,4 @@
 ---
 ## TO DO LIST
 ---
-- [ ] Remove `omin.stats.fdr`
+- [x] Remove `omin.stats.fdr`

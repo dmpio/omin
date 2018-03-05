@@ -26,13 +26,7 @@ setup(
     ],
     keywords='pandas',
     packages=find_packages(),
-	package_data = {'omin': ['__version__',
-                             'databases/mitocarta/*.ipynb',# FIXME : Remove all but pickle or bz.
-                             'databases/mitocarta/*.p',
-                             'databases/mitocarta/*.pickle',
-                             'databases/mitocarta/*.xls',
-                             'databases/mitocarta/*.xlsx',
-                             'databases/mitocarta/*.gz'],},
+	package_data = {'omin': ['__version__', 'databases/mitocarta/*.p']},
     install_requires=['pandas',
                       'xlrd',# Needed for pandas export of DataFrames to xlsx
                       'numpy',

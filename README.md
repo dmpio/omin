@@ -19,27 +19,39 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 
 ---
 
-## Installation
+## Installation within the python 3.x environment.
+0) Make sure your computer has Miniconda3/Anaconda3 installed. You can download the free software from the links listed above.
+1) Download and unzip the this [zip file](https://github.com/dmpio/omin/archive/master.zip)
+2) Open a commandline windows as administrator (press the windows button then type cmd) or teminal (linux users should how to do this, mac users just google it).
+2.1) If Python 3.x is already available on your system path and you know what you are doing skip to step 4.
+3)  In the commandline activate Anaconda/Miniconda by typing the following:
+### WINDOWS
+```
+"%PROGRAMFILES%\Miniconda3\Scripts\activate.bat"
+```
+or
+```
+"%PROGRAMFILES%\Anaconda3\Scripts\activate.bat"
+```
+3.1) Your commandline now be prepended with the word `(base)`.
+4) `cd` to the unzipped directory from step 1 like so:
+```
+cd %userprofile%\Downloads\omin-master\
+```
+5) Then run the command:
 
-### Windows
+```
+pip install .
+```
+This command will install the omin package into: `<Your Python distro>\lib\sitepackages`
 
-- Download the this [zip file](https://github.com/dmpio/omin/archive/dataloader_base.zip)
-- Extract the files.
-- Run omin_win7_installer.cmd as administrator.
-    - This needs more details.
+Now omin can be run from the commandline or imported into jupyter notebook.
 
-Here are a some Jupyter notebook examples;
+## Usage: Jupyter Notebook/Lab
 
-- [omin method development]([here](https://github.com/dmpio/omin_method_development)
-
-## Usage
-
+## Usage: Command line
 
 ---
-## Omin state diagram
-
-FIXME: ADD UPDATED STATE DIAGRAM
-
 ## LICENSE:
 Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
@@ -62,6 +74,10 @@ SOFTWARE.
 # TO DO LIST
 ![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)
 ---
+- [ ] Find all FIXME flags and add them here.
+- [ ] Create a chnagelog file.
+- [ ] Back fill all version tags where possible.
+- [ ] Document process for switching to old version.
 - [ ] Build separate site to host the msi and/or exe.
 - [ ] Build PyInstaller NSI pipeline for packaging
-- [ ] Find all FIXME flags and add them here.
+- [ ] Add updated state diagram.

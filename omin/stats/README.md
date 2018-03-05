@@ -2,4 +2,5 @@
 ---
 ## TO DO LIST
 ---
-- [ ] Remove `omin.stats.fdr`
+- [ ] Add descriptions of functions
+- [ ] Gradually migrate functions into the pandomics module.

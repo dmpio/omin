@@ -20,8 +20,5 @@ SOFTWARE.
 """
 
 from . import utils
-from . import vis
-from .vis import *
-# from .vis import Volcano
 from . import cluster
 from . import volcano

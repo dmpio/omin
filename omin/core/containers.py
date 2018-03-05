@@ -35,7 +35,7 @@ from .base import Handle
 from ..utils import IOTools
 from ..utils import StringTools
 from ..utils import SelectionTools
-from ..utils import FilterTools
+# from ..utils import FilterTools
 from ..utils import IntermineTools
 
 # --------
@@ -116,6 +116,13 @@ class Container(DataLoader, Handle):
         self.metadata["file_name"] = self.file_name
         self.metadata["file_path"] = self.file_path
         self.metadata["file_ext"] = self.file_ext
+
+
+    def show_metadata(self):
+        exculsions = set(["file_path", "file_ext"])
+        for k,v in self.metadata.items():
+            if k not in exculsions:
+                print(k,":",v)
 
 
 class MaxQuantRaw(Container):
@@ -492,9 +499,9 @@ class Proteins(ProteomeDiscovererRaw):
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
 
         # Filter for master proteins and high confidence.
-        # FIXME: FilterTools.is_master_protein fails on PD2.2 files
-        self._high_confidence = FilterTools.high_confidence(self.raw)
-        self.master_high_confidence = FilterTools.is_master_protein(self._high_confidence).copy()
+        # FIXME: This may be redone in the future.
+        self._high_confidence = self.high_confidence
+        self.master_high_confidence = self.is_master_protein
         # METADATA: Number of high confidence protein.
         self.metadata['high_confidence_ids'] = self.master_high_confidence.shape[0]
 
@@ -510,6 +517,38 @@ class Proteins(ProteomeDiscovererRaw):
         self.add_database(MitoCartaTwo.essential)
         # Filter the abundance by master_high_confidence
         self.filter_abundance()
+
+    @property
+    def high_confidence(self):
+        """
+        Return a DataFrame of high confidence proteins.
+        """
+        result = self.raw
+        try:
+            try: # PD 2.1
+                mask = self.raw["Exp. q-value"] < .01
+                result = self.raw.loc[mask]
+                return result
+            except KeyError: # PD 2.2
+                mask = self.raw['Protein FDR Confidence: Combined'] == "High"
+                result = self.raw.loc[mask]
+                return result
+        except Exception as err:
+            print("Could not filter for FDR")
+            return result
+
+
+    @property
+    def is_master_protein(self):
+        "Filter raw protein DataFrame for master proteins."
+        try:
+            # BIG ASSUMPTION: self.high_confidence is able to work
+            mask = self.high_confidence.Master == "IsMasterProtein"
+            result = self.high_confidence.loc[mask]
+            return result
+        except Exception as err:
+            print('Could not Filter for master proteins.', err)
+            return self.high_confidence
 
 
     def set_entrez(self):

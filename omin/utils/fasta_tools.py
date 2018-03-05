@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Tools for investigating with fasta and uniprot."""
+"""omin.utils.fasta_tools
 
-# LICENSE
-# -------
-
+Provides
+--------
+Tools for investigating with fasta and uniprot.
+"""
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 import re
@@ -11,6 +12,7 @@ from urllib.error import HTTPError
 from urllib.request import urlopen
 
 # FIXME: DEPRECATE ALL
+# FIXME: I've worked on better ways to do all of this -> find the relevant files in method development and rewrite this class from scratch.
 
 class FastaTools(object):
     """A collection of tools for handling FASTA formatted strings."""

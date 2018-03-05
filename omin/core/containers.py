@@ -392,11 +392,12 @@ class PeptideGroups(ProteomeDiscovererRaw):
             if len(in_vivo_mods) > 0:
                 self._in_vivo_modifications = in_vivo_mods
                 # For each modification create a filtered dataframe attribute.
+                # FIXME: This loop complates thing for a nuber of reasons it needs revision.
                 for i in in_vivo_mods:
                     mod = StringTools.remove_punctuation(i).lower()
-                    df = SelectionTools.filterRow(self.raw,
-                                                  on="Modifications",
-                                                  term=i)
+                    #FIXME: SelectionTools.filter_row will be migrated to pandomics.
+                    # df = SelectionTools.filter_row(self.raw, on="Modifications", term=i)
+                    df = self.raw.filter_rows(on= "Modifications", term=i)
                     # METADATA: Total Peptide Group IDs
                     self.metadata[mod+"_total_peptide_ids"] = df.shape[0]
                     self.__dict__[mod] = df

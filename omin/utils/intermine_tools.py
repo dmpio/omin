@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""omin.intermine_tools
+
+Provides
+--------
+Tools for querying the intermine database.
+"""
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
+
 import pandas as pd
 import numpy as np
 # FIXME: Add to install reqs.

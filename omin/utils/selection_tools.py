@@ -7,7 +7,6 @@ Tools for making selections on DataFrames.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
-
 import re
 import itertools
 import numpy as np
@@ -15,9 +14,11 @@ import pandas as pd
 from .string_tools import StringTools
 
 
-
 chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
 
+# ====================
+# SELECTIONTOOLS CLASS
+# ====================
 class SelectionTools(object):
     """
     DEPRECATED

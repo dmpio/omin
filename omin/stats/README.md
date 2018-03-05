@@ -3,4 +3,5 @@
 ## TO DO LIST
 ---
 - [ ] Add descriptions of functions
-- [ ] Gradually migrate functions into the pandomics module.
+- [ ] Decide on the fate of this submodule:
+  - [ ] Gradually migrate functions into the pandomics module (Y/N)?

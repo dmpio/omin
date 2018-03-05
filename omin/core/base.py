@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """omin.core.base
-Provides the Base class used in the Container classes.
+
+Provides
+--------
+Base class used in the Container classes.
 """
-# -------
-# LiCENSE
-# -------
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 # ----------

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+DEPRECATED: This will be eventually integrated into th econtainer class.
+"""
 
 import guipyter
 from xml.etree import cElementTree as et

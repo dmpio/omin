@@ -5,9 +5,6 @@ Provides Container, Normalized, MaxQuantRaw, ProteomeDiscovererRaw,
 PeptideGroups, and Proteins classes.
 
 """
-# -------
-# LiCENSE
-# -------
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 # ----------

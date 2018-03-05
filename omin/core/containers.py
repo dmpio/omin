@@ -109,6 +109,7 @@ class Container(DataLoader, Handle):
         DataLoader.__init__(self, *args, **kwargs)
         # Initialize the Handle class.
         Handle.__init__(self)
+        self._title = "empty container"
 
         self.metadata["file_name"] = self.file_name
         self.metadata["file_path"] = self.file_path
@@ -116,7 +117,12 @@ class Container(DataLoader, Handle):
 
 
     def show_metadata(self):
+        """Print the metadata found in the container.
+        """
         exculsions = set(["file_path", "file_ext"])
+        header = " ".join([self._title, "Metadata"])
+        print(header)
+        print(len(header)*"=")
         for k,v in self.metadata.items():
             if k not in exculsions:
                 print(k,":",v)
@@ -339,7 +345,8 @@ class PeptideGroups(ProteomeDiscovererRaw):
         """Initialize the base class."""
         # filepath_or_buffer = filepath_or_buffer or None
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select peptide groups file", *args, **kwargs)
-
+        # Set the title.
+        self._title = "Peptide Groups"
         # Fill all of the modifications with NaNs with a blank string
         try:
             self.raw.Modifications.fillna('', inplace=True)
@@ -495,7 +502,8 @@ class Proteins(ProteomeDiscovererRaw):
         # filepath_or_buffer = filepath_or_buffer or None
         # FIXME: Add verbose argument.
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
-
+        # Set the title.
+        self._title = "Proteins"
         # Filter for master proteins and high confidence.
         # FIXME: This may be redone in the future.
         self._high_confidence = self.high_confidence
@@ -573,7 +581,7 @@ class Proteins(ProteomeDiscovererRaw):
         """Attempt to set the master index for the Proteins.
         """
         # FIXME: Add try and except for each of these columns.
-        master_index_components = ["EntrezGeneID", "Description]"]
+        master_index_components = ["EntrezGeneID", "Gene Symbol", "Description"]
 
         # Start the master index with the the first master protein accession.
         self.master_index = pd.DataFrame(self.master_high_confidence["Accession"].first_member())
@@ -590,6 +598,7 @@ class Proteins(ProteomeDiscovererRaw):
     def add_database(self, DataFrame):
         """Add databases to master_index.
         """
+        # FIXME: Expose this function to users.
         try:
             self.master_index.dropna(inplace=True)
             self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member().apply(np.int64)
@@ -600,7 +609,10 @@ class Proteins(ProteomeDiscovererRaw):
         except Exception as err:
             print(err)
 
+
     def filter_abundance(self):
+        """Filter the Abundance columns by the the high confidence master proteins.
+        """
         if "Abundance" in self.__dict__:
             try:
                 self.Abundance = self.Abundance.loc[self.master_high_confidence.index]

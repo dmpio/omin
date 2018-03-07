@@ -10,11 +10,6 @@ import numpy as np
 
 from ..utils import IOTools
 
-try:
-    import webcolors
-except Exception as err:
-    print(err)
-
 def save_fig(path, parent_file=None, dpi=300, ftype="png"):
     """Save your figures.
     """
@@ -34,15 +29,3 @@ def save_fig(path, parent_file=None, dpi=300, ftype="png"):
     print("Your file has been saved: \n", fn, "\n@", dpi, "dpi")
 
     return
-
-
-def web2rgb(color):
-    """Turn your webcolor names and hex strings into rgb format."""
-    try:
-        return np.array(webcolors.name_to_rgb(color))/255.0
-    except Exception:
-        pass
-    try:
-        return np.array(webcolors.hex_to_rgb(color))/255.0
-    except Exception:
-        pass

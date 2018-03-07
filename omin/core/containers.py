@@ -110,7 +110,7 @@ class Container(DataLoader, Handle):
         # Initialize the Handle class.
         Handle.__init__(self)
         self._title = "empty container"
-
+        # METADATA: Collect basic file info
         self.metadata["file_name"] = self.file_name
         self.metadata["file_path"] = self.file_path
         self.metadata["file_ext"] = self.file_ext
@@ -154,16 +154,19 @@ class ProteomeDiscovererRaw(Container):
         Container.__init__(self, low_memory=False, delimiter='\t', **kwargs)
         # Calling the function below.
         self.expose_thermo_categories()
-        # METADATA: Number of IDs no filter.
+        # METADATA: Number of ids no filter.
         self.metadata['total_ids'] = self.raw.shape[0]
-        # METADATA: Number of IDs with quantification.
+        # METADATA: Number of ids with quantification.
         self.metadata['total_ids_with_quant'] = self.Abundance.dropna(axis=0, how='all').shape[0]
+        # Create an index of the ids with quantification
+        self.quantified_index = self.Abundance.dropna(axis=0, how='all').index
 
 
     def expose_thermo_categories(self):
         """Creates attributes that are pandas DataFrames based on Thermo's categories.
         """
         # FIXME: This method could potentially create collisions, figure out a way to safe gard against this.
+        # fixme: Perhaps we could use one multi-index dataframe, in any case this loop is probably a substantial memory leak.
         thermo_category_values = set([i.split(":")[0] for i in self.raw.columns])
         thermo_category_keys = list(map(StringTools.remove_punctuation, thermo_category_values))
         thermo_category_keys = list(map(lambda x: x.strip().replace(" ", "_"), thermo_category_keys))

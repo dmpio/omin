@@ -564,7 +564,7 @@ class Proteins(ProteomeDiscovererRaw):
     def gene_symbols_from_description(self):
         """Return the gene symbols derived from the Fasta description.
         """
-        result = self.raw.Description.str.extract("GN=([a-zA-Z0-9]*)", expand=True).iloc[:, 0]
+        result = self.master_high_confidence.Description.str.extract("GN=([a-zA-Z0-9]*)", expand=True).iloc[:, 0]
         return result
 
 

@@ -560,6 +560,14 @@ class Proteins(ProteomeDiscovererRaw):
             return self.high_confidence
 
 
+    @property
+    def gene_symbols_from_description(self):
+        """Return the gene symbols derived from the Fasta description.
+        """
+        result = self.raw.Description.str.extract("GN=([a-zA-Z0-9]*)", expand=True).iloc[:, 0]
+        return result
+
+
     def set_entrez(self):
         """Find and relabel the Entrez Gene ID column.
         """

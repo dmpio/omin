@@ -24,8 +24,6 @@ databases
     Locally stored databases and tools to read and convert them.
 visualize
     Data graphing tools.
-export
-    Tools for explorting processed data.
 stats
     Statistical methods.
 
@@ -67,7 +65,6 @@ __version__
 # FIXME: Investigate a SQLite/Json file method in APPDATA or linux eqv.
 # FIXME: Store each handle class as SQLite database in same parent dir.
 # FIXME: Include paragraph description of the types of filtering.
-# FIXME: Add Python 2 compat layer.
 
 # -------
 # PROTIPS

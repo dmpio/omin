@@ -567,7 +567,7 @@ class Proteins(ProteomeDiscovererRaw):
 
         if "Entrez Gene ID" in self.master_high_confidence: # PD2.2
             self.master_high_confidence.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
-
+        self.master_high_confidence.EntrezGeneID = self.master_high_confidence.EntrezGeneID.first_member()
 
     def set_master_protein_accession(self):
         """Find and relabel the Master Protein Accession column as Accession.
@@ -603,13 +603,13 @@ class Proteins(ProteomeDiscovererRaw):
         # FIXME: Expose this function to users.
         try:
 
-            self.master_index.dropna(inplace=True)
+            # self.master_index.dropna(inplace=True)
             # FIXME: modifying the EntrezGeneID really should happen in the set_entrez function
-            self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member().apply(np.int64)
+            # self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member()
             self.master_index = self.master_index.merge(DataFrame.copy(), on="EntrezGeneID", how="left")
 
-            self.master_index.index = self.master_index.index
-            self.master_index.fillna(False, inplace=True)
+            # self.master_index.index = self.master_index.index
+            # self.master_index.fillna(False, inplace=True)
         except Exception as err:
             print(err)
 

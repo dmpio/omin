@@ -602,7 +602,9 @@ class Proteins(ProteomeDiscovererRaw):
         """
         # FIXME: Expose this function to users.
         try:
+
             self.master_index.dropna(inplace=True)
+            # FIXME: modifying the EntrezGeneID really should happen in the set_entrez function
             self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member().apply(np.int64)
             self.master_index = self.master_index.merge(DataFrame.copy(), on="EntrezGeneID", how="left")
 

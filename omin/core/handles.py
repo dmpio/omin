@@ -13,7 +13,7 @@ user.
 # TO DO LIST
 # ----------
 # FIXME: DOCUMENT OR DIE #DOD
-# FIXME: Add relative occupancy method to Process
+# FIXME: Make ONE design pattern for verbose and stick with it. Perhaps a decorator?
 
 # ----------------
 # EXTERNAL IMPORTS
@@ -33,7 +33,7 @@ from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 class Project(object):
     """
     """
-    def __init__(self, file_list=None, peptides_file=None, proteins_file=None, rescue_entrez_ids=None, verbose=None, *args, **kwargs):
+    def __init__(self, file_list=None, peptides_file=None, proteins_file=None, rescue_entrez_ids=None, verbose=True, *args, **kwargs):
         """Load data for peptides_file and proteins_file
 
         Parameters
@@ -54,7 +54,7 @@ class Project(object):
             Defaults to True.
         """
         #rescue_entrez_ids =rescue_entrez_ids or False
-        verbose = verbose or True
+        # verbose = verbose or True
         # FIXME: For some reason even if a list is provided guipyter is stil triggered.
         if file_list is not None:
             rx = re.compile("[Pp]eptide")
@@ -119,7 +119,7 @@ class Process(Project):
         self.calculate_relative_occupancy(verbose=verbose)
 
 
-    def peptide_groups_master_index_update(self):
+    def peptide_groups_master_index_update(self, verbose=True):
         """Merge the proteins.master_index with the peptide_groups.master_index.
         """
         try:

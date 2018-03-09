@@ -24,7 +24,7 @@ from guipyter import DataLoader
 # ----------------
 # INTERNAL IMPORTS
 # ----------------
-from .base import Handle
+from .base import repr_dec, Handle
 
 # -------------
 # UTILS IMPORTS
@@ -49,7 +49,7 @@ from pandomics import pandas as pd
 # ================
 # NORMALIZED CLASS
 # ================
-
+@repr_dec
 class Normalized(object):
     """Empty class that catches results from normalization methods.
     """
@@ -57,14 +57,14 @@ class Normalized(object):
         for k,v in kwargs.items():
             self.__dict__[k] = v
 
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+    # def __repr__(self):
+    #     """Show all attributes."""
+    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 # ===============
 # OCCUPANCY CLASS
 # ===============
-
+@repr_dec
 class Occupancy(object):
     """Empty class that catches results from relative occupancy methods.
 
@@ -74,9 +74,9 @@ class Occupancy(object):
         for k,v in kwargs.items():
             self.__dict__[k] = v
 
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+    # def __repr__(self):
+    #     """Show all attributes."""
+    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 # ===============
 # CONTAINER CLASS

@@ -23,12 +23,13 @@ import re
 # ----------------
 # INTERNAL IMPORTS
 # ----------------
+from .base import repr_dec
 from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 
 # =============
 # PROJECT CLASS
 # =============
-
+@repr_dec
 class Project(object):
     """
     """

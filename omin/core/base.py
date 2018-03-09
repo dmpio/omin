@@ -27,6 +27,39 @@ from pandomics import pandas
 from ..utils import IOTools
 
 
+# --------------
+# REPR DECORATOR
+# --------------
+
+def repr_dec(cls):
+    """Replace the __repr__ function of a given class with the repr_wrapper.
+    """
+    def repr_wrapper(self):
+        """Show all attributes.
+        """
+        # Create a list of attributes.
+        keys = sorted(list(self.__dict__.keys()))
+        # Create a list of the attribute values types.
+        value_types = list(map(lambda x: type(x).__name__, [self.__dict__[i] for i in keys]))
+        # Zip the two lists above into a dict.
+        att_dict = dict(zip(keys, value_types))
+        # Create the template string for all the reaults.
+        template = "{}: {}\n"
+        # Create the results string.
+        result = type(self).__name__+" Attributes\n"
+        # Create a fancy border for the results.
+        result += (len(result)-1)*"-" + "\n"
+        # For every key and value in att_dict...
+        for k,v in att_dict.items():
+            # Format them and concatenate to result.
+            result += template.format(k, v)
+        return result
+
+    # Replace the classes __repr__ function.
+    cls.__repr__ = repr_wrapper
+    return cls
+
+
 def export(obj, desired_type=None, parent_dir=None):
     """Export all attributes of an object that are DataFrames as csv files.
     """
@@ -51,6 +84,7 @@ def export(obj, desired_type=None, parent_dir=None):
 # ---------------------------
 # Essentially container for DataFrames.
 
+@repr_dec
 class Handle(object):
     """The core omin handle base class."""
 
@@ -76,6 +110,6 @@ class Handle(object):
     def export_all(self, **kwargs):
         export(self, **kwargs)
 
-    def __repr__(self):
-        """Show all attributes."""
-        return "Attributes: "+", ".join(list(self.__dict__.keys()))
+    # def __repr__(self):
+    #     """Show all attributes."""
+    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))

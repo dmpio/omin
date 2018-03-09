@@ -33,6 +33,19 @@ from ..utils import IOTools
 
 def repr_dec(cls):
     """Replace the __repr__ function of a given class with the repr_wrapper.
+
+    When a class is decorated with this function each instance of that class
+    will print a list of it's attributes along with that attributes type.
+    Hopefully this will make navigating through class instances easier.
+
+    Parameters
+    ----------
+    cls: class
+
+    Returns
+    -------
+    cls: class
+        With modified __repr__ function.
     """
     def repr_wrapper(self):
         """Show all attributes.
@@ -80,9 +93,11 @@ def export(obj, desired_type=None, parent_dir=None):
             IOTools.mkdir(dirn)
             export(obj.__dict__[i[0]], desired_type, dirn)
 
-# Omin's core handle
-# ---------------------------
-# Essentially container for DataFrames.
+
+# ------------
+# HANDLE CLASS
+# ------------
+
 
 @repr_dec
 class Handle(object):
@@ -109,7 +124,3 @@ class Handle(object):
 
     def export_all(self, **kwargs):
         export(self, **kwargs)
-
-    # def __repr__(self):
-    #     """Show all attributes."""
-    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))

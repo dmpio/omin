@@ -19,6 +19,9 @@ PeptideGroups, and Proteins classes.
 import re
 import os
 import numpy as np
+# Import pandas with the pandomics plug-in.
+from pandomics import pandas as pd
+# Import the guipyter DataLoader class.
 from guipyter import DataLoader
 
 # ----------------
@@ -32,19 +35,13 @@ from .base import repr_dec, Handle
 from ..utils import IOTools
 from ..utils import StringTools
 from ..utils import SelectionTools
-# from ..utils import FilterTools
 from ..utils import IntermineTools
 
 # --------
 # DATBASES
 # --------
 from ..databases import MitoCartaTwo
-# import pandas with the pandomics plug-in
-from pandomics import pandas as pd
 
-# FIXME: Add the same try and except as seen in the guipyter module.
-# # The line below could be used as a backup.
-# from ..utils.pandas_tools import pd
 
 # ================
 # NORMALIZED CLASS
@@ -57,9 +54,6 @@ class Normalized(object):
         for k,v in kwargs.items():
             self.__dict__[k] = v
 
-    # def __repr__(self):
-    #     """Show all attributes."""
-    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 # ===============
 # OCCUPANCY CLASS
@@ -74,9 +68,6 @@ class Occupancy(object):
         for k,v in kwargs.items():
             self.__dict__[k] = v
 
-    # def __repr__(self):
-    #     """Show all attributes."""
-    #     return "Attributes: "+", ".join(list(self.__dict__.keys()))
 
 # ===============
 # CONTAINER CLASS

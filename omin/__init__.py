@@ -60,6 +60,9 @@ __version__
 # TO DO LIST
 # ----------
 # FIXME: DOCUMENT OR DIE #DOD
+# FIXME: Make a .omin config file class that points to a file in %userprofile%
+# FIXME: Make a .omin/Database file class that could hold MitoCartaTwo and perhaps read and process others
+# FIXME: ADD KFW EXAMPLE FILES
 # FIXME: *** update the readme ** [ ] How to install,
 # FIXME: *** Document dependencies *** [ ] guipyter, [ ] panomics
 # FIXME: Investigate a SQLite/Json file method in APPDATA or linux eqv.

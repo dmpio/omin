@@ -115,7 +115,7 @@ class Process(Project):
         # Link proteins to peptides
         self.link_proteins_to_peptides()
 
-        # # Attempt to calculate the relative occupancy
+        # # Attempt to calculate the relative occupancy.
         self.calculate_relative_occupancy(verbose=verbose)
 
 

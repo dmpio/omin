@@ -9,10 +9,13 @@ Tools for file input output handling.
 
 import os
 import re
+import shutil
 
 
 class IOTools(object):
-    """Tools for file handling and dir building."""
+    """Tools for file handling and dir building.
+
+    """
 
     @staticmethod
     def sanitize_file_path(path):
@@ -42,13 +45,57 @@ class IOTools(object):
         ----------
         directory : str
         """
+        # FIXME: This class is weak :/
+        # FIXME: Should just use shutil
         assert type(directory) == str
-        # directory = StringTools.remove_punctuation(directory)
         directory = directory.replace(" ", "_")
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-            # print(directory, "is ready.")
-            return directory
+
+        if os.path.isdir(directory):
+            pass
         else:
-            # print(directory, "already exists.")
-            return directory
+            print("Created dir:", directory)
+            os.mkdir(directory)
+
+
+class UserProfile(object):
+    """Creates user profile files for configuration and databases.
+    """
+    user_profile = os.path.expanduser("~")
+    omin_profile_dir = os.path.join(user_profile, ".omin")
+    omin_database_profile_dir = os.path.join(omin_profile_dir, "databases")
+    # Get this dir as a string.
+    this_dir, _ = os.path.split(__file__)
+    this_dir, _ = os.path.split(this_dir)
+    # Create the path string.
+    carta_src = os.path.join(this_dir, 'databases', 'mitocarta', 'complete_mitocarta_2.p')
+    carta_dst = os.path.join(omin_database_profile_dir, 'complete_mitocarta_2.p')
+
+
+    @classmethod
+    def _create_omin_profile_dir(cls):
+        IOTools.mkdir(cls.omin_profile_dir)
+
+
+    @classmethod
+    def _create_omin_database_profile_dir(cls):
+        IOTools.mkdir(cls.omin_database_profile_dir)
+
+
+    @classmethod
+    def _copy_mitocarta(cls):
+        if os.path.exists(cls.carta_dst):
+            pass
+        else:
+            print("Copying the MitoCarta2.0 Database to:", cls.carta_dst)
+            shutil.copyfile(cls.carta_src, cls.carta_dst)
+            # shutil copy
+
+
+    @classmethod
+    def _create_profile_dirs(cls):
+        cls._create_omin_profile_dir()
+        cls._create_omin_database_profile_dir()
+        cls._copy_mitocarta()
+
+
+UserProfile._create_profile_dirs()

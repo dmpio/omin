@@ -60,6 +60,7 @@ __version__
 # TO DO LIST
 # ----------
 # FIXME: DOCUMENT OR DIE #DOD
+# FIXME: ADD TRACEBACK TO ALL TRY AND EXCEPT LOOPS
 # FIXME: Make a .omin config file class that points to a file in %userprofile%
 # FIXME: Make a .omin/Database file class that could hold MitoCartaTwo and perhaps read and process others
 # FIXME: ADD KFW EXAMPLE FILES

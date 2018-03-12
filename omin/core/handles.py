@@ -118,6 +118,8 @@ class Process(Project):
         # # Attempt to calculate the relative occupancy.
         self.calculate_relative_occupancy(verbose=verbose)
 
+        self.reset_master_index(verbose=verbose)
+
 
     def peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
@@ -198,3 +200,13 @@ class Process(Project):
         # No input fractions found.
         else:
             pass
+
+    def reset_master_index(self, verbose=True):
+        mi = self.proteins._old_master_index.copy()
+        mi = mi.filter(regex="Accession")
+        result = mi.merge(self.proteins.master_index, how="left", on="Accession")
+        result.index = self.proteins._old_master_index.index
+        result["MitoCarta2_List"].fillna(False, inplace=True)
+        result["Matrix"].fillna(False, inplace=True)
+        result["IMS"].fillna(False, inplace=True)
+        self.proteins.master_index = result

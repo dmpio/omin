@@ -498,7 +498,9 @@ class Proteins(ProteomeDiscovererRaw):
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
         # Set the title.
         self._title = "Proteins"
-        # Filter for master proteins and high confidence.
+        # ----------------------------------------------
+        # Filter for master proteins and high confidence
+        # ----------------------------------------------
         # FIXME: This may be redone in the future.
         self._high_confidence = self.high_confidence
         self.master_high_confidence = self.is_master_protein
@@ -507,12 +509,17 @@ class Proteins(ProteomeDiscovererRaw):
 
         # Find and relabel the Entrez Gene ID column.
         self.set_entrez()
+        # Select the first master protein accession.
         self.set_master_protein_accession()
         # Create the master_index
         self.set_master_index()
         # Attempt to rescue Entrez Gene IDs
         if rescue_entrez_ids:
+            # ------------------------
+            # IntermineTools Used here
+            # ------------------------
             IntermineTools.rescue_entrez_ids(self.master_index)
+
         # Attach MitoCarta2 data to the master_index.
         self.add_database(MitoCartaTwo.essential)
         # Filter the abundance by master_high_confidence
@@ -590,9 +597,11 @@ class Proteins(ProteomeDiscovererRaw):
 
         for i in master_index_components:
             try:
-                self.master_index = pd.concat([self.master_index, self.master_high_confidence[i]], axis=1)
+                result = pd.concat([self.master_index, self.master_high_confidence[i]], axis=1)
+                result.index = self.master_index.index
+                self.master_index = result
             except Exception as err:
-                # print(err)
+                print(err)
                 pass
         return
 
@@ -602,11 +611,33 @@ class Proteins(ProteomeDiscovererRaw):
         """
         # FIXME: Expose this function to users.
         try:
-            self.master_index.dropna(inplace=True)
-            self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member().apply(np.int64)
-            self.master_index = self.master_index.merge(DataFrame.copy(), on="EntrezGeneID", how="left")
+            # print(self.master_index.shape)
+            # print(self.master_index.index.max())
 
-            self.master_index.index = self.master_index.index
+            # -------------------------------------------
+            # DROPNA: Lose rows that have missing values.
+            # -------------------------------------------
+            self._old_master_index = self.master_index.copy()
+            self.master_index.dropna(inplace=True)
+            # print(self.master_index.shape)
+            # print(self.master_index.index.max())
+
+            self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member().apply(np.int64)
+
+            result = self.master_index.merge(DataFrame.copy(), on="EntrezGeneID", how="left")
+            # result.index = self._old_master_index
+            # result = result.reindex(self.master_index.index)
+            # # Causes index error in calculate_relative_occupancy
+            # result.index = self._old_master_index.dropna().index 
+
+            self.master_index = result
+            # print(self.master_index.shape)
+            # print(self.master_index.index.max())
+
+            # self.master_index.index = self.master_index.index
+            # print(self.master_index.shape)
+            # print(self.master_index.index.max())
+
             self.master_index.fillna(False, inplace=True)
         except Exception as err:
             print(err)

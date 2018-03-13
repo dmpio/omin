@@ -16,26 +16,6 @@ except Exception as err:
     print(err)
 
 
-def save_fig(path, parent_file=None, dpi=300, ftype="png"):
-    """Save your figures.
-    """
-
-    here = os.path.abspath('.')
-
-    fn = IOTools.sanitize_file_path(path)
-    fn = '.'.join([fn, ftype])
-    fn = os.path.join(here, fn)
-
-    if parent_file is not None:
-        fn = os.path.join(parent_file, fn)
-
-    plt.savefig(fn, dpi=dpi)
-
-    print("Your file has been saved: \n", fn, "\n@", dpi, "dpi")
-
-    return
-
-
 def boolean_color(mask, true_color='black', false_color='white',
                   name="face_color"):
     """Return a Series with colors replacing True and False."""

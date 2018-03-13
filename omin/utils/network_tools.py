@@ -11,7 +11,8 @@ Tools for investigating with fasta and uniprot.
 # ==========
 # TO DO LIST
 # ==========
-# FIXME: Intermine rescue function fails from wierd indexing of the master_index.
+# FIXME: Make all of these functions verbose.
+# FIXME: ID the brittle functions.
 # FIXME: Extent to other intermine APIs.
 
 # ----------------

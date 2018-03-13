@@ -19,12 +19,24 @@ user.
 # EXTERNAL IMPORTS
 # ----------------
 import re
+import os
+# Get the version numbers of the hard dependencies.
+from guipyter import __version__ as guipyter_version
+from pandomics import __version__ as pandomics_version
 
 # ----------------
 # INTERNAL IMPORTS
 # ----------------
 from .base import repr_dec
 from .containers import PeptideGroups, Proteins, Occupancy, Normalized
+
+# Ugly hack to find this module's version number.
+__module_path__ = os.path.dirname(os.path.realpath(__file__))
+__module_path__ = os.path.split(__module_path__)[0]
+
+with open(os.path.join(__module_path__, '__version__')) as f:
+    omin_version = f.read().strip()
+
 
 # =============
 # PROJECT CLASS
@@ -53,8 +65,16 @@ class Project(object):
         verbose: bool
             Defaults to True.
         """
-        #rescue_entrez_ids =rescue_entrez_ids or False
-        verbose = verbose or True
+        # If verbose is not declared then set it to True.
+        if verbose is None:
+            verbose = True
+
+        # Set all of the version info for object verification.
+        self._version_info = dict()
+        self._version_info["omin"] = omin_version
+        self._version_info["guipyter"] = guipyter_version
+        self._version_info["pandomics"] = pandomics_version
+
         # FIXME: For some reason even if a list is provided guipyter is stil triggered.
         if file_list is not None:
             rx = re.compile("[Pp]eptide")
@@ -118,6 +138,7 @@ class Process(Project):
         # # Attempt to calculate the relative occupancy.
         self.calculate_relative_occupancy(verbose=verbose)
 
+        # Reset the master_index
         self.reset_master_index(verbose=verbose)
 
 

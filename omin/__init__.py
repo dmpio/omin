@@ -97,6 +97,7 @@ from .utils import UniProtTools
 # ------------
 from . import core
 from .core.handles import Process
+from .core.operations import Operate
 
 # -------------
 # STATS IMPORTS

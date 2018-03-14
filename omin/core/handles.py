@@ -20,6 +20,8 @@ user.
 # ----------------
 import re
 import os
+import numpy as np
+from pandomics import pandas as pd
 # Get the version numbers of the hard dependencies.
 from guipyter import __version__ as guipyter_version
 from pandomics import __version__ as pandomics_version
@@ -242,3 +244,94 @@ class Process(Project):
         result["Matrix"].fillna(False, inplace=True)
         result["IMS"].fillna(False, inplace=True)
         self.proteins.master_index = result
+
+
+    def comparision(self, on=None, where=None, fraction_key=None, mask=None, right=None,
+                    numerator=None, denominator=None, filter_out_numerator=None, filter_out_denominator=None):
+        """Creates a comparision dataframe from a Process object.
+
+        Parameters
+        ----------
+        on: str
+            either: peptide_groups or proteins.
+
+        where: str
+            either: load_normalized or relative_occupancy.
+
+        fraction_key: str
+            Can be whatever fraction keys that are availible in the process object.
+
+        mask: pd.Index
+            Uses this index to select for.
+
+        right: DataFrame
+            When comparing to another separate DataFrame taken as the denominator.
+            Defaults to None.
+
+        numerator: str
+            The term to filter for the numerator.
+
+        denominator: str
+            The term to filterfor the denominator.
+
+        filter_out_numerator: bool
+            Defaults to False.
+
+        filter_out_denominator: bool
+            Defaults to False.
+
+        Returns
+        ------
+        result: pd.DataFrame
+        """
+        # FIXME: Add ANDing of masks
+        # FIXME: ADD THIS FUNCTION TO THE NORMALIZED and/or OCCUPANCY classes.
+        # FIXME: Consider adding more kwargs like fraction_key for fine tuning.
+        result=None
+
+        if mask is not None:
+            # Isolate just the masked peptides.
+            try:
+                shown = self.__getattribute__(on).__getattribute__(where).__dict__[fraction_key].iloc[mask]
+
+            except Exception as err:
+                print(err)
+                print("Cannot use mask defaulting to whole data set.")
+                shown = self.__getattribute__(on).__getattribute__(where).__dict__[fraction_key]
+
+        else:
+            shown = self.__getattribute__(on).__getattribute__(where).__dict__[fraction_key]
+
+        ## Drop the rows with only missing values in the Abundance columns.
+        abun = shown.dropna(how="all")
+
+        ## Log2 Normalize the load normalized.
+        if where == "relative_occupancy":
+            log2load = abun
+        else:
+            log2load = abun.log2_normalize(prepend_cols="Log2 Normalized: ")
+
+        ## Create the comparison.
+        ## FIXME: Add kwargs switch for right ect.
+        comp = log2load.fold_change_with_ttest(right=right,
+                                               numerator=numerator,
+                                               denominator=denominator,
+                                               filter_out_numerator=filter_out_numerator,
+                                               filter_out_denominator=filter_out_denominator)
+
+        ## Take the -log10(p-value)
+        comp["negative_log10_pvalue"] = -np.log10(comp.pvalue)
+
+        #truncated_index = self.__getattribute__(on).master_index
+
+        ## Grab the related annotations.
+        truncated_index = self.__getattribute__(on).master_index.loc[comp.index]
+
+        ## Package for export.
+        if where == "load_normalized":
+            result = pd.concat([truncated_index, abun, log2load, comp], axis=1)
+
+        if where == "relative_occupancy":
+            result = pd.concat([truncated_index, log2load, comp], axis=1)
+
+        return result

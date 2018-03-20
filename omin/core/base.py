@@ -40,11 +40,11 @@ def repr_dec(cls):
 
     Parameters
     ----------
-    cls: class
+    cls : class
 
     Returns
     -------
-    cls: class
+    cls : class
         With modified __repr__ function.
     """
     def repr_wrapper(self):
@@ -101,7 +101,17 @@ def export(obj, desired_type=None, parent_dir=None):
 
 @repr_dec
 class Handle(object):
-    """The core omin handle base class."""
+    """The core omin handle base class.
+
+    Attributes
+    ----------
+    numbers : dict
+        DEPRECATE
+
+    metadata : data
+
+    type : type
+    """
 
     def __init__(self):
         """Initalize the core handle."""

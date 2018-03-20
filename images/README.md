@@ -1,2 +1,3 @@
 # Omin Wire Diagram
-![wire_diagram](omin_wire_diagram.svg)
+
+![wire_diagram](omin_state_diagram.svg)

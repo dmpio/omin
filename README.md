@@ -1,9 +1,9 @@
-# omin - Omics Modeling Integrating and Normalization
 
 <!-- ![logo](https://github.com/dmpio/omin/blob/master/images/omin_lil_horns_logo.png) -->
 
-![logo](images/omin_lil_horns_logo_reworked_501px_194px.png)
+<center>![logo](images/omin_lil_horns_logo_reworked_501px_194px.png)</center>
 
+# Omics Modeling Integrating and Normalization(omin)
 Using python to squeeze the biomarkers out of your big data.
 
 ## Requirements
@@ -51,6 +51,12 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 ## Usage: Command line
 
+
+## Omin State Diagram
+
+<center>![state_diagram](/images/omin_state_digram.svg)</center>
+
+
 ---
 ## LICENSE:
 Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
@@ -72,7 +78,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 # TO DO LIST
-![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)
+<center>![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)</center>
 ---
 - [ ] Find all FIXME flags and add them here.
 - [ ] Create a chnagelog file.

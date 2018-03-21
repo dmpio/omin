@@ -38,17 +38,31 @@ release = '0.0.26'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.napoleon',
-    #'numpydoc',
-]
+
+# extensions = [
+#     'sphinx.ext.autodoc',
+#     'sphinx.ext.doctest',
+#     'sphinx.ext.intersphinx',
+#     'sphinx.ext.todo',
+#     'sphinx.ext.mathjax',
+#     'sphinx.ext.ifconfig',
+#     'sphinx.ext.autosummary',
+#     'sphinx.ext.napoleon',
+#     #'numpydoc',
+# ]
+
+extensions = ['matplotlib.sphinxext.only_directives',
+              'matplotlib.sphinxext.plot_directive',
+              'IPython.sphinxext.ipython_directive',
+              'IPython.sphinxext.ipython_console_highlighting',
+              'sphinx.ext.mathjax',
+              'sphinx.ext.autodoc',
+              'sphinx.ext.doctest',
+              'sphinx.ext.ifconfig',
+              'sphinx.ext.autosummary',
+              'sphinx.ext.napoleon',
+              'sphinx.ext.inheritance_diagram',
+              'numpydoc']
 
 numpydoc_show_class_members = False
 

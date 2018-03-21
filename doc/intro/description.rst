@@ -8,6 +8,11 @@ State Diagram
   :alt: state_diagram
   :align: center
 
+Legend
+
+- Green are entry points.
+- Red will be deprecated soon.
+
 Process instance
 ----------------
 

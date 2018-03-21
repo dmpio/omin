@@ -1,7 +1,10 @@
 
 <!-- ![logo](https://github.com/dmpio/omin/blob/master/images/omin_lil_horns_logo.png) -->
 
-<img align="center" src="images/omin_lil_horns_logo_reworked_501px_194px.png" >
+
+<p align="center">
+  <img src="images/omin_lil_horns_logo_reworked_501px_194px.png" >
+</p>
 
 <!--
 <center>![logo](images/omin_lil_horns_logo_reworked_501px_194px.png)</center>
@@ -58,8 +61,11 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 ## Omin State Diagram
 
-<center>![state_diagram](/images/omin_state_digram.svg)</center>
+<!-- ![state_diagram](/images/omin_state_digram.svg)</center> -->
 
+<p align="center">
+  <img src="/images/omin_state_digram.svg" >
+</p>
 
 ---
 ## LICENSE:
@@ -82,7 +88,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 # TO DO LIST
-<center>![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)</center>
+<p align="center">
+![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)</center>
+</p>
+
 ---
 - [ ] Find all FIXME flags and add them here.
 - [ ] Create a chnagelog file.

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""omin.core.handles
+"""
+omin.core.handles
+-----------------
 
-Provides
---------
-A handle in this context is a class composed of several pandas DataFrames, and
-other varibles that are either derived from the DataFrames or provided by the
-user.
+Provides handles for omin. A handle in this context is a class composed of 
+several pandas DataFrames, and other varibles that are either derived from the
+DataFrames or provided by the user.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 

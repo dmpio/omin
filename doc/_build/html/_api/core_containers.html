@@ -1,0 +1,309 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>omin.core.containers &#8212; omin 0.0.26 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="omin.core.handles" href="core_handles.html" />
+    <link rel="prev" title="omin.core.base" href="core_base.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core_handles.html" title="omin.core.handles"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="core_base.html" title="omin.core.base"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">omin 0.0.26 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-omin.core.containers"></span><div class="section" id="omin-core-containers">
+<h1>omin.core.containers<a class="headerlink" href="#omin-core-containers" title="Permalink to this headline">¶</a></h1>
+<p>Provides Container, Normalized, MaxQuantRaw, ProteomeDiscovererRaw,
+PeptideGroups, and Proteins classes.</p>
+<dl class="class">
+<dt id="omin.core.containers.Container">
+<em class="property">class </em><code class="descclassname">omin.core.containers.</code><code class="descname">Container</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Container" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for handling raw files.</p>
+<p>Accepted Raw files currently limited to</p>
+<dl class="method">
+<dt id="omin.core.containers.Container.show_metadata">
+<code class="descname">show_metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Container.show_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the metadata found in the container.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="omin.core.containers.MaxQuantRaw">
+<em class="property">class </em><code class="descclassname">omin.core.containers.</code><code class="descname">MaxQuantRaw</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.MaxQuantRaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for MaxQuant raw files.</p>
+<p>This class inherits attributes from the Container class.</p>
+<p>HARD HAT AREA: Under construction.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="omin.core.containers.Normalized">
+<em class="property">class </em><code class="descclassname">omin.core.containers.</code><code class="descname">Normalized</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Normalized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty class that catches results from normalization methods.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="omin.core.containers.Occupancy">
+<em class="property">class </em><code class="descclassname">omin.core.containers.</code><code class="descname">Occupancy</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Occupancy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty class that catches results from relative occupancy methods.</p>
+<p>NOTE: This is imported and applied by handles.Process.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="omin.core.containers.PeptideGroups">
+<em class="property">class </em><code class="descclassname">omin.core.containers.</code><code class="descname">PeptideGroups</code><span class="sig-paren">(</span><em>filepath_or_buffer=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.PeptideGroups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for Peptide Groups.</p>
+<p>Derived from the ProteomeDiscovererRaw class</p>
+<dl class="attribute">
+<dt id="omin.core.containers.PeptideGroups.load_normalized">
+<code class="descname">load_normalized</code><a class="headerlink" href="#omin.core.containers.PeptideGroups.load_normalized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return object with load normalzed pd.DataFrames as attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.containers.PeptideGroups.set_in_vivo_modifications">
+<code class="descname">set_in_vivo_modifications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.PeptideGroups.set_in_vivo_modifications" title="Permalink to this definition">¶</a></dt>
+<dd><p>FIXME: Add docs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.containers.PeptideGroups.set_master_index">
+<code class="descname">set_master_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.PeptideGroups.set_master_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to set the master index for the Proteins.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="omin.core.containers.Proteins">
+<em class="property">class </em><code class="descclassname">omin.core.containers.</code><code class="descname">Proteins</code><span class="sig-paren">(</span><em>filepath_or_buffer=None</em>, <em>rescue_entrez_ids=False</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Proteins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for Proteins.
+Derived from the ProteomeDiscovererRaw class</p>
+<dl class="method">
+<dt id="omin.core.containers.Proteins.add_database">
+<code class="descname">add_database</code><span class="sig-paren">(</span><em>DataFrame</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Proteins.add_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add databases to master_index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.containers.Proteins.filter_abundance">
+<code class="descname">filter_abundance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Proteins.filter_abundance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the Abundance columns by the the high confidence master proteins.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.Proteins.gene_symbols_from_description">
+<code class="descname">gene_symbols_from_description</code><a class="headerlink" href="#omin.core.containers.Proteins.gene_symbols_from_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the gene symbols derived from the Fasta description.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.Proteins.high_confidence">
+<code class="descname">high_confidence</code><a class="headerlink" href="#omin.core.containers.Proteins.high_confidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a DataFrame of high confidence proteins.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.Proteins.is_master_protein">
+<code class="descname">is_master_protein</code><a class="headerlink" href="#omin.core.containers.Proteins.is_master_protein" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter raw protein DataFrame for master proteins.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.containers.Proteins.set_entrez">
+<code class="descname">set_entrez</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Proteins.set_entrez" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and relabel the Entrez Gene ID column.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.containers.Proteins.set_master_index">
+<code class="descname">set_master_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Proteins.set_master_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to set the master index for the Proteins.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.containers.Proteins.set_master_protein_accession">
+<code class="descname">set_master_protein_accession</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.Proteins.set_master_protein_accession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and relabel the Master Protein Accession column as Accession.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="omin.core.containers.ProteomeDiscovererRaw">
+<em class="property">class </em><code class="descclassname">omin.core.containers.</code><code class="descname">ProteomeDiscovererRaw</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for Proteome Discoverer raw files.</p>
+<p>This class inherits attributes from the Container class.</p>
+<dl class="method">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.expose_thermo_categories">
+<code class="descname">expose_thermo_categories</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.expose_thermo_categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates attributes that are pandas DataFrames based on Thermo’s categories.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.fraction_number2fraction_tag">
+<code class="descname">fraction_number2fraction_tag</code><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.fraction_number2fraction_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dict with fraction numbers as keys and fraction tags as values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.fraction_tag">
+<code class="descname">fraction_tag</code><span class="sig-paren">(</span><em>fraction_number=None</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.fraction_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a characteristic string for a fraction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fraction_number</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Must be the form Fn e.g. F1, F2, ect.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.input_number">
+<code class="descname">input_number</code><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.input_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return number of inputs as a float.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataframe</strong> (<em>DataFrame</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>number_input</strong></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.study_factor_dict">
+<code class="descname">study_factor_dict</code><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.study_factor_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the study_factor_table as a flattened dict.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.study_factor_table">
+<code class="descname">study_factor_table</code><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.study_factor_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to retrieve the study factors from Abundance column headers.</p>
+<dl class="docutils">
+<dt>Study Factors should be in the format:</dt>
+<dd>KO (Genotype), WT (Genotype), Input (Fraction), Phospho (Fraction) ect.</dd>
+</dl>
+<p>If study factor cannot be identified then StudyFactor_&lt;ABC…&gt; will be assigned.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.study_factor_with_input">
+<code class="descname">study_factor_with_input</code><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.study_factor_with_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the study factor that contains “Input” or “input”.</p>
+<p>PROTIP: In your when creating study factors stick with the conventions:</p>
+<blockquote>
+<div>Input (Fraction), Acetyl (Fraction), ect.</div></blockquote>
+<p>NOTE: For this to work correctly there must be only one study factor
+that contains the terms: “Input” or “input”.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="omin.core.containers.ProteomeDiscovererRaw.tmt_plex_number">
+<code class="descname">tmt_plex_number</code><a class="headerlink" href="#omin.core.containers.ProteomeDiscovererRaw.tmt_plex_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the TMT plex number.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="core_base.html"
+                        title="previous chapter">omin.core.base</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="core_handles.html"
+                        title="next chapter">omin.core.handles</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_api/core_containers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core_handles.html" title="omin.core.handles"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="core_base.html" title="omin.core.base"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">omin 0.0.26 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, James Draper.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.
+    </div>
+  </body>
+</html>

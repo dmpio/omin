@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""omin.core.operations
+"""
+omin.core.operations
+--------------------
 
-Provides
---------
+Provides operations and possible a main class entry point for the CLI.
 
 """
 

@@ -89,7 +89,7 @@ SOFTWARE.
 
 # TO DO LIST
 <p align="center">
-![blue_dev_dev](images/duke_octocat_drawing_v1_.300px_292px.png)</center>
+  <img src="images/duke_octocat_drawing_v1_.300px_292px.png">
 </p>
 
 ---

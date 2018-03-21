@@ -61,10 +61,15 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 ## Omin State Diagram
 
-<!-- ![state_diagram](/images/omin_state_digram.svg)</center> -->
+<p align="center">
+  <img src="/images/omin_state_diagram.svg" >
+</p>
+
+
+## Omin Process Object State Diagram
 
 <p align="center">
-  <img src="/images/omin_state_digram.svg" >
+  <img src="/images/omin_state_diagram_process.svg" >
 </p>
 
 ---
@@ -99,4 +104,3 @@ SOFTWARE.
 - [ ] Document process for switching to old version.
 - [ ] Build separate site to host the msi and/or exe.
 - [ ] Build PyInstaller NSI pipeline for packaging
-- [ ] Add updated state diagram.

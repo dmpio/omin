@@ -51,8 +51,7 @@
       Project
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <linktarget COLOR="#b0b0b0" DESTINATION="ID_1283960104" ENDARROW="Default" ENDINCLINATION="24;0;" ID="Arrow_ID_829766921" SOURCE="ID_1241484308" STARTARROW="None" STARTINCLINATION="24;0;"/>
 <font NAME="Consolas" SIZE="12"/>
 </node>
@@ -115,7 +114,18 @@
 <node CREATED="1521586178334" ID="ID_920608979" MODIFIED="1521604159916" TEXT="PDStudyTools">
 <font NAME="Consolas" SIZE="12"/>
 </node>
-<node BACKGROUND_COLOR="#ff0033" COLOR="#ffffff" CREATED="1521586215368" ID="ID_515823011" MODIFIED="1521604159916" TEXT="SelectionTools">
+<node BACKGROUND_COLOR="#ff0033" COLOR="#ffffff" CREATED="1521586215368" ID="ID_515823011" MODIFIED="1521607477335">
+<richcontent TYPE="NODE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      SelectionTools
+    </p>
+  </body>
+</html>
+</richcontent>
 <font NAME="Consolas" SIZE="12"/>
 </node>
 </node>

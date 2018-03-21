@@ -61,11 +61,18 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 ## Omin State Diagram
 
-<!-- ![state_diagram](/images/omin_state_digram.svg)</center> -->
+<p align="center">
+  <img src="/images/omin_state_diagram.svg" >
+</p>
+
+
+## Omin Process Object State Diagram
 
 <p align="center">
-  <img src="/images/omin_state_digram.svg" >
+  <img src="/images/omin_state_diagram_process_intstance.svg" >
 </p>
+
+- State diagrams generated with FreeMind 1.0.1
 
 ---
 ## LICENSE:
@@ -93,10 +100,10 @@ SOFTWARE.
 </p>
 
 ---
+- [ ] Finish prototype for sphinx docs -> use pandas docs + numpy_doc
 - [ ] Find all FIXME flags and add them here.
-- [ ] Create a chnagelog file.
+- [ ] Create a changelog file.
 - [ ] Back fill all version tags where possible.
 - [ ] Document process for switching to old version.
 - [ ] Build separate site to host the msi and/or exe.
 - [ ] Build PyInstaller NSI pipeline for packaging
-- [ ] Add updated state diagram.

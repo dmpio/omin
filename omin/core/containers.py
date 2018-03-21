@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""omin.core.containers
+"""
+omin.core.containers
+--------------------
 
 Provides Container, Normalized, MaxQuantRaw, ProteomeDiscovererRaw,
 PeptideGroups, and Proteins classes.
@@ -628,7 +630,7 @@ class Proteins(ProteomeDiscovererRaw):
             # result.index = self._old_master_index
             # result = result.reindex(self.master_index.index)
             # # Causes index error in calculate_relative_occupancy
-            # result.index = self._old_master_index.dropna().index 
+            # result.index = self._old_master_index.dropna().index
 
             self.master_index = result
             # print(self.master_index.shape)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""omin.core.base
+"""
+omin.core.base
+--------------
 
-Provides
---------
-Base class used in the Container classes.
+Provides, base class used in the Container classes.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 

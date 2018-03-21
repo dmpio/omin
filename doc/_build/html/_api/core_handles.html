@@ -1,0 +1,185 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>omin.core.handles &#8212; omin 0.0.26 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="omin.core.operations" href="core_operations.html" />
+    <link rel="prev" title="omin.core.containers" href="core_containers.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core_operations.html" title="omin.core.operations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="core_containers.html" title="omin.core.containers"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">omin 0.0.26 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-omin.core.handles"></span><div class="section" id="omin-core-handles">
+<h1>omin.core.handles<a class="headerlink" href="#omin-core-handles" title="Permalink to this headline">¶</a></h1>
+<p>Provides handles for omin. A handle in this context is a class composed of
+several pandas DataFrames, and other varibles that are either derived from the
+DataFrames or provided by the user.</p>
+<dl class="class">
+<dt id="omin.core.handles.Process">
+<em class="property">class </em><code class="descclassname">omin.core.handles.</code><code class="descname">Process</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process" title="Permalink to this definition">¶</a></dt>
+<dd><p>A metaclass that uses PreProcess attempting several normalization steps.</p>
+<p>WARNING: This class is under construction switch to stable branch if you need to work.</p>
+<dl class="method">
+<dt id="omin.core.handles.Process.calculate_relative_occupancy">
+<code class="descname">calculate_relative_occupancy</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.calculate_relative_occupancy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the relative occupancy if possible.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.handles.Process.comparision">
+<code class="descname">comparision</code><span class="sig-paren">(</span><em>on=None</em>, <em>where=None</em>, <em>fraction_key=None</em>, <em>mask=None</em>, <em>right=None</em>, <em>numerator=None</em>, <em>denominator=None</em>, <em>filter_out_numerator=None</em>, <em>filter_out_denominator=None</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.comparision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a comparision dataframe from a Process object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>on</strong> (<em>str</em>) – either: peptide_groups or proteins.</li>
+<li><strong>where</strong> (<em>str</em>) – either: load_normalized or relative_occupancy.</li>
+<li><strong>fraction_key</strong> (<em>str</em>) – Can be whatever fraction keys that are availible in the process object.</li>
+<li><strong>mask</strong> (<em>pd.Index</em>) – Uses this index to select for.</li>
+<li><strong>right</strong> (<em>DataFrame</em>) – When comparing to another separate DataFrame taken as the denominator.
+Defaults to None.</li>
+<li><strong>numerator</strong> (<em>str</em>) – The term to filter for the numerator.</li>
+<li><strong>denominator</strong> (<em>str</em>) – The term to filterfor the denominator.</li>
+<li><strong>filter_out_numerator</strong> (<em>bool</em>) – Defaults to False.</li>
+<li><strong>filter_out_denominator</strong> (<em>bool</em>) – Defaults to False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.handles.Process.link_proteins_to_peptides">
+<code class="descname">link_proteins_to_peptides</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.link_proteins_to_peptides" title="Permalink to this definition">¶</a></dt>
+<dd><p>Links protiens to peptides.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.handles.Process.peptide_groups_master_index_update">
+<code class="descname">peptide_groups_master_index_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.peptide_groups_master_index_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge the proteins.master_index with the peptide_groups.master_index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.handles.Process.peptide_groups_mitocart_fillna">
+<code class="descname">peptide_groups_mitocart_fillna</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.peptide_groups_mitocart_fillna" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to fill missing values (NaNs) created by merging the proteins.master_index with the peptide_groups.master_index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="omin.core.handles.Process.reset_master_index">
+<code class="descname">reset_master_index</code><span class="sig-paren">(</span><em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.reset_master_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Work-around to return rows with missing values to protein.master_index.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="omin.core.handles.Project">
+<em class="property">class </em><code class="descclassname">omin.core.handles.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>file_list=None</em>, <em>peptides_file=None</em>, <em>proteins_file=None</em>, <em>rescue_entrez_ids=None</em>, <em>verbose=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Project" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="core_containers.html"
+                        title="previous chapter">omin.core.containers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="core_operations.html"
+                        title="next chapter">omin.core.operations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_api/core_handles.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core_operations.html" title="omin.core.operations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="core_containers.html" title="omin.core.containers"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">omin 0.0.26 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, James Draper.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.
+    </div>
+  </body>
+</html>

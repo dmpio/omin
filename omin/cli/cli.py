@@ -21,10 +21,13 @@
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import guipyter
+
+
 import argparse
 import sys
 import time
+
+import guipyter
 import guipyter as gptr
 # import omin
 from ..core import handles

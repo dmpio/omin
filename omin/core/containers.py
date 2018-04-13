@@ -314,7 +314,11 @@ class ProteomeDiscovererRaw(Container):
                 term = terms[0]
                 term = rx.findall(term)
                 if len(term) == 1:
+                    # Make everything lowercase.
                     term = term[0].lower()
+                    # Replace any whitespace with underscore.
+                    term = re.sub("\s", "_", term)
+                    # print(term)
                     tag_for_fraction = "_".join([tag_for_fraction, term])
 
         return tag_for_fraction

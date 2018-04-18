@@ -62,7 +62,6 @@ class IOTools(object):
         for fn in file_list:
             # Remove .bz2 from the file name.
             new_fn = ".".join([fn, "bz2"])
-            # print(new_fn)
             # Open the compressed file.
             with open(fn, "r") as _in:
                 print("Compressing: {} as: {}".format(fn, new_fn))

@@ -57,6 +57,35 @@ class IOTools(object):
             os.mkdir(directory)
 
 
+    @staticmethod
+    def bz2_compression(file_list):
+        for fn in file_list:
+            # Remove .bz2 from the file name.
+            new_fn = ".".join([fn, "bz2"])
+            # print(new_fn)
+            # Open the compressed file.
+            with open(fn, "r") as _in:
+                print("Compressing: {} as: {}".format(fn, new_fn))
+                # Open the destination file.
+                with open(new_fn, "wb") as _out:
+                    # Write the decompressed decoded data to the new file.
+                    _out.write(bz2.compress(_in.read().encode()))
+
+
+    @staticmethod
+    def bz2_decompression(file_list):
+        for fn in file_list:
+            # Remove .bz2 from the file name.
+            new_fn = ".".join(fn.split(".")[:-1])
+            # Open the compressed file.
+            with open(fn, "rb") as _in:
+                print("Decompressing: {} as: {}".format(fn, new_fn))
+                # Open the destination file.
+                with open(new_fn, "w") as _out:
+                    # Write the decompressed decoded data to the new file.
+                    _out.write(bz2.decompress(_in.read()).decode())
+
+
 class UserProfile(object):
     """Creates user profile files for configuration and databases.
     """

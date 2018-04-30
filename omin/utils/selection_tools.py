@@ -110,7 +110,7 @@ class SelectionTools(object):
         present_modifications = cls.findModifications(df)
         chemical_modifications = {'Oxidation', 'Carbamidomethyl',
                                   'TMT6plex', 'TMT10plex'}
-        invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
+        invivo_modifications = {modification for modification in present_modifications if modification not in chemical_modifications}
         return invivo_modifications
 
     @staticmethod

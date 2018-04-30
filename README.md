@@ -56,6 +56,8 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 ## Usage: Jupyter Notebook/Lab
 
+- Check out the [omin cookiecutter](https://github.com/dmpio/cookiecutter-omin-jupyter-notebook).
+
 ## Usage: Command line
 
 

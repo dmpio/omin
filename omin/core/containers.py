@@ -304,7 +304,7 @@ class ProteomeDiscovererRaw(Container):
         # FIXME: Add try and excepts with some kind of unique string passed
         by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
 
-        rx = re.compile('(.+)\s\(.+\)')
+        rx = re.compile('(.+)\s{0,1}\(.+\)')
 
         tag_for_fraction = ""
         for i in by_fn:

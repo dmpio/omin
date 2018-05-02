@@ -56,20 +56,6 @@ __version__
 # TORT OR OTHERWISE, ARISING FROM. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# ----------
-# TO DO LIST
-# ----------
-# FIXME: DOCUMENT OR DIE #DOD
-# FIXME: ADD TRACEBACK TO ALL TRY AND EXCEPT LOOPS
-# FIXME: Make a .omin config file class that points to a file in %userprofile%
-# FIXME: Make a .omin/Database file class that could hold MitoCartaTwo and perhaps read and process others
-# FIXME: ADD KFW EXAMPLE FILES
-# FIXME: *** update the readme ** [ ] How to install,
-# FIXME: *** Document dependencies *** [ ] guipyter, [ ] panomics
-# FIXME: Investigate a SQLite/Json file method in APPDATA or linux eqv.
-# FIXME: Store each handle class as SQLite database in same parent dir.
-# FIXME: Include paragraph description of the types of filtering.
-
 # -------
 # PROTIPS
 # -------

@@ -1,0 +1,17 @@
+# TO DO LIST
+---
+- [ ] Privatize most of the functions in omin.core
+- [ ] KILL THE MEMORY LEAK in omin.core
+- [ ] Include paragraph description of the types of filtering.
+- [ ] Better documentation integration with cookiecutter with fancy GIFs.
+- [ ] Finish prototype for sphinx docs -> use pandas docs + numpy_doc
+- [ ] ADD KFW EXAMPLE FILES
+- [ ] Find all FIXME flags and add them here.
+- [ ] Create a changelog file.
+- [ ] Back fill all version tags where possible.
+- [ ] Document process for switching to old version.
+- [ ] Build separate site to host the msi and/or exe.
+- [ ] Build PyInstaller NSI pipeline for packaging
+- [ ] ADD TRACEBACK TO ALL TRY AND EXCEPT LOOPS
+- [ ] Make a .omin config file class that points to a file in %userprofile%
+- [ ] Investigate a SQLite/Json file method in APPDATA or linux eqv (possibly store each handle class as SQLite database in same parent dir?).

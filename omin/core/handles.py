@@ -141,7 +141,7 @@ class Process(Project):
         self.calculate_relative_occupancy(verbose=verbose)
 
         # Reset the master_index
-        self.reset_master_index(verbose=verbose)
+        self._reset_master_index(verbose=verbose)
 
 
     def peptide_groups_master_index_update(self):
@@ -227,7 +227,7 @@ class Process(Project):
             pass
 
 
-    def reset_master_index(self, verbose=True):
+    def _reset_master_index(self, verbose=True):
         """Work-around to return rows with missing values to protein.master_index.
         """
         # Create a copy of the old_master_index.

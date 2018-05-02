@@ -132,7 +132,7 @@ class Process(Project):
         Project.__init__(self, *args, **kwargs)
         # Connect master index from peptide groups to proteins.
         self.peptide_groups_master_index_update()
-        self.peptide_groups_mitocart_fillna()
+        self.peptide_groups_mitocarta_fillna()
 
         # Link proteins to peptides
         self.link_proteins_to_peptides()
@@ -156,7 +156,7 @@ class Process(Project):
                 print(err)
 
 
-    def peptide_groups_mitocart_fillna(self):
+    def peptide_groups_mitocarta_fillna(self):
         """Attempts to fill missing values (NaNs) created by merging the proteins.master_index with the peptide_groups.master_index.
         """
         if "MitoCarta2_List" in self.peptide_groups.master_index:

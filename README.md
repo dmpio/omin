@@ -76,6 +76,11 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 - State diagrams generated with FreeMind 1.0.1
 
+# Contributing
+---
+- Want to help? Check the [to do list](TO_DO_LIST.md) kill the bugs, make a PR, and bask in the glory<sup>&#10044;</sup>.
+
+&#10044;) Amount of glory with vary based on bug squashed.
 ---
 <p align="center">
   <img src="images/duke_octocat_drawing_v1_.300px_292px.png">

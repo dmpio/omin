@@ -10,7 +10,7 @@
 <center>![logo](images/omin_lil_horns_logo_reworked_501px_194px.png)</center>
 -->
 
-# Omics Modeling Integrating and Normalization(omin)
+# Omics Module Integrating and Normalization (omin)
 Using python to squeeze the biomarkers out of your big data.
 
 ## Requirements

@@ -3,17 +3,11 @@
 omin.core.handles
 -----------------
 
-Provides handles for omin. A handle in this context is a class composed of 
+Provides handles for omin. A handle in this context is a class composed of
 several pandas DataFrames, and other varibles that are either derived from the
 DataFrames or provided by the user.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
-
-# ----------
-# TO DO LIST
-# ----------
-# FIXME: DOCUMENT OR DIE #DOD
-# FIXME: Add relative occupancy method to Process
 
 # ----------------
 # EXTERNAL IMPORTS
@@ -131,20 +125,22 @@ class Process(Project):
 
         Project.__init__(self, *args, **kwargs)
         # Connect master index from peptide groups to proteins.
-        self.peptide_groups_master_index_update()
-        self.peptide_groups_mitocart_fillna()
+        self._peptide_groups_master_index_update()
+
+        # Fill the NaNs in mitocarta.
+        self._peptide_groups_mitocarta_fillna()
 
         # Link proteins to peptides
-        self.link_proteins_to_peptides()
+        self._link_proteins_to_peptides()
 
         # # Attempt to calculate the relative occupancy.
-        self.calculate_relative_occupancy(verbose=verbose)
+        self._calculate_relative_occupancy(verbose=verbose)
 
         # Reset the master_index
-        self.reset_master_index(verbose=verbose)
+        self._reset_master_index(verbose=verbose)
 
 
-    def peptide_groups_master_index_update(self):
+    def _peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
         """
         try:
@@ -156,7 +152,7 @@ class Process(Project):
                 print(err)
 
 
-    def peptide_groups_mitocart_fillna(self):
+    def _peptide_groups_mitocarta_fillna(self):
         """Attempts to fill missing values (NaNs) created by merging the proteins.master_index with the peptide_groups.master_index.
         """
         if "MitoCarta2_List" in self.peptide_groups.master_index:
@@ -170,7 +166,7 @@ class Process(Project):
                     print(err)
 
 
-    def link_proteins_to_peptides(self):
+    def _link_proteins_to_peptides(self):
         """Links protiens to peptides.
         """
         link_to_peptides = self.peptide_groups.master_index.merge(self.proteins.master_index, on="Accession", how="left", left_index=True)
@@ -178,7 +174,7 @@ class Process(Project):
         self.proteins.link_to_peptides = link_to_peptides
 
 
-    def calculate_relative_occupancy(self, verbose=False):
+    def _calculate_relative_occupancy(self, verbose=False):
         """Calculate the relative occupancy if possible.
         """
         self.peptide_groups.relative_occupancy = Occupancy()
@@ -227,7 +223,7 @@ class Process(Project):
             pass
 
 
-    def reset_master_index(self, verbose=True):
+    def _reset_master_index(self, verbose=True):
         """Work-around to return rows with missing values to protein.master_index.
         """
         # Create a copy of the old_master_index.

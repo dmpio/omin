@@ -10,7 +10,7 @@
 <center>![logo](images/omin_lil_horns_logo_reworked_501px_194px.png)</center>
 -->
 
-# Omics Modeling Integrating and Normalization(omin)
+# Omics Module Integrating and Normalization (omin)
 Using python to squeeze the biomarkers out of your big data.
 
 ## Requirements
@@ -76,7 +76,17 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 - State diagrams generated with FreeMind 1.0.1
 
+# Contributing
 ---
+Want to help? Check the [to do list](TO_DO_LIST.md) kill the bugs, make a PR, and bask in the glory<sup>[&#10044;](#asterisk)</sup>.
+
+> <a name="asterisk"> &#10044;</a>: Amount of glory with vary based on bug squashed.
+
+---
+<p align="center">
+  <img src="images/duke_octocat_drawing_v1_.300px_292px.png">
+</p>
+
 ## LICENSE:
 Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
@@ -95,17 +105,3 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM.
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-# TO DO LIST
-<p align="center">
-  <img src="images/duke_octocat_drawing_v1_.300px_292px.png">
-</p>
-
----
-- [ ] Finish prototype for sphinx docs -> use pandas docs + numpy_doc
-- [ ] Find all FIXME flags and add them here.
-- [ ] Create a changelog file.
-- [ ] Back fill all version tags where possible.
-- [ ] Document process for switching to old version.
-- [ ] Build separate site to host the msi and/or exe.
-- [ ] Build PyInstaller NSI pipeline for packaging

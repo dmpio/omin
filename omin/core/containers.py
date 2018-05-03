@@ -9,12 +9,6 @@ PeptideGroups, and Proteins classes.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
-# ----------
-# TO DO LIST
-# ----------
-# FIXME: DOCUMENT OR DIE #DOD
-# FIXME: Find out what words we can use to name classes and functions.
-
 # ----------------
 # EXTERNAL IMPORTS
 # ----------------
@@ -146,7 +140,7 @@ class ProteomeDiscovererRaw(Container):
         # Initialize the Container class
         Container.__init__(self, low_memory=False, delimiter='\t', **kwargs)
         # Calling the function below.
-        self.expose_thermo_categories()
+        self._expose_thermo_categories()
         # METADATA: Number of ids no filter.
         self.metadata['total_ids'] = self.raw.shape[0]
         # METADATA: Number of ids with quantification.
@@ -155,7 +149,7 @@ class ProteomeDiscovererRaw(Container):
         self.quantified_index = self.Abundance.dropna(axis=0, how='all').index
 
 
-    def expose_thermo_categories(self):
+    def _expose_thermo_categories(self):
         """Creates attributes that are pandas DataFrames based on Thermo's categories.
         """
         # FIXME: This method could potentially create collisions, figure out a way to safe gard against this.
@@ -354,14 +348,14 @@ class PeptideGroups(ProteomeDiscovererRaw):
             print("No Modifications column found in Peptide Groups data.", err)
         # Create the master_index
         self.master_index = None
-        self.set_master_index()
+        self._set_master_index()
 
         # Declare variable
         self._in_vivo_modifications = []
-        self.set_in_vivo_modifications()
+        self._set_in_vivo_modifications()
 
 
-    def set_master_index(self):
+    def _set_master_index(self):
         """Attempt to set the master index for the Proteins.
         """
         # FIXME: Add try and except for each of these columns.
@@ -384,7 +378,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
         return
 
 
-    def set_in_vivo_modifications(self):
+    def _set_in_vivo_modifications(self):
         """FIXME: Add docs.
         """
         # FIXME: Rethink this part. Should this be done in the ProteomeDiscovererRaw class?
@@ -514,11 +508,11 @@ class Proteins(ProteomeDiscovererRaw):
         self.metadata['high_confidence_ids'] = self.master_high_confidence.shape[0]
 
         # Find and relabel the Entrez Gene ID column.
-        self.set_entrez()
+        self._set_entrez()
         # Select the first master protein accession.
-        self.set_master_protein_accession()
+        self._set_master_protein_accession()
         # Create the master_index
-        self.set_master_index()
+        self._set_master_index()
         # Attempt to rescue Entrez Gene IDs
         if rescue_entrez_ids:
             # ------------------------
@@ -572,7 +566,7 @@ class Proteins(ProteomeDiscovererRaw):
         return result
 
 
-    def set_entrez(self):
+    def _set_entrez(self):
         """Find and relabel the Entrez Gene ID column.
         """
         if "Gene ID" in self.master_high_confidence: # PD2.1
@@ -582,7 +576,7 @@ class Proteins(ProteomeDiscovererRaw):
             self.master_high_confidence.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
 
 
-    def set_master_protein_accession(self):
+    def _set_master_protein_accession(self):
         """Find and relabel the Master Protein Accession column as Accession.
         """
         if "Accession" in self.master_high_confidence: # PD2.1
@@ -592,7 +586,7 @@ class Proteins(ProteomeDiscovererRaw):
             self.master_high_confidence.rename(columns={'Master Protein Accessions':'Accession'}, inplace=True)
 
 
-    def set_master_index(self):
+    def _set_master_index(self):
         """Attempt to set the master index for the Proteins.
         """
         # FIXME: Add try and except for each of these columns.
@@ -617,34 +611,16 @@ class Proteins(ProteomeDiscovererRaw):
         """
         # FIXME: Expose this function to users.
         try:
-            # print(self.master_index.shape)
-            # print(self.master_index.index.max())
-
             # -------------------------------------------
             # DROPNA: Lose rows that have missing values.
             # -------------------------------------------
             self._old_master_index = self.master_index.copy()
             self.master_index.dropna(inplace=True)
-            # print(self.master_index.shape)
-            # print(self.master_index.index.max())
-
             self.master_index.EntrezGeneID = self.master_index.EntrezGeneID.first_member().apply(np.int64)
-
             result = self.master_index.merge(DataFrame.copy(), on="EntrezGeneID", how="left")
-            # result.index = self._old_master_index
-            # result = result.reindex(self.master_index.index)
-            # # Causes index error in calculate_relative_occupancy
-            # result.index = self._old_master_index.dropna().index
-
             self.master_index = result
-            # print(self.master_index.shape)
-            # print(self.master_index.index.max())
-
-            # self.master_index.index = self.master_index.index
-            # print(self.master_index.shape)
-            # print(self.master_index.index.max())
-
             self.master_index.fillna(False, inplace=True)
+
         except Exception as err:
             print(err)
 

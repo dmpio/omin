@@ -7,11 +7,6 @@ Provides, base class used in the Container classes.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
-# ----------
-# TO DO LIST
-# ----------
-# FIXME: DOCUMENT OR DIE #DOD
-
 # ----------------
 # EXTERNAL IMPORTS
 # ----------------

@@ -9,12 +9,6 @@ PeptideGroups, and Proteins classes.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
-# ----------
-# TO DO LIST
-# ----------
-# FIXME: DOCUMENT OR DIE #DOD
-# FIXME: Find out what words we can use to name classes and functions.
-
 # ----------------
 # EXTERNAL IMPORTS
 # ----------------

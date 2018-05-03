@@ -9,12 +9,6 @@ DataFrames or provided by the user.
 """
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
-# ----------
-# TO DO LIST
-# ----------
-# FIXME: DOCUMENT OR DIE #DOD
-# FIXME: Add relative occupancy method to Process
-
 # ----------------
 # EXTERNAL IMPORTS
 # ----------------

@@ -440,6 +440,9 @@ class PeptideGroups(ProteomeDiscovererRaw):
         # self._linked_fractions = linked
 
         # Normalize the inputs to themselves and add them to the normalized dict.
+
+        # FIXME: Add the following comment to the doc string for this function.
+
         # NOTE: Inputs are normalized to themselves in order to calculate relative occupancy
         # and looking into the whole proteome. Inputs that have been normalized to themselves
         # are not used to normalize enriched fractions non-normalized inputs are.

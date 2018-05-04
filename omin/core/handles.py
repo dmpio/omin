@@ -105,9 +105,7 @@ class Project(object):
 # =============
 
 class Process(Project):
-    """A metaclass that uses PreProcess attempting several normalization steps.
-
-    WARNING: This class is under construction switch to stable branch if you need to work.
+    """Attempts several normalization steps.
     """
 
     # PROTIP: Wait util the last possible moment to link databases.

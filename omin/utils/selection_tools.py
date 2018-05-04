@@ -193,6 +193,8 @@ class SelectionTools(object):
 
     @staticmethod
     def filter_modification(modification_list):
+        """DEPRECATED.
+        """
         mod = "".join([i for i in modification_list if i not in chemical_modifications])
         return mod
 

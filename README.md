@@ -16,14 +16,9 @@
 
 [![submit bug](https://img.shields.io/badge/project%20issues-submit%20bug-red.svg)](https://github.com/dmpio/omin/issues/new?template=issue_template.md&labels=BUG&title=BUG%20:) | [![feature request](https://img.shields.io/badge/project%20issues-submit%20feature%20request-blue.svg)](https://github.com/dmpio/omin/issues/new?template=issue_template.md&labels=FEATURE%20REQUEST&title=FEATURE%20REQUEST%20:)    
 
+[![GitHub issues](https://img.shields.io/github/issues/dmpio/omin.svg)](https://github.com/dmpio/omin/issues) | [![GitHub forks](https://img.shields.io/github/forks/dmpio/omin.svg)](https://github.com/dmpio/omin/network) | [![GitHub stars](https://img.shields.io/github/stars/dmpio/omin.svg)](https://github.com/dmpio/omin/stargazers)
 
-[![GitHub issues](https://img.shields.io/github/issues/dmpio/omin.svg)](https://github.com/dmpio/omin/issues)
-[![GitHub forks](https://img.shields.io/github/forks/dmpio/omin.svg)](https://github.com/dmpio/omin/network)
-[![GitHub stars](https://img.shields.io/github/stars/dmpio/omin.svg)](https://github.com/dmpio/omin/stargazers)
-
-[![PyPI](https://img.shields.io/pypi/v/omin.svg)](https://pypi.org/project/omin/)
-![PyPI - Status](https://img.shields.io/pypi/status/omin.svg)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
+[![PyPI](https://img.shields.io/pypi/v/omin.svg)](https://pypi.org/project/omin/) | ![PyPI - Status](https://img.shields.io/pypi/status/omin.svg) | ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
 
 ---
 ## Requirements
@@ -92,7 +87,7 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 <p align="center"><img src="/images/omin_state_diagram.svg" ></p>
 
 ---
-## Omin Process Object State Diagram
+## Omin process object overview
 
 <p align="center">
   <img src="/images/omin_state_diagram_process_intstance.svg" >

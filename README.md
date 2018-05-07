@@ -44,7 +44,8 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 2) Open a commandline windows as administrator (press the windows button then type cmd) or teminal (linux users should how to do this, mac users just google it).
 2.1) If Python 3.x is already available on your system path and you know what you are doing skip to step 4.
 3)  In the commandline activate Anaconda/Miniconda by typing the following:
-### WINDOWS
+### Installation (Windows 7/8/10)
+
 ```
 "%PROGRAMFILES%\Miniconda3\Scripts\activate.bat"
 ```
@@ -68,17 +69,20 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 
 ## Usage: Jupyter Notebook/Lab with cookiecutter
 
-0) Install [cookiecutter](https://github.com/audreyr/cookiecutter)   
-    0) Installing via Anaconda prompt(Windows7/8/10).    
-        0) Click the start menu type `anaconda prompt` and press `Enter`    
-        0) Once the prompt has started run the following command:    
+1. [`cookiecutter`]() requires `Git`. You can install `Git` if it is not installed already directions can be found here: [installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+
+1. Install [cookiecutter](https://github.com/audreyr/cookiecutter)   
+    1. Installing via Anaconda prompt(Windows7/8/10).    
+        1. Click the start menu type `anaconda prompt` and press <kbd>Enter</kbd>
+        2. Once the prompt has started run the following command:    
             `pip install cookiecutter -U`
 
-1) Using cookiecutter
+1. Using cookiecutter:
+    1. Open a command prompt.
+    2. Use the [`cd`](#FIXME: Add link) command to change your current directory to where you would like to create your project.
+    3. When at your target directory copy and paste the following command then press <kbd>Enter</kbd>:    
+        `cookiecutter https://github.com/dmpio/cookiecutter-omin-jupyter-notebook`
 
-```
-cookiecutter https://github.com/dmpio/cookiecutter-omin-jupyter-notebook
-```
 
 ## Usage: Command line
 
@@ -94,20 +98,16 @@ cookiecutter https://github.com/dmpio/cookiecutter-omin-jupyter-notebook
   <img src="/images/omin_state_diagram_process_intstance.svg" >
 </p>
 
-- State diagrams generated with FreeMind 1.0.1
+> State diagrams generated with FreeMind 1.0.1
 
 # Contributing
 ---
 Want to help? Check the [to do list](TO_DO_LIST.md) kill the bugs, make a PR, and bask in the glory<sup>[&#10044;](#asterisk)</sup>.
 
-
-
 > <a name="asterisk"> &#10044;</a>: Amount of glory with vary based on bug squashed.
 
 ---
-<p align="center">
-  <img src="images/duke_octocat_drawing_v1_.300px_292px.png">
-</p>
+<p align="center"><img src="images/duke_octocat_drawing_v1_.300px_292px.png"></p>
 
 ## LICENSE:
 Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.

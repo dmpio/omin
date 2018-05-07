@@ -10,9 +10,21 @@
 <center>![logo](images/omin_lil_horns_logo_reworked_501px_194px.png)</center>
 -->
 
-# Omics Module Integrating and Normalization (omin)
-Using python to squeeze the biomarkers out of your big data.
+# omin - Omics Module Integrating and Normalization
+### Using python to squeeze the biomarkers out of your big data.
+---
+[![submit bug](https://img.shields.io/badge/project%20issues-submit%20bug-red.svg)](https://github.com/dmpio/omin/issues/new?template=issue_template.md&labels=BUG&title=BUG%20:)
+[![feature request](https://img.shields.io/badge/project%20issues-submit%20feature%20request-blue.svg)](https://github.com/dmpio/omin/issues/new?template=issue_template.md&labels=FEATURE%20REQUEST&title=FEATURE%20REQUEST%20:)
 
+[![GitHub issues](https://img.shields.io/github/issues/dmpio/omin.svg)](https://github.com/dmpio/omin/issues)
+[![GitHub forks](https://img.shields.io/github/forks/dmpio/omin.svg)](https://github.com/dmpio/omin/network)
+[![GitHub stars](https://img.shields.io/github/stars/dmpio/omin.svg)](https://github.com/dmpio/omin/stargazers)
+
+[![PyPI](https://img.shields.io/pypi/v/omin.svg)](https://pypi.org/project/omin/)
+![PyPI - Status](https://img.shields.io/pypi/status/omin.svg)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
+
+---
 ## Requirements
 
 > Anaconda(or Miniconda) -> Python 3.x
@@ -54,19 +66,27 @@ This command will install the omin package into: `<Your Python distro>\lib\sitep
 
 Now omin can be run from the commandline or imported into jupyter notebook.
 
-## Usage: Jupyter Notebook/Lab
+## Usage: Jupyter Notebook/Lab with cookiecutter
 
-- Check out the [omin cookiecutter](https://github.com/dmpio/cookiecutter-omin-jupyter-notebook).
+0) Install [cookiecutter](https://github.com/audreyr/cookiecutter)   
+    0) Installing via Anaconda prompt(Windows7/8/10).    
+        0) Click the start menu type `anaconda prompt` and press `Enter`    
+        0) Once the prompt has started run the following command:    
+            `pip install cookiecutter -U`
+
+1) Using cookiecutter
+
+```
+cookiecutter https://github.com/dmpio/cookiecutter-omin-jupyter-notebook
+```
 
 ## Usage: Command line
 
+- Content TK.
 
 ## Omin State Diagram
 
-<p align="center">
-  <img src="/images/omin_state_diagram.svg" >
-</p>
-
+<p align="center"><img src="/images/omin_state_diagram.svg" ></p>
 
 ## Omin Process Object State Diagram
 
@@ -79,6 +99,8 @@ Now omin can be run from the commandline or imported into jupyter notebook.
 # Contributing
 ---
 Want to help? Check the [to do list](TO_DO_LIST.md) kill the bugs, make a PR, and bask in the glory<sup>[&#10044;](#asterisk)</sup>.
+
+
 
 > <a name="asterisk"> &#10044;</a>: Amount of glory with vary based on bug squashed.
 

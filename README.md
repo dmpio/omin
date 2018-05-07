@@ -14,11 +14,16 @@
 ### Using python to squeeze the biomarkers out of your big data.
 ---    
 
-[![submit bug](https://img.shields.io/badge/project%20issues-submit%20bug-red.svg)](https://github.com/dmpio/omin/issues/new?template=issue_template.md&labels=BUG&title=BUG%20:) | [![feature request](https://img.shields.io/badge/project%20issues-submit%20feature%20request-blue.svg)](https://github.com/dmpio/omin/issues/new?template=issue_template.md&labels=FEATURE%20REQUEST&title=FEATURE%20REQUEST%20:)    
+[![submit bug](https://img.shields.io/badge/project%20issues-submit%20bug-red.svg)](https://github.com/dmpio/omin/issues/new?template=issue_template.md&labels=BUG&title=BUG%20:)
+[![feature request](https://img.shields.io/badge/project%20issues-submit%20feature%20request-blue.svg)](https://github.com/dmpio/omin/issues/new?template=feature_request.md&labels=FEATURE%20REQUEST&title=FEATURE%20REQUEST%20:)    
 
-[![GitHub issues](https://img.shields.io/github/issues/dmpio/omin.svg)](https://github.com/dmpio/omin/issues) | [![GitHub forks](https://img.shields.io/github/forks/dmpio/omin.svg)](https://github.com/dmpio/omin/network) | [![GitHub stars](https://img.shields.io/github/stars/dmpio/omin.svg)](https://github.com/dmpio/omin/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/dmpio/omin.svg)](https://github.com/dmpio/omin/issues)
+[![GitHub forks](https://img.shields.io/github/forks/dmpio/omin.svg)](https://github.com/dmpio/omin/network)
+[![GitHub stars](https://img.shields.io/github/stars/dmpio/omin.svg)](https://github.com/dmpio/omin/stargazers)
 
-[![PyPI](https://img.shields.io/pypi/v/omin.svg)](https://pypi.org/project/omin/) | ![PyPI - Status](https://img.shields.io/pypi/status/omin.svg) | ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
+[![PyPI](https://img.shields.io/pypi/v/omin.svg)](https://pypi.org/project/omin/)
+![PyPI - Status](https://img.shields.io/pypi/status/omin.svg)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
 
 ---
 ## Requirements
@@ -30,7 +35,6 @@
 [Download Miniconda3](https://conda.io/miniconda.html)
 
 If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFILES%\Miniconda3` without adding it to your windows path. This way it should not interfere with other installations of Python.
-
 
 ---
 
@@ -59,7 +63,9 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 
 ---
 
-## Usage: Jupyter Notebook/Lab with cookiecutter
+## Usage:
+
+### Jupyter Notebook/Lab + cookiecutter
 
 1. [`cookiecutter`]() requires `Git`. You can install `Git` if it is not installed already directions can be found here: [installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
@@ -74,6 +80,14 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
     2. Use the [`cd`](#FIXME: Add link) command to change your current directory to where you would like to create your project.
     3. When at your target directory copy and paste the following command then press <kbd>Enter</kbd>:    
         `cookiecutter https://github.com/dmpio/cookiecutter-omin-jupyter-notebook`
+    4. `cookiecutter` will prompt you for your name and email then it will create a custom jupyter notebook `.ipynb` file populating it with the information collected from the prompts.
+    5. #FIXME: Add a fancy GIF showing behavior.
+
+
+#### Jupyter Notebook/Lab extensions
+
+1. Install jupyter
+
 
 ---
 

@@ -51,14 +51,7 @@ DataFrames or provided by the user.</p>
 <dl class="class">
 <dt id="omin.core.handles.Process">
 <em class="property">class </em><code class="descclassname">omin.core.handles.</code><code class="descname">Process</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process" title="Permalink to this definition">¶</a></dt>
-<dd><p>A metaclass that uses PreProcess attempting several normalization steps.</p>
-<p>WARNING: This class is under construction switch to stable branch if you need to work.</p>
-<dl class="method">
-<dt id="omin.core.handles.Process.calculate_relative_occupancy">
-<code class="descname">calculate_relative_occupancy</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.calculate_relative_occupancy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the relative occupancy if possible.</p>
-</dd></dl>
-
+<dd><p>Attempts several normalization steps.</p>
 <dl class="method">
 <dt id="omin.core.handles.Process.comparision">
 <code class="descname">comparision</code><span class="sig-paren">(</span><em>on=None</em>, <em>where=None</em>, <em>fraction_key=None</em>, <em>mask=None</em>, <em>right=None</em>, <em>numerator=None</em>, <em>denominator=None</em>, <em>filter_out_numerator=None</em>, <em>filter_out_denominator=None</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.comparision" title="Permalink to this definition">¶</a></dt>
@@ -89,30 +82,6 @@ Defaults to None.</li>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="omin.core.handles.Process.link_proteins_to_peptides">
-<code class="descname">link_proteins_to_peptides</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.link_proteins_to_peptides" title="Permalink to this definition">¶</a></dt>
-<dd><p>Links protiens to peptides.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="omin.core.handles.Process.peptide_groups_master_index_update">
-<code class="descname">peptide_groups_master_index_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.peptide_groups_master_index_update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge the proteins.master_index with the peptide_groups.master_index.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="omin.core.handles.Process.peptide_groups_mitocart_fillna">
-<code class="descname">peptide_groups_mitocart_fillna</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.peptide_groups_mitocart_fillna" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to fill missing values (NaNs) created by merging the proteins.master_index with the peptide_groups.master_index.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="omin.core.handles.Process.reset_master_index">
-<code class="descname">reset_master_index</code><span class="sig-paren">(</span><em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#omin.core.handles.Process.reset_master_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Work-around to return rows with missing values to protein.master_index.</p>
 </dd></dl>
 
 </dd></dl>

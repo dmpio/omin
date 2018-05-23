@@ -427,7 +427,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
         linked = []
         for i in inps:
             for j in frcs:
-                score = sum(sum(j.as_matrix() == i.as_matrix()))
+                score = sum(sum(j.values == i.values))
                 link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
                 score_df = pd.DataFrame([i.shape[0]*[score]]).T
                 score_df.columns = ["Score"]

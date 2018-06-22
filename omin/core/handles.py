@@ -137,6 +137,8 @@ class Process(Project):
         # Reset the master_index
         self._reset_master_index(verbose=verbose)
 
+        # Add mitocart info to metadata
+        self._add_mitocarta_metadata(verbose=verbose)
 
     def _peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
@@ -238,6 +240,21 @@ class Process(Project):
         result["Matrix"].fillna(False, inplace=True)
         result["IMS"].fillna(False, inplace=True)
         self.proteins.master_index = result
+
+
+    def _add_mitocarta_metadata(self, verbose=False):
+        for mod in self.peptide_groups._in_vivo_modifications:
+            # Filter for given in vivo modification.
+            try:
+                result = self.peptide_groups.master_index.filter_rows(on="Modifications", term=mod)
+
+                self.peptide_groups.metadata[mod.lower() + "_mitocarta_total_hits"] = result.MitoCarta2_List.sum()
+                self.peptide_groups.metadata[mod.lower() + "_mitocarta_matrix"] = result.Matrix.sum()
+                self.peptide_groups.metadata[mod.lower() + "_mitocarta_ims"] = result.IMS.sum()
+
+            except Exception as err:
+                if verbose:
+                    print("Could not add Mitocarta info to metadata.", err)
 
 
     def comparision(self, on=None, where=None, fraction_key=None, mask=None, right=None,

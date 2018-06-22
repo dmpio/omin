@@ -88,9 +88,7 @@ class SelectionTools(object):
         -------
         found : set
         """
-        found = set(
-            itertools.chain.from_iterable(cls.simplifyModifications(df))
-            )
+        found = set(itertools.chain.from_iterable(cls.simplifyModifications(df)))
 
         return found
 

@@ -98,13 +98,13 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 ---
 ## Omin overview
 
-<p align="center"><img src="/images/omin_state_diagram.svg" ></p>
+<p align="center"><img src="/images/omin_state_diagram.png" ></p>
 
 ---
 ## Omin process object overview
 
 <p align="center">
-  <img src="/images/omin_state_diagram_process_intstance.svg" >
+  <img src="/images/omin_state_diagram_process_intstance.png" >
 </p>
 
 > State diagrams generated with FreeMind 1.0.1

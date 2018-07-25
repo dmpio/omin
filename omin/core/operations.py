@@ -6,12 +6,23 @@ omin.core.operations
 Provides operations and possible a main class entry point for the CLI.
 
 """
+# Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
+# ----------------
+# EXTERNAL IMPORTS
+# ----------------
 import os
 import pickle
 
+# ----------------
+# INTERNAL IMPORTS
+# ----------------
 from .handles import Process
 
+# -------------
+# UTILS IMPORTS
+# -------------
+from ..utils import IOTools
 
 class Operate(object):
 

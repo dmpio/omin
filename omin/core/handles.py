@@ -27,6 +27,7 @@ from .base import repr_dec
 from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 
 # Ugly hack to find this module's version number.
+# FIXME: use bump for versioning instead.
 __module_path__ = os.path.dirname(os.path.realpath(__file__))
 __module_path__ = os.path.split(__module_path__)[0]
 

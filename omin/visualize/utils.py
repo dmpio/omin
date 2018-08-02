@@ -86,7 +86,7 @@ def compartmentalize(boolean_series,
 
 def compartmentalize_and_scale(boolean_series,
                                scale_series,
-                               max_size=50,
+                               max_size=100,
                                axis=1,
                                **kwargs):
     """Returns DataFrame for volcano plots."""
@@ -97,10 +97,20 @@ def compartmentalize_and_scale(boolean_series,
     return results
 
 
-def mitocarta_scale(dataframe, true_face_color=None, true_edge_color=None,
-                    false_face_color=None, false_edge_color=None, legend_fontsize=12,
-                    *args, **kwargs):
-    """Returns compartmentalized plot."""
+def mitocarta_scale(dataframe):
+    return compartmentalize_and_scale(dataframe["MitoCarta2_List"], dataframe["p_adjusted"])
+
+
+def volcano_compartments(stats, title="",
+                         true_face_color=None,
+                         true_edge_color=None,
+                         false_face_color=None,
+                         false_edge_color=None,
+                         loc=2, legend_fontsize=12, ax=None,
+                         *args, **kwargs):
+    if ax is None:
+        ax = plt.gca()
+
     if true_face_color is None:
         true_face_color = [.19, .15, .11, .9]
 
@@ -113,15 +123,15 @@ def mitocarta_scale(dataframe, true_face_color=None, true_edge_color=None,
     if false_edge_color is None:
         false_edge_color = [.35, .35, .35, .8]
 
+    ax.scatter(x=999, y=999, color=true_face_color, edgecolors=true_edge_color)
+    ax.scatter(x=999, y=999, color=false_face_color, edgecolors=false_edge_color)
 
-    ax = compartmentalize_and_scale(dataframe["MitoCarta2_List"],
-                                    dataframe["p_adjusted"], *args, **kwargs)
-    # FIXME: This is embarassing.Find another way to do this.
-    # FIGURE LEGEND HACK
-    ax.scatter(x=999, y=999, color=true_face_color)
-    ax.scatter(x=999, y=999, color=false_face_color)
+    mc_scale = mitocarta_scale(stats)
+    vol = stats.plot.volcano(color=mc_scale.face_color,
+                            edgecolors=mc_scale.edge_color,
+                            sizes=mc_scale.scalar, ax=ax)
 
     # LEGEND
-    ax.legend(["Mito", "Non-mito"], loc=2, prop={'size': legend_fontsize})
+    vol.legend(["Mito", "Non-mito"], loc=loc, prop={'size': legend_fontsize})
 
-    return ax
+    return volcano_latex(title=title, ax=vol, *args, **kwargs)

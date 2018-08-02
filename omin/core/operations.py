@@ -109,7 +109,4 @@ class Operate(object):
             # FIXME: Add error messages.
             file_list = glob("Proteome_Discoverer_Results/*.bz2")
 
-        cls.create_or_load_process(file_list=file_list,
-                                   rescue_entrez_ids=rescue_entrez_ids,
-                                   *args,
-                                   **kwargs)
+        return cls.create_or_load_process(file_list=file_list, rescue_entrez_ids=rescue_entrez_ids, *args, **kwargs)

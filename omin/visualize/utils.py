@@ -64,7 +64,6 @@ def compartmentalize(boolean_series,
                      fc_name="face_color",
                      ec_name="edge_color",
                      axis=1):
-
     """Returns a DataFrame with the folloing columns ..."""
 
     if true_face_color is None:
@@ -81,8 +80,7 @@ def compartmentalize(boolean_series,
 
     face_color_series = boolean_color(boolean_series, true_face_color, false_face_color, name=fc_name)
     edge_color_series = boolean_color(boolean_series, true_edge_color, false_edge_color, name=ec_name)
-
-    results = concat([face_color_series, edge_color_series], axis=axis)
+    results = pd.concat([face_color_series, edge_color_series], axis=axis)
 
     return results
 
@@ -99,5 +97,31 @@ def compartmentalize_and_scale(boolean_series,
     return results
 
 
-def mitocarta_scale(dataframe):
-    return compartmentalize_and_scale(dataframe["MitoCarta2_List"], dataframe["p_adjusted"])
+def mitocarta_scale(dataframe, true_face_color=None, true_edge_color=None,
+                    false_face_color=None, false_edge_color=None, legend_fontsize=12,
+                    *args, **kwargs):
+    """Returns compartmentalized plot."""
+    if true_face_color is None:
+        true_face_color = [.19, .15, .11, .9]
+
+    if true_edge_color is None:
+        true_edge_color = [.6, .25, .25, .25]
+
+    if false_face_color is None:
+        false_face_color = [.97, .981, .9, .50]
+
+    if false_edge_color is None:
+        false_edge_color = [.35, .35, .35, .8]
+
+
+    ax = compartmentalize_and_scale(dataframe["MitoCarta2_List"],
+                                    dataframe["p_adjusted"], *args, **kwargs)
+    # FIXME: This is embarassing.Find another way to do this.
+    # FIGURE LEGEND HACK
+    ax.scatter(x=999, y=999, color=true_face_color)
+    ax.scatter(x=999, y=999, color=false_face_color)
+
+    # LEGEND
+    ax.legend(["Mito", "Non-mito"], loc=2, prop={'size': legend_fontsize})
+
+    return ax

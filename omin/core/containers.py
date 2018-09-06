@@ -326,6 +326,24 @@ class ProteomeDiscovererRaw(Container):
         result = dict([(i,self.fraction_tag(i)) for i in self.study_factor_table._Fn.unique()])
         return result
 
+
+    def _gene_name_extractor(self):
+        """
+        """
+        dataframe = self.master_index.copy()
+
+        result = None
+
+        if "Description" in dataframe:
+            result = dataframe.Description.str.extract("GN=([A-Za-z0-9]+)")
+            result = pd.concat([result, dataframe], axis=1)
+            result.rename(columns={0:"Gene Name"}, inplace=True)
+            self.master_index = result
+
+        else:
+            pass
+
+
 # ===================
 # PEPTIDEGROUPS CLASS
 # ===================
@@ -377,6 +395,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
                 # print(err)
                 pass
         return
+
 
     def _simplify_modifications(self):
         """Return a series of simplifed modifications.
@@ -588,6 +607,7 @@ class Proteins(ProteomeDiscovererRaw):
             # ------------------------
             IntermineTools.rescue_entrez_ids(self.master_index)
 
+        # self.gene_name_extractor()
         # Attach MitoCarta2 data to the master_index.
         self.add_database(MitoCartaTwo.essential)
         # Filter the abundance by master_high_confidence

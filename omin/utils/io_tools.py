@@ -9,6 +9,7 @@ Tools for file input output handling.
 
 import os
 import re
+import bz2
 import shutil
 
 

@@ -21,6 +21,8 @@ from pandomics import pandas as pd
 # Import the guipyter DataLoader class.
 from guipyter import DataLoader
 
+# from pandomics import pandas
+
 # ----------------
 # INTERNAL IMPORTS
 # ----------------

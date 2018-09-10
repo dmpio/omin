@@ -14,8 +14,10 @@ PeptideGroups, and Proteins classes.
 # ----------------
 import re
 import os
-import numpy as np
+import string
 import itertools
+import numpy as np
+
 # Import pandas with the pandomics plug-in.
 from pandomics import pandas as pd
 # Import the guipyter DataLoader class.
@@ -195,12 +197,13 @@ class ProteomeDiscovererRaw(Container):
         rx = re.compile("\((.+)\)")
         study_factors = []
         for i in range(1, len(column_names.columns)):
-            ucols = column_names.iloc[:, i].apply(lambda x: rx.findall(x)[0])
-            ucols = ucols.unique()
-            if len(ucols) == 1:
+            try:
+                ucols = column_names.iloc[:, i].apply(lambda x: rx.findall(x)[0])
+                ucols = ucols.unique()
                 study_factor = ucols[0]
                 study_factors.append(study_factor)
-            else:
+
+            except IndexError as err:
                 # If study factor cannot be identified then StudyFactor_<ABC...> will be assigned.
                 study_factor = "StudyFactor_" + string.ascii_uppercase[i-1]
                 study_factors.append(study_factor)
@@ -301,15 +304,24 @@ class ProteomeDiscovererRaw(Container):
         # FIXME: Add try and excepts with some kind of unique string passed
         by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
 
+        # Regex for isolating the study factor from it's catagory.
         rx = re.compile('(.+)\s\(.+\)')
 
         tag_for_fraction = ""
         for i in by_fn:
             terms = by_fn[i].unique()
+
             terms = list(map(lambda x:x.strip(), terms))
+            #  FIXME: add some try and excepts with better docs.
             if len(terms) == 1:
-                term = terms[0]
-                term = rx.findall(term)
+
+                if any(["(" in i or ")" in i for i in terms]):
+                    term = terms[0]
+                    # Isolate the study factor from it's catagory.
+                    term = rx.findall(term)
+                else:
+                    term = terms
+
                 if len(term) == 1:
                     # Make everything lowercase.
                     term = term[0].lower()
@@ -659,10 +671,11 @@ class Proteins(ProteomeDiscovererRaw):
     def _set_entrez(self):
         """Find and relabel the Entrez Gene ID column.
         """
-        if "Gene ID" in self.master_high_confidence: # PD2.1
-            self.master_high_confidence.rename(columns={'Gene ID':'EntrezGeneID'}, inplace=True)
+        if "Gene ID" in self.master_high_confidence: # PD2.1 Workaround
+            #FIXME: In PD2.1 Gene ID is actually the gene name. Make sure that this will not break anything with PD2.2.
+            self.master_high_confidence.rename(columns={'Gene ID':'GeneName'}, inplace=True)
 
-        if "Entrez Gene ID" in self.master_high_confidence: # PD2.2
+        if "Entrez Gene ID" in self.master_high_confidence: # PD2.1 Workaround
             self.master_high_confidence.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
 
 

@@ -410,6 +410,66 @@ class PeptideGroups(ProteomeDiscovererRaw):
                 pass
         return
 
+    def _simplify_modifications(self):
+        """Return a series of simplifed modifications.
+
+        Parameters
+        ----------
+        df : DataFrame
+
+        Returns
+        -------
+        simplified : Series
+        """
+        simplified = None
+        if any(self.raw.columns == "Modifications"):
+            # Compile the regular expression to be used in findall
+            # rx = re.compile("x(\w+)\s")
+            # simplified = dataframe.Modifications.apply(rx.findall)
+            try:
+                simplified = self.raw.Modifications.str.findall("x(\w+)\s")
+                simplified = simplified.apply(lambda x: x if isinstance(x, list) else [])
+                return simplified
+            except Exception as err:
+                print(err)
+                return simplified
+        else:
+            print("No Modifications column found in Peptide Groups data.")
+
+
+    def get_all_modifications(self):
+        """Return set of ALL of TYPES of modifications found.
+
+        Parameters
+        ----------
+        df : Dataframe
+
+        Returns
+        -------
+
+        """
+
+        found = set(itertools.chain.from_iterable(self._simplify_modifications()))
+
+        return found
+
+
+    def get_in_vivo_modifications(self):
+        """Return list of the in vivo modifications.
+
+        Parameters
+        ----------
+        df : Dataframe
+
+        Returns
+        -------
+        invivo_modifications : set
+        """
+
+        present_modifications = self.get_all_modifications()
+        chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
+        invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
+        return invivo_modifications
 
     def _simplify_modifications(self):
         """Return a series of simplifed modifications.

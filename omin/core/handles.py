@@ -27,6 +27,7 @@ from .base import repr_dec
 from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 
 # Ugly hack to find this module's version number.
+# FIXME: use bump for versioning instead.
 __module_path__ = os.path.dirname(os.path.realpath(__file__))
 __module_path__ = os.path.split(__module_path__)[0]
 
@@ -134,12 +135,17 @@ class Process(Project):
         # # Attempt to calculate the relative occupancy.
         self._calculate_relative_occupancy(verbose=verbose)
 
-        # Reset the master_index
+        # Reset the master_index.
         self._reset_master_index(verbose=verbose)
 
-        # Add mitocart info to metadata
+        # Add mitocarta info to metadata.
         self._add_mitocarta_metadata(verbose=verbose)
 
+        # Extract the gene namesself.
+        self.peptide_groups._gene_name_extractor()
+
+        self.proteins._gene_name_extractor()
+        
     def _peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
         """

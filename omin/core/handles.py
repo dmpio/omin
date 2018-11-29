@@ -145,7 +145,7 @@ class Process(Project):
         self.peptide_groups._gene_name_extractor()
 
         self.proteins._gene_name_extractor()
-
+        
     def _peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
         """

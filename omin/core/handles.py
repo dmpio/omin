@@ -145,7 +145,7 @@ class Process(Project):
         self.peptide_groups._gene_name_extractor()
 
         self.proteins._gene_name_extractor()
-        
+
     def _peptide_groups_master_index_update(self):
         """Merge the proteins.master_index with the peptide_groups.master_index.
         """
@@ -263,7 +263,8 @@ class Process(Project):
                     print("Could not add Mitocarta info to metadata.", err)
 
 
-    def std_out(self, selected_mod, comparisons):
+    # FIXME: Define the two following functions at the PeptideGroups and Proteins Level.
+    def peptides_std_out(self, selected_mod, comparisons):
         """
         Parameters
         ----------
@@ -321,6 +322,49 @@ class Process(Project):
         return result
 
 
+    def proteins_std_out(self, selected_mod, comparisons):
+        """
+        Parameters
+        ----------
+        selected_mod: str
+
+        comparisons: list
+            In the format: [[numerator, denominator],...]
+        """
+
+        proteins_metadata = self.proteins.master_index
+
+        norm_proteins = self.proteins.load_normalized.__dict__["_" + selected_mod.lower()]
+
+        norm_proteins_log2 = norm_proteins.log2_normalize()
+
+
+        comparison_labels = []
+        relative_abundance_comparisons = []
+
+        for i in comparisons:
+            numerator = i[0]
+            denominator = i[1]
+
+            comparision_label = "Protein_Expression_Stats_{}_vs_{}".format(numerator, denominator)
+
+            comparison_labels.append(comparision_label)
+
+            relative_abundance_comp = norm_proteins_log2.fold_change_with_ttest(numerator=numerator,
+                                                                                denominator=denominator,
+                                                                                missing_values=True)
+            relative_abundance_comparisons.append(relative_abundance_comp)
+
+        rel_abun = pd.set_super_columns([proteins_metadata, norm_proteins, norm_proteins_log2],
+                                        ["Metadata", "Load_Normalized", "Load_Normalized_Log2_Normalized",])
+
+        rel_comp = pd.set_super_columns(relative_abundance_comparisons, comparison_labels)
+
+        result = pd.concat([rel_abun, rel_comp], axis=1)
+
+        return result
+
+
     def comparision(self, on=None, where=None, fraction_key=None, mask=None, right=None,
                     numerator=None, denominator=None, filter_out_numerator=None, filter_out_denominator=None):
         """Creates a comparision dataframe from a Process object.
@@ -347,7 +391,7 @@ class Process(Project):
             The term to filter for the numerator.
 
         denominator: str
-            The term to filterfor the denominator.
+            The term to filter for the denominator.
 
         filter_out_numerator: bool
             Defaults to False.

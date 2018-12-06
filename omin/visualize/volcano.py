@@ -19,12 +19,21 @@ try:
 except Exception as err:
     print(err)
 
+
+try:
+    import altair as alt
+except Exception as err:
+    print(err)
+
+
 swatch = {"gray": (0.35, 0.3, 0.3),
           "opti-black": (0.10, 0.05, 0.15)}
 
 cmap = LinearSegmentedColormap.from_list('mycmap',
                                          ["beige", swatch["opti-black"]],
                                          N=2)
+
+
 
 
 def by_compartment(lfc, pval, mask, aspect=None, title=None):
@@ -116,3 +125,83 @@ def scale(lfc=None, pval=None, scalar=None, compartment_mask=None,
     ax.set_ylabel('-Log10(p-value)', fontname="arial")
 
     return ax
+
+### Altair Functions
+
+def volcanize(dataframe):
+    dataframe['nlog10_pvalue'] = -np.log10(dataframe.pvalue)
+    dataframe['ipadj'] = 1-dataframe.p_adjusted
+    return dataframe
+
+
+def alt_volcano(dataframe, domain=(-5,5), range=(0,8), title=''):
+    # Create chart
+
+    if "ipadj" not in dataframe.columns:
+        dataframe = volcanize(dataframe)
+
+    if "nlog10_pvalue" not in dataframe.columns:
+        dataframe = volcanize(dataframe)
+
+    chart = alt.Chart(dataframe)
+
+    tooltip = ["Gene Name",
+               "Accession",
+               "pvalue",
+               "FC",
+               "Modifications in Proteins",
+               "Modifications",
+               "Sequence",
+               "Description",
+              ]
+
+    # Filter for tooltip items in the dataframe.
+    tooltip = [i for i in tooltip if i in dataframe.columns]
+
+    # tooltip = alt.Tooltip(tooltip)
+
+    # Create matrix for edge colors.
+    stroke = alt.Color('MitoCarta2_List', scale=alt.Scale(range=['grey', 'grey']), legend=None)
+
+    # Create matrix for fill colors.
+    fill = alt.Color('MitoCarta2_List',
+                      # Set marker colors
+                      scale=alt.Scale(range=['cornsilk', 'black']),
+                      # Sort according to color
+                      sort=[False, True],
+                      # Legend formatting.
+                      legend=alt.Legend(title="Mitochondrial"),
+                     )
+
+    size = alt.Size('ipadj', legend=alt.Legend(title='1 - FDR'))
+
+    x = alt.X('FC', scale=alt.Scale(domain=domain), title="Log2 FC")
+
+    y = alt.X('nlog10_pvalue', scale=alt.Scale(domain=range), title="-Log10(p-value)")
+
+    # CREATE PLOT
+    chart = chart.mark_point(opacity=0.7).encode(x=x, y=y,
+                                                 tooltip=tooltip,
+                                                 size=size,
+                                                 stroke=stroke,
+                                                 fill=fill)
+
+    chart.title = title
+
+    chart = chart.properties(height=500, width=500)
+
+    return chart
+
+
+def alt_volcano_from_std_out(dataframe, stats_column_name, **kwargs):
+    """Returns an altair chart from a peptides or proteins std_out dataframe.
+    """
+    dataframe = dataframe[['Metadata', stats_column_name]].copy()
+
+    dataframe.drop_super_columns()
+
+    chart = alt_volcano(dataframe, **kwargs)
+
+    chart.title = stats_column_name
+
+    return chart

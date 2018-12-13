@@ -627,6 +627,83 @@ class PeptideGroups(ProteomeDiscovererRaw):
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)
 
+
+    # FIXME: Define the two following functions at the PeptideGroups and Proteins Level.
+    def std_out(self, selected_mod, comparisons):
+        """
+        Parameters
+        ----------
+        selected_mod: str
+
+        comparisons: list
+            In the format: [[numerator, denominator],...]
+        """
+        mod_mask = self.master_index.Modifications.str.contains(selected_mod)
+
+        peptides_metadata = self.master_index.loc[mod_mask]
+
+        peptides_metadata = pd.set_super_columns([peptides_metadata], ["Metadata"])
+
+        results_list = []
+        for k in self._linked_fractions.keys():
+            norm_peptides = self.load_normalized.__dict__[k].loc[mod_mask]
+            norm_peptides_log2 = norm_peptides.log2_normalize()
+
+            comparison_labels = []
+            relative_abundance_comparisons = []
+
+            for i in comparisons:
+                numerator = i[0]
+                denominator = i[1]
+
+                comparision_label = "Relative_Abundance"+k+"_Stats_{}_vs_{}".format(numerator, denominator)
+
+                comparison_labels.append(comparision_label)
+
+                relative_abundance_comp = norm_peptides_log2.fold_change_with_ttest(numerator=numerator,
+                                                                                    denominator=denominator,
+                                                                                    missing_values=True)
+                relative_abundance_comparisons.append(relative_abundance_comp)
+
+            rel_abun = pd.set_super_columns([norm_peptides, norm_peptides_log2],
+                                            ["Load_Normalized"+k, "Load_Normalized_Log2_Normalized"+k,])
+
+            rel_comp = pd.set_super_columns(relative_abundance_comparisons, comparison_labels)
+
+            # Collect the related proteins. These are just for the readers that want to check the work.
+            related_proteins = self.load_normalized_related_proteins.__dict__[self._linked_fractions[k]].loc[mod_mask]
+
+            related_proteins_log2_normalized = related_proteins.log2_normalize()
+
+            norm_peptides_occ = self.relative_occupancy.__dict__[k].loc[mod_mask]
+
+            comparison_labels = []
+            relative_occupancy_comparisons = []
+
+            for i in comparisons:
+                numerator = i[0]
+                denominator = i[1]
+                comparision_label = "Relative_Occupancy"+k+"_Stats_{}_vs_{}".format(numerator, denominator)
+                comparison_labels.append(comparision_label)
+
+                relative_occupancy_comp = norm_peptides_occ.fold_change_with_ttest(numerator=numerator,
+                                                                                   denominator=denominator,
+                                                                                   missing_values=True)
+                relative_occupancy_comparisons.append(relative_occupancy_comp)
+
+            rel_occ = pd.set_super_columns([related_proteins, related_proteins_log2_normalized, norm_peptides_occ],
+                                           ["Load_Normalized_Related_Protein_Abundances"+self._linked_fractions[k], "Log2_Normalized_Load_Normalized_Related_Protein_Abundances"+self._linked_fractions[k], "Relative_Occupancy"+k])
+
+            rel_occ_comp = pd.set_super_columns(relative_occupancy_comparisons, comparison_labels)
+            result = pd.concat([rel_abun, rel_comp, rel_occ, rel_occ_comp], axis=1)
+            results_list.append(result)
+
+        results_list.insert(0, peptides_metadata)
+
+        result = pd.concat(results_list, axis=1)
+
+        return result
+
 # ==============
 # PROTEINS CLASS
 # ==============
@@ -798,3 +875,55 @@ class Proteins(ProteomeDiscovererRaw):
                 print("Could not filter protein abundance by high confidence master proteins.", err)
         else:
             print("Could not filter protein abundance by high confidence master proteins.")
+
+
+    def std_out(self, selected_mod, comparisons):
+        """
+        Parameters
+        ----------
+        selected_mod: str
+
+        comparisons: list
+            In the format: [[numerator, denominator],...]
+        """
+
+        proteins_metadata = self.master_index
+
+        proteins_metadata =  pd.set_super_columns([proteins_metadata], ["Metadata"])
+
+        results_list = []
+        for k in self.load_normalized.__dict__.keys():
+
+            norm_proteins = self.load_normalized.__dict__[k]
+            norm_proteins_log2 = norm_proteins.log2_normalize()
+
+            comparison_labels = []
+            relative_abundance_comparisons = []
+
+            for i in comparisons:
+                numerator = i[0]
+                denominator = i[1]
+
+                comparision_label = "Protein_Expression_Stats"+k+"_{}_vs_{}".format(numerator, denominator)
+
+                comparison_labels.append(comparision_label)
+
+                relative_abundance_comp = norm_proteins_log2.fold_change_with_ttest(numerator=numerator,
+                                                                                    denominator=denominator,
+                                                                                    missing_values=True)
+                relative_abundance_comparisons.append(relative_abundance_comp)
+
+            rel_abun = pd.set_super_columns([norm_proteins, norm_proteins_log2],
+                                            ["Load_Normalized"+k, "Load_Normalized_Log2_Normalized"+k,])
+
+            rel_comp = pd.set_super_columns(relative_abundance_comparisons, comparison_labels)
+
+            result = pd.concat([rel_abun, rel_comp], axis=1)
+
+            results_list.append(result)
+
+        results_list.insert(0, proteins_metadata)
+
+        final_result = pd.concat(results_list, axis=1)
+
+        return final_result

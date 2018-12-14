@@ -138,9 +138,6 @@ class Process(Project):
         # # Attempt to calculate the relative occupancy.
         self._calculate_relative_occupancy(verbose=verbose)
 
-        # # Reset the master_index.
-        # self._reset_master_index(verbose=verbose)
-
         # Add mitocarta info to metadata.
         self._add_mitocarta_metadata(verbose=verbose)
 
@@ -268,108 +265,6 @@ class Process(Project):
             except Exception as err:
                 if verbose:
                     print("Could not add Mitocarta info to metadata.", err)
-
-
-    # # FIXME: Define the two following functions at the PeptideGroups and Proteins Level.
-    # def peptides_std_out(self, selected_mod, comparisons):
-    #     """
-    #     Parameters
-    #     ----------
-    #     selected_mod: str
-    #
-    #     comparisons: list
-    #         In the format: [[numerator, denominator],...]
-    #     """
-    #     mod_mask = self.peptide_groups.master_index.Modifications.str.contains(selected_mod)
-    #     peptides_metadata = self.peptide_groups.master_index.loc[mod_mask]
-    #     norm_peptides = self.peptide_groups.load_normalized.__dict__["_" + selected_mod.lower()].loc[mod_mask]
-    #     norm_peptides_log2 = norm_peptides.log2_normalize()
-    #
-    #     comparison_labels = []
-    #     relative_abundance_comparisons = []
-    #
-    #     for i in comparisons:
-    #         numerator = i[0]
-    #         denominator = i[1]
-    #
-    #         comparision_label = "Relative_Abundance_Stats_{}_vs_{}".format(numerator, denominator)
-    #
-    #         comparison_labels.append(comparision_label)
-    #
-    #         relative_abundance_comp = norm_peptides_log2.fold_change_with_ttest(numerator=numerator,
-    #                                                                             denominator=denominator,
-    #                                                                             missing_values=True)
-    #         relative_abundance_comparisons.append(relative_abundance_comp)
-    #
-    #     rel_abun = pd.set_super_columns([peptides_metadata, norm_peptides, norm_peptides_log2],
-    #                                     ["Metadata", "Load_Normalized", "Load_Normalized_Log2_Normalized",])
-    #
-    #     rel_comp = pd.set_super_columns(relative_abundance_comparisons, comparison_labels)
-    #
-    #     norm_peptides_occ = self.peptide_groups.relative_occupancy.__dict__["_" + selected_mod.lower()].loc[mod_mask]
-    #
-    #     comparison_labels = []
-    #     relative_occupancy_comparisons = []
-    #
-    #     for i in comparisons:
-    #         numerator = i[0]
-    #         denominator = i[1]
-    #         comparision_label = "Relative_Occupancy_Stats_{}_vs_{}".format(numerator, denominator)
-    #         comparison_labels.append(comparision_label)
-    #
-    #         relative_occupancy_comp = norm_peptides_occ.fold_change_with_ttest(numerator=numerator,
-    #                                                                            denominator=denominator,
-    #                                                                            missing_values=True)
-    #         relative_occupancy_comparisons.append(relative_occupancy_comp)
-    #
-    #     rel_occ = pd.set_super_columns([norm_peptides_occ], ["Relative_Occupancy"])
-    #     rel_occ_comp = pd.set_super_columns(relative_occupancy_comparisons, comparison_labels)
-    #     result = pd.concat([rel_abun, rel_comp, rel_occ, rel_occ_comp], axis=1)
-    #
-    #     return result
-    #
-    #
-    # def proteins_std_out(self, selected_mod, comparisons):
-    #     """
-    #     Parameters
-    #     ----------
-    #     selected_mod: str
-    #
-    #     comparisons: list
-    #         In the format: [[numerator, denominator],...]
-    #     """
-    #
-    #     proteins_metadata = self.proteins.master_index
-    #
-    #     norm_proteins = self.proteins.load_normalized.__dict__["_" + selected_mod.lower()]
-    #
-    #     norm_proteins_log2 = norm_proteins.log2_normalize()
-    #
-    #
-    #     comparison_labels = []
-    #     relative_abundance_comparisons = []
-    #
-    #     for i in comparisons:
-    #         numerator = i[0]
-    #         denominator = i[1]
-    #
-    #         comparision_label = "Protein_Expression_Stats_{}_vs_{}".format(numerator, denominator)
-    #
-    #         comparison_labels.append(comparision_label)
-    #
-    #         relative_abundance_comp = norm_proteins_log2.fold_change_with_ttest(numerator=numerator,
-    #                                                                             denominator=denominator,
-    #                                                                             missing_values=True)
-    #         relative_abundance_comparisons.append(relative_abundance_comp)
-    #
-    #     rel_abun = pd.set_super_columns([proteins_metadata, norm_proteins, norm_proteins_log2],
-    #                                     ["Metadata", "Load_Normalized", "Load_Normalized_Log2_Normalized",])
-    #
-    #     rel_comp = pd.set_super_columns(relative_abundance_comparisons, comparison_labels)
-    #
-    #     result = pd.concat([rel_abun, rel_comp], axis=1)
-    #
-    #     return result
 
 
     def comparision(self, on=None, where=None, fraction_key=None, mask=None, right=None,

@@ -670,6 +670,14 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
             rel_comp = pd.set_super_columns(relative_abundance_comparisons, comparison_labels)
 
+<<<<<<< HEAD
+=======
+            # Collect the related proteins. These are just for the readers that want to check the work.
+            related_proteins = self.load_normalized_related_proteins.__dict__[self._linked_fractions[k]].loc[mod_mask]
+
+            related_proteins_log2_normalized = related_proteins.log2_normalize()
+
+>>>>>>> before_stdout
             norm_peptides_occ = self.relative_occupancy.__dict__[k].loc[mod_mask]
 
             comparison_labels = []
@@ -686,7 +694,13 @@ class PeptideGroups(ProteomeDiscovererRaw):
                                                                                    missing_values=True)
                 relative_occupancy_comparisons.append(relative_occupancy_comp)
 
+<<<<<<< HEAD
             rel_occ = pd.set_super_columns([norm_peptides_occ], ["Relative_Occupancy"+k])
+=======
+            rel_occ = pd.set_super_columns([related_proteins, related_proteins_log2_normalized, norm_peptides_occ],
+                                           ["Load_Normalized_Related_Protein_Abundances"+self._linked_fractions[k], "Log2_Normalized_Load_Normalized_Related_Protein_Abundances"+self._linked_fractions[k], "Relative_Occupancy"+k])
+
+>>>>>>> before_stdout
             rel_occ_comp = pd.set_super_columns(relative_occupancy_comparisons, comparison_labels)
             result = pd.concat([rel_abun, rel_comp, rel_occ, rel_occ_comp], axis=1)
             results_list.append(result)

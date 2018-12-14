@@ -129,14 +129,17 @@ class Process(Project):
         # Fill the NaNs in mitocarta.
         self._peptide_groups_mitocarta_fillna()
 
+        # Reset the master_index.
+        self._reset_master_index(verbose=verbose)
+
         # Link proteins to peptides
         self._link_proteins_to_peptides()
 
         # # Attempt to calculate the relative occupancy.
         self._calculate_relative_occupancy(verbose=verbose)
 
-        # Reset the master_index.
-        self._reset_master_index(verbose=verbose)
+        # # Reset the master_index.
+        # self._reset_master_index(verbose=verbose)
 
         # Add mitocarta info to metadata.
         self._add_mitocarta_metadata(verbose=verbose)
@@ -210,10 +213,13 @@ class Process(Project):
             self.proteins.load_normalized = Normalized(**normalized)
             related_proteins_dict = dict()
             for k,v in self.proteins.load_normalized.__dict__.items():
-                related_proteins = v.iloc[self.proteins.link_to_peptides.index]
-                related_proteins.index = self.peptide_groups.raw.index
+                # related_proteins = v.iloc[self.proteins.link_to_peptides.index]
+                related_proteins = v.loc[self.proteins.link_to_peptides.index]
+                # related_proteins.index = self.peptide_groups.raw.index
+                related_proteins.index = self.peptide_groups.master_index.index
                 related_proteins_dict[k] = related_proteins
             self.peptide_groups.load_normalized_related_proteins = Normalized(**related_proteins_dict)
+
             occupancy = dict()
             for k,v in self.peptide_groups._linked_fractions.items():
                 peptide_norm = self.peptide_groups.load_normalized.__dict__[k].log2_normalize()
@@ -234,6 +240,7 @@ class Process(Project):
         """
         # Create a copy of the old_master_index.
         old_master_index = self.proteins._old_master_index.copy()
+
         # Retrieve the accession from the old_master_index.
         old_master_index = old_master_index.filter(regex="Accession")
         # Merge the old_master_index with the "new" master_index

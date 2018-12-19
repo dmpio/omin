@@ -575,23 +575,38 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
         # isolate the input fractions study factors.
         inps = self.study_factor_table.loc[input_mask]
-        inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
+        # inps = [inps.loc[inps._Fn.str.contains(i+"\Z")] for i in inps._Fn.unique()]
+        inps = [inps.filter_rows(on="_Fn", term=i+"\Z") for i in inps._Fn.unique()]
 
         # isolate the other fractions study factors.
         frcs = self.study_factor_table.loc[~input_mask]
-        frcs = [frcs.loc[frcs._Fn.str.contains(i)] for i in frcs._Fn.unique()]
+        # frcs = [frcs.loc[frcs._Fn.str.contains(i+"\Z")] for i in frcs._Fn.unique()]
+        frcs = [frcs.filter_rows(on="_Fn", term=i+"\Z") for i in frcs._Fn.unique()]
+
+        # # Create a list of linkage DataFrames.
+        # linked = []
+        # for i in inps:
+        #     for j in frcs:
+        #         score = sum(sum(j.values == i.values))
+        #         link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
+        #         score_df = pd.DataFrame([i.shape[0]*[score]]).T
+        #         score_df.columns = ["Score"]
+        #         score_df.index = j.index
+        #         j_prime = pd.concat([j, link, score_df], axis=1)
+        #         linked.append(j_prime)
 
         # Create a list of linkage DataFrames.
         linked = []
         for i in inps:
             for j in frcs:
-                score = sum(sum(j.values == i.values))
-                link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
-                score_df = pd.DataFrame([i.shape[0]*[score]]).T
-                score_df.columns = ["Score"]
-                score_df.index = j.index
-                j_prime = pd.concat([j, link, score_df], axis=1)
-                linked.append(j_prime)
+                if j.shape == i.shape:
+                    score = sum(sum(j.values == i.values))
+                    link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
+                    score_df = pd.DataFrame([i.shape[0]*[score]]).T
+                    score_df.columns = ["Score"]
+                    score_df.index = j.index
+                    j_prime = pd.concat([j, link, score_df], axis=1)
+                    linked.append(j_prime)
 
         scores = np.array([i.Score.unique()[0] for i in linked])
         linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
@@ -788,11 +803,20 @@ class Proteins(ProteomeDiscovererRaw):
     @property
     def is_master_protein(self):
         "Filter raw protein DataFrame for master proteins."
+
+
+
         try:
             # BIG ASSUMPTION: self.high_confidence is able to work
-            mask = self.high_confidence.Master == "IsMasterProtein"
+            # mask = self.high_confidence.Master == "IsMasterProtein"
+
+            # For PD version compatibility.
+            master_protein_terms = {"IsMasterProtein", "Master Protein"}
+            mask = self.high_confidence.Master.apply(lambda x: x in master_protein_terms)
+
             result = self.high_confidence.loc[mask]
             return result
+
         except Exception as err:
             print('Could not Filter for master proteins.', err)
             return self.high_confidence

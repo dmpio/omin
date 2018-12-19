@@ -599,11 +599,11 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
 
         scores = np.array([i.Score.unique()[0] for i in linked])
-        # linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
+        linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
 
-        # Create a cutoff list that is approximately half of the scores.
-        cut_off = scores[(-scores).argsort()][:int(len(scores)/2)]
-        linked = list(filter(lambda x:x.Score.unique()[0] in cut_off, linked))
+        # # Create a cutoff list that is approximately half of the scores.
+        # cut_off = scores[(-scores).argsort()][:int(len(scores)/2)]
+        # linked = list(filter(lambda x:x.Score.unique()[0] in cut_off, linked))
 
         # Normalize the inputs to themselves and add them to the normalized dict.
         # FIXME: Add the following comment to the doc string for this function.

@@ -575,32 +575,21 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
         # isolate the input fractions study factors.
         inps = self.study_factor_table.loc[input_mask]
-        # inps = [inps.loc[inps._Fn.str.contains(i+"\Z")] for i in inps._Fn.unique()]
         inps = [inps.filter_rows(on="_Fn", term=i+"\Z") for i in inps._Fn.unique()]
 
         # isolate the other fractions study factors.
         frcs = self.study_factor_table.loc[~input_mask]
-        # frcs = [frcs.loc[frcs._Fn.str.contains(i+"\Z")] for i in frcs._Fn.unique()]
         frcs = [frcs.filter_rows(on="_Fn", term=i+"\Z") for i in frcs._Fn.unique()]
-
-        # # Create a list of linkage DataFrames.
-        # linked = []
-        # for i in inps:
-        #     for j in frcs:
-        #         score = sum(sum(j.values == i.values))
-        #         link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
-        #         score_df = pd.DataFrame([i.shape[0]*[score]]).T
-        #         score_df.columns = ["Score"]
-        #         score_df.index = j.index
-        #         j_prime = pd.concat([j, link, score_df], axis=1)
-        #         linked.append(j_prime)
 
         # Create a list of linkage DataFrames.
         linked = []
         for i in inps:
             for j in frcs:
+                # If the fractions have the same shape then proceed with linking.
                 if j.shape == i.shape:
+                    # Generate a integer score of the similarity.
                     score = sum(sum(j.values == i.values))
+                    # Create a DataFrame of the links.
                     link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
                     score_df = pd.DataFrame([i.shape[0]*[score]]).T
                     score_df.columns = ["Score"]
@@ -608,12 +597,15 @@ class PeptideGroups(ProteomeDiscovererRaw):
                     j_prime = pd.concat([j, link, score_df], axis=1)
                     linked.append(j_prime)
 
+
         scores = np.array([i.Score.unique()[0] for i in linked])
-        linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
-        # self._linked_fractions = linked
+        # linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
+
+        # Create a cutoff list that is approximately half of the scores.
+        cut_off = scores[(-scores).argsort()][:int(len(scores)/2)]
+        linked = list(filter(lambda x:x.Score.unique()[0] in cut_off, linked))
 
         # Normalize the inputs to themselves and add them to the normalized dict.
-
         # FIXME: Add the following comment to the doc string for this function.
 
         # NOTE: Inputs are normalized to themselves in order to calculate relative occupancy
@@ -641,6 +633,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)
+
 
 
     # FIXME: Define the two following functions at the PeptideGroups and Proteins Level.

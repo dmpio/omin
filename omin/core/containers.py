@@ -563,8 +563,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
             pass
 
 
-    @property
-    def load_normalized(self):
+    def _separate_enriched_and_input(self):
         """Return object with load normalzed pd.DataFrames as attributes.
         """
         # FIXME: NORMALIZE INPUT TO ITS SELF.
@@ -581,7 +580,13 @@ class PeptideGroups(ProteomeDiscovererRaw):
         frcs = self.study_factor_table.loc[~input_mask]
         frcs = [frcs.filter_rows(on="_Fn", term=i+"\Z") for i in frcs._Fn.unique()]
 
+        return inps, frcs
+
+
+    def _link_enriched_to_input(self):
         # Create a list of linkage DataFrames.
+        inps, frcs = self._separate_enriched_and_input()
+
         linked = []
         for i in inps:
             for j in frcs:
@@ -599,37 +604,59 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
 
         scores = np.array([i.Score.unique()[0] for i in linked])
-        linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
+        # # Isolate the highest scoring linked fractions
+        # linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
 
         # # Create a cutoff list that is approximately half of the scores.
         # cut_off = scores[(-scores).argsort()][:int(len(scores)/2)]
         # linked = list(filter(lambda x:x.Score.unique()[0] in cut_off, linked))
 
-        # Normalize the inputs to themselves and add them to the normalized dict.
-        # FIXME: Add the following comment to the doc string for this function.
+        return linked
 
-        # NOTE: Inputs are normalized to themselves in order to calculate relative occupancy
-        # and looking into the whole proteome. Inputs that have been normalized to themselves
-        # are not used to normalize enriched fractions non-normalized inputs are.
-        normalized = dict()
-        for inp in inps:
-            inp_df = self.Abundance[self.Abundance.columns[i.index]]
-            inp_df = inp_df.normalize_to(inp_df)
-            inp_label = self.fraction_tag(inp._Fn.unique()[0])
-            normalized[inp_label] = inp_df
+
+    def _set_linked_fractions(self):
+        # linked = _link_enriched_to_input(self)
+        linked = self._link_enriched_to_input()
 
         # Normalize the linked fractions
         self._linked_fractions = dict()
         for link in linked:
-            inp = self.Abundance[self.Abundance.columns[link.Link]]
-            # Get the input label again.
+            # Get the input label.
             inp_label = self.fraction_tag(self.study_factor_table.iloc[link.Link]._Fn.unique()[0])
-            other = self.Abundance[self.Abundance.columns[link.index]]
+
             other_label = self.fraction_tag(link._Fn.unique()[0])
-            load_normalized = other.normalize_to(inp)
-            normalized[other_label] = load_normalized
 
             self._linked_fractions[other_label] = inp_label
+
+
+    def load_normalized(self):
+        """Normalize the inputs to themselves and add them to the normalized dict.
+        NOTE: Inputs are normalized to themselves in order to calculate relative
+        occupancy and looking into the whole proteome. Inputs that have been
+        normalized to themselves are not used to normalize enriched fractions
+        non-normalized inputs are.
+        """
+
+        self._set_linked_fractions()
+
+        linked = self._link_enriched_to_input()
+        inps, frcs = self._separate_enriched_and_input()
+
+
+        normalized = dict()
+        for inp in inps:
+            inp_df = self.Abundance[self.Abundance.columns[inp.index]]
+            inp_df = inp_df.normalize_to(inp_df)
+            inp_label = self.fraction_tag(inp._Fn.unique()[0])
+            normalized[inp_label] = inp_df
+
+        for link in linked:
+            inp = self.Abundance[self.Abundance.columns[link.Link]]
+            other = self.Abundance[self.Abundance.columns[link.index]]
+            other_label = self.fraction_tag(link._Fn.unique()[0])
+
+            load_normalized = other.normalize_to(inp)
+            normalized[other_label] = load_normalized
 
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)

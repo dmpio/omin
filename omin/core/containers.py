@@ -565,6 +565,8 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
     def _separate_enriched_and_input(self):
         """Return object with load normalzed pd.DataFrames as attributes.
+
+        See Also: omin.core.containers.load_normalized
         """
         # FIXME: NORMALIZE INPUT TO ITS SELF.
 
@@ -584,6 +586,10 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
 
     def _link_enriched_to_input(self):
+        """Returns list of DataFrames linking enriched fractions to inputs.
+
+        See Also: omin.core.containers.load_normalized
+        """
         # Create a list of linkage DataFrames.
         inps, frcs = self._separate_enriched_and_input()
 
@@ -614,35 +620,25 @@ class PeptideGroups(ProteomeDiscovererRaw):
         return linked
 
 
-    def _set_linked_fractions(self):
-        # linked = _link_enriched_to_input(self)
-        linked = self._link_enriched_to_input()
-
-        # Normalize the linked fractions
-        self._linked_fractions = dict()
-        for link in linked:
-            # Get the input label.
-            inp_label = self.fraction_tag(self.study_factor_table.iloc[link.Link]._Fn.unique()[0])
-
-            other_label = self.fraction_tag(link._Fn.unique()[0])
-
-            self._linked_fractions[other_label] = inp_label
-
-
+    @property
     def load_normalized(self):
         """Normalize the inputs to themselves and add them to the normalized dict.
         NOTE: Inputs are normalized to themselves in order to calculate relative
         occupancy and looking into the whole proteome. Inputs that have been
         normalized to themselves are not used to normalize enriched fractions
         non-normalized inputs are.
+
+        See Also:
+        omin.core.containers._link_enriched_to_input
+        omin.core.containers._separate_enriched_and_input
+
         """
-
-        self._set_linked_fractions()
-
+        # Collect the linked fractions.
         linked = self._link_enriched_to_input()
+        # Collect the input and enriched fractions.
         inps, frcs = self._separate_enriched_and_input()
 
-
+        # Normalize the inputs to themselves.
         normalized = dict()
         for inp in inps:
             inp_df = self.Abundance[self.Abundance.columns[inp.index]]
@@ -650,13 +646,23 @@ class PeptideGroups(ProteomeDiscovererRaw):
             inp_label = self.fraction_tag(inp._Fn.unique()[0])
             normalized[inp_label] = inp_df
 
+        # Create the _linked_fractions dict
+        self._linked_fractions = dict()
+        # Normalize the linked fractions.
         for link in linked:
+            # Get the input label.
+            inp_label = self.fraction_tag(self.study_factor_table.iloc[link.Link]._Fn.unique()[0])
+            # Collect the linked input abundance values.
             inp = self.Abundance[self.Abundance.columns[link.Link]]
-            other = self.Abundance[self.Abundance.columns[link.index]]
+            # Get the enriched fraction.
             other_label = self.fraction_tag(link._Fn.unique()[0])
-
+            # Collect the linked enriched abundance values.
+            other = self.Abundance[self.Abundance.columns[link.index]]
+            # Normalize the enriched fraction to the input
             load_normalized = other.normalize_to(inp)
             normalized[other_label] = load_normalized
+            # Add the link to the dict for use in other functions.
+            self._linked_fractions[other_label] = inp_label
 
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)

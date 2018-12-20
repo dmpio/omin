@@ -563,9 +563,10 @@ class PeptideGroups(ProteomeDiscovererRaw):
             pass
 
 
-    @property
-    def load_normalized(self):
+    def _separate_enriched_and_input(self):
         """Return object with load normalzed pd.DataFrames as attributes.
+
+        See Also: omin.core.containers.load_normalized
         """
         # FIXME: NORMALIZE INPUT TO ITS SELF.
 
@@ -575,57 +576,97 @@ class PeptideGroups(ProteomeDiscovererRaw):
 
         # isolate the input fractions study factors.
         inps = self.study_factor_table.loc[input_mask]
-        inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
+        inps = [inps.filter_rows(on="_Fn", term=i+"\Z") for i in inps._Fn.unique()]
 
         # isolate the other fractions study factors.
         frcs = self.study_factor_table.loc[~input_mask]
-        frcs = [frcs.loc[frcs._Fn.str.contains(i)] for i in frcs._Fn.unique()]
+        frcs = [frcs.filter_rows(on="_Fn", term=i+"\Z") for i in frcs._Fn.unique()]
 
+        return inps, frcs
+
+
+    def _link_enriched_to_input(self):
+        """Returns list of DataFrames linking enriched fractions to inputs.
+
+        See Also: omin.core.containers.load_normalized
+        """
         # Create a list of linkage DataFrames.
+        inps, frcs = self._separate_enriched_and_input()
+
         linked = []
         for i in inps:
             for j in frcs:
-                score = sum(sum(j.values == i.values))
-                link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
-                score_df = pd.DataFrame([i.shape[0]*[score]]).T
-                score_df.columns = ["Score"]
-                score_df.index = j.index
-                j_prime = pd.concat([j, link, score_df], axis=1)
-                linked.append(j_prime)
+                # If the fractions have the same shape then proceed with linking.
+                if j.shape == i.shape:
+                    # Generate a integer score of the similarity.
+                    score = sum(sum(j.values == i.values))
+                    # Create a DataFrame of the links.
+                    link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
+                    score_df = pd.DataFrame([i.shape[0]*[score]]).T
+                    score_df.columns = ["Score"]
+                    score_df.index = j.index
+                    j_prime = pd.concat([j, link, score_df], axis=1)
+                    linked.append(j_prime)
+
 
         scores = np.array([i.Score.unique()[0] for i in linked])
-        linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
-        # self._linked_fractions = linked
+        # # Isolate the highest scoring linked fractions
+        # linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
 
-        # Normalize the inputs to themselves and add them to the normalized dict.
+        # # Create a cutoff list that is approximately half of the scores.
+        # cut_off = scores[(-scores).argsort()][:int(len(scores)/2)]
+        # linked = list(filter(lambda x:x.Score.unique()[0] in cut_off, linked))
 
-        # FIXME: Add the following comment to the doc string for this function.
+        return linked
 
-        # NOTE: Inputs are normalized to themselves in order to calculate relative occupancy
-        # and looking into the whole proteome. Inputs that have been normalized to themselves
-        # are not used to normalize enriched fractions non-normalized inputs are.
+
+    @property
+    def load_normalized(self):
+        """Normalize the inputs to themselves and add them to the normalized dict.
+        NOTE: Inputs are normalized to themselves in order to calculate relative
+        occupancy and looking into the whole proteome. Inputs that have been
+        normalized to themselves are not used to normalize enriched fractions
+        non-normalized inputs are.
+
+        See Also:
+        omin.core.containers._link_enriched_to_input
+        omin.core.containers._separate_enriched_and_input
+
+        """
+        # Collect the linked fractions.
+        linked = self._link_enriched_to_input()
+        # Collect the input and enriched fractions.
+        inps, frcs = self._separate_enriched_and_input()
+
+        # Normalize the inputs to themselves.
         normalized = dict()
         for inp in inps:
-            inp_df = self.Abundance[self.Abundance.columns[i.index]]
+            inp_df = self.Abundance[self.Abundance.columns[inp.index]]
             inp_df = inp_df.normalize_to(inp_df)
             inp_label = self.fraction_tag(inp._Fn.unique()[0])
             normalized[inp_label] = inp_df
 
-        # Normalize the linked fractions
+        # Create the _linked_fractions dict
         self._linked_fractions = dict()
+        # Normalize the linked fractions.
         for link in linked:
-            inp = self.Abundance[self.Abundance.columns[link.Link]]
-            # Get the input label again.
+            # Get the input label.
             inp_label = self.fraction_tag(self.study_factor_table.iloc[link.Link]._Fn.unique()[0])
-            other = self.Abundance[self.Abundance.columns[link.index]]
+            # Collect the linked input abundance values.
+            inp = self.Abundance[self.Abundance.columns[link.Link]]
+            # Get the enriched fraction.
             other_label = self.fraction_tag(link._Fn.unique()[0])
+            # Collect the linked enriched abundance values.
+            other = self.Abundance[self.Abundance.columns[link.index]]
+            # Normalize the enriched fraction to the input
             load_normalized = other.normalize_to(inp)
             normalized[other_label] = load_normalized
-
+            # Add the link to the dict for use in other functions.
             self._linked_fractions[other_label] = inp_label
 
         # Throwing the normalized dict into the Normalized class
         return Normalized(**normalized)
+
 
 
     # FIXME: Define the two following functions at the PeptideGroups and Proteins Level.
@@ -788,11 +829,20 @@ class Proteins(ProteomeDiscovererRaw):
     @property
     def is_master_protein(self):
         "Filter raw protein DataFrame for master proteins."
+
+
+
         try:
             # BIG ASSUMPTION: self.high_confidence is able to work
-            mask = self.high_confidence.Master == "IsMasterProtein"
+            # mask = self.high_confidence.Master == "IsMasterProtein"
+
+            # For PD version compatibility.
+            master_protein_terms = {"IsMasterProtein", "Master Protein"}
+            mask = self.high_confidence.Master.apply(lambda x: x in master_protein_terms)
+
             result = self.high_confidence.loc[mask]
             return result
+
         except Exception as err:
             print('Could not Filter for master proteins.', err)
             return self.high_confidence

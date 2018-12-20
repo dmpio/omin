@@ -108,6 +108,11 @@ from .databases import MitoCartaTwo
 # -----------
 from . import cli
 
+# -----------
+# CLI IMPORTS
+# -----------
+from . import example_data
+
 # -------
 # VERSION
 # -------

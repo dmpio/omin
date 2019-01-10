@@ -593,29 +593,34 @@ class PeptideGroups(ProteomeDiscovererRaw):
         # Create a list of linkage DataFrames.
         inps, frcs = self._separate_enriched_and_input()
 
+        # Create a list of linkage DataFrames.
         linked = []
-        for i in inps:
-            for j in frcs:
-                # If the fractions have the same shape then proceed with linking.
+        for j in frcs:
+            for i in inps:
                 if j.shape == i.shape:
-                    # Generate a integer score of the similarity.
-                    score = sum(sum(j.values == i.values))
-                    # Create a DataFrame of the links.
+                    # Isolate the just the columns to compare.
+                    cols_to_compare = list(filter(lambda x: x not in {"_Fn", "Fraction"}, j.columns))
+                    # Create bolean comparison matrix.
+                    comparison_matrix = j[cols_to_compare].values == i[cols_to_compare].values
+                    # Find the number of cells in the matrix.
+                    number_of_cells = comparison_matrix.shape[0]*comparison_matrix.shape[1]
+                    # Calculate similarity 1 being the most simillar 0 being the least.
+                    score = sum(sum(comparison_matrix))/number_of_cells
+                    # Create the link DataFrame
                     link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
+                    # Create score DataFrame
                     score_df = pd.DataFrame([i.shape[0]*[score]]).T
                     score_df.columns = ["Score"]
+                    # Give the score_df the same index as j.
                     score_df.index = j.index
+                    # Concatenate j, link and score_df
                     j_prime = pd.concat([j, link, score_df], axis=1)
                     linked.append(j_prime)
 
 
         scores = np.array([i.Score.unique()[0] for i in linked])
-        # # Isolate the highest scoring linked fractions
-        # linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
-
-        # # Create a cutoff list that is approximately half of the scores.
-        # cut_off = scores[(-scores).argsort()][:int(len(scores)/2)]
-        # linked = list(filter(lambda x:x.Score.unique()[0] in cut_off, linked))
+        # Isolate the highest scoring linked fractions
+        linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
 
         return linked
 

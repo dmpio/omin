@@ -787,7 +787,7 @@ class Proteins(ProteomeDiscovererRaw):
         # Filter for master proteins and high confidence
         # ----------------------------------------------
         # FIXME: This may be redone in the future.
-        self._high_confidence = self.high_confidence
+        # self._high_confidence = self.high_confidence
         self.master_high_confidence = self.is_master_protein
         # METADATA: Number of high confidence protein.
         self.metadata['high_confidence_ids'] = self.master_high_confidence.shape[0]
@@ -834,8 +834,6 @@ class Proteins(ProteomeDiscovererRaw):
     @property
     def is_master_protein(self):
         "Filter raw protein DataFrame for master proteins."
-
-
 
         try:
             # BIG ASSUMPTION: self.high_confidence is able to work

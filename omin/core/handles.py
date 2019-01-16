@@ -141,7 +141,7 @@ class Process(Project):
         # Add mitocarta info to metadata.
         self._add_mitocarta_metadata(verbose=verbose)
 
-        # Extract the gene namesself.
+        # Extract the gene names.
         self.peptide_groups._gene_name_extractor()
 
         self.proteins._gene_name_extractor()
@@ -172,9 +172,34 @@ class Process(Project):
                     print(err)
 
 
+    def _reset_master_index(self, verbose=True):
+        """Work-around to return rows with missing values to protein.master_index.
+        """
+        # Create a copy of the old_master_index.
+        old_master_index = self.proteins._old_master_index.copy()
+
+        # Retrieve the accession from the old_master_index.
+        old_master_index = old_master_index.filter(regex="Accession")
+        # Merge the old_master_index with the "new" master_index
+        result = old_master_index.merge(self.proteins.master_index, how="left", on="Accession")
+        # Set the index.
+        result.index = self.proteins._old_master_index.index
+        # Fill the missing values in the Mitocarta columns with False.
+        # FIXME: Generalize this so that it isn't so mitocarta specific
+        result["MitoCarta2_List"].fillna(False, inplace=True)
+        result["Matrix"].fillna(False, inplace=True)
+        result["IMS"].fillna(False, inplace=True)
+        self.proteins.master_index = result
+
+
     def _link_proteins_to_peptides(self):
         """Links protiens to peptides.
+
+        Creates a series that serves as a map between proteins and peptides
+        groups. The series has the same number of rows as the peptides groups
+        but the index corresponds to the proteins.
         """
+
         link_to_peptides = self.peptide_groups.master_index.merge(self.proteins.master_index, on="Accession", how="left", left_index=True)
         link_to_peptides = link_to_peptides.Accession
         self.proteins.link_to_peptides = link_to_peptides
@@ -230,26 +255,6 @@ class Process(Project):
             if verbose:
                 print("Could not generate relative occupancy from data.")
             pass
-
-
-    def _reset_master_index(self, verbose=True):
-        """Work-around to return rows with missing values to protein.master_index.
-        """
-        # Create a copy of the old_master_index.
-        old_master_index = self.proteins._old_master_index.copy()
-
-        # Retrieve the accession from the old_master_index.
-        old_master_index = old_master_index.filter(regex="Accession")
-        # Merge the old_master_index with the "new" master_index
-        result = old_master_index.merge(self.proteins.master_index, how="left", on="Accession")
-        # Set the index.
-        result.index = self.proteins._old_master_index.index
-        # Fill the missing values in the Mitocarta columns with False.
-        # FIXME: Generalize this so that it isn't so mitocarta specific
-        result["MitoCarta2_List"].fillna(False, inplace=True)
-        result["Matrix"].fillna(False, inplace=True)
-        result["IMS"].fillna(False, inplace=True)
-        self.proteins.master_index = result
 
 
     def _add_mitocarta_metadata(self, verbose=False):

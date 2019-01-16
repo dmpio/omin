@@ -200,7 +200,11 @@ class Process(Project):
         but the index corresponds to the proteins.
         """
 
-        link_to_peptides = self.peptide_groups.master_index.merge(self.proteins.master_index, on="Accession", how="left", left_index=True)
+        link_to_peptides = self.peptide_groups.master_index.merge(self.proteins.master_index,
+                                                                  on="Accession",
+                                                                  how="left",
+                                                                  left_index=True,
+                                                                  validate="m:1")
         link_to_peptides = link_to_peptides.Accession
         self.proteins.link_to_peptides = link_to_peptides
 

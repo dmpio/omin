@@ -209,12 +209,10 @@ class Process(Project):
         self.proteins.link_to_peptides = link_to_peptides
 
 
-    def _calculate_relative_occupancy(self, verbose=False):
-        """Calculate the relative occupancy if possible.
+    def _normalize_input_protiens_to_input_peptides(self, verbose=False):
+        """Normalize input proteins to input peptides.
         """
-        self.peptide_groups.relative_occupancy = Occupancy()
         self.proteins.load_normalized = Normalized()
-        self.proteins.relative_occupancy = Occupancy()
 
         if self.proteins.input_number > 0:
             if verbose:
@@ -235,8 +233,16 @@ class Process(Project):
                         inp_pg_linked = self.peptide_groups.Abundance[self.peptide_groups.Abundance.columns[inp.index]]
                         load_norm = inp_pr_linked.normalize_to(inp_pg_linked)
                         normalized[inp_tag] = load_norm
-
             self.proteins.load_normalized = Normalized(**normalized)
+
+
+    def _link_related_load_normalized_protein_abundances_to_peptides(self, verbose=False):
+        """
+        """
+        # Check for the presence of input fractions.
+        if self.proteins.input_number > 0:
+            # Normalize input proteins to input peptides.
+            self._normalize_input_protiens_to_input_peptides()
             related_proteins_dict = dict()
             for k,v in self.proteins.load_normalized.__dict__.items():
                 # related_proteins = v.iloc[self.proteins.link_to_peptides.index]
@@ -246,6 +252,32 @@ class Process(Project):
                 related_proteins_dict[k] = related_proteins
             self.peptide_groups.load_normalized_related_proteins = Normalized(**related_proteins_dict)
 
+
+    def _filter_out_false_hit_related_proteins(self):
+        """Removes the false hits in the related proteins.
+
+        For some unknown reason false hits are generated from merging the
+        peptides and proteins data.
+        """
+        accessions_in_proteins = self.peptide_groups.master_index.Accession.isin(self.proteins.master_index.Accession)
+
+        for k,v in self.peptide_groups.load_normalized_related_proteins.__dict__.items():
+            related_proteins_filtered = v.loc[accessions_in_proteins]
+            related_proteins_filtered = related_proteins_filtered.reindex(v.index)
+            self.peptide_groups.load_normalized_related_proteins.__dict__[k] = related_proteins_filtered
+
+
+    def _calculate_relative_occupancy(self, verbose=False):
+        """Calculate the relative occupancy if possible.
+        """
+        # Initalize the empty relative occupancy container.
+        self.peptide_groups.relative_occupancy = Occupancy()
+        # Check for the presence of input fractions.
+        if self.proteins.input_number > 0:
+            self._link_related_load_normalized_protein_abundances_to_peptides()
+            self._filter_out_false_hit_related_proteins()
+
+            # Calculate relative occupancy.
             occupancy = dict()
             for k,v in self.peptide_groups._linked_fractions.items():
                 peptide_norm = self.peptide_groups.load_normalized.__dict__[k].log2_normalize()

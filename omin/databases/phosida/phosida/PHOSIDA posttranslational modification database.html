@@ -1,0 +1,853 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+		<title>PHOSIDA posttranslational modification database</title>
+		<meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR">
+		<meta content="C#" name="CODE_LANGUAGE">
+		<meta content="JavaScript" name="vs_defaultClientScript">
+		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script language="javascript">
+			function change (flag, img) {
+				if (document.images) {
+					if (document.images[img].permloaded) {
+						if (flag==1) document.images[img].src = document.images[img].perm.src
+						else document.images[img].src = document.images[img].perm.oldsrc
+					}
+				}
+			}
+
+			function preloadchange (img, adresse) {
+				if (document.images) {
+					img.onload = null;
+					img.perm = new Image ();
+					img.perm.oldsrc = img.src;
+					img.perm.src = adresse;
+					img.permloaded = true;
+				}
+			}
+		</script>
+		<link href="PHOSIDA%20posttranslational%20modification%20database_files/phosida.css" type="text/css" rel="stylesheet">
+	</head>
+	<body topmargin="0" leftmargin="0" bgcolor="#22243d">
+		<table id="Table_TOP" width="*" height="*" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" background="PHOSIDA%20posttranslational%20modification%20database_files/bg_motifs.gif" align="left">
+			<!--TOP-->
+			<tbody><tr>
+				<td colspan="5"><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/Top.jpg" width="779" height="20"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="20"></td>
+			</tr>
+			<!--TOPB-->
+			<tr>
+				<td colspan="5"><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/help_top.jpg" width="779" height="160"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="160"></td>
+			</tr>
+			<!--BUTTON_DOWN-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td colspan="3"><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/button_down.jpg" width="675" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<!--CONTENT-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="80"></td>
+				<td width="30"></td>
+				<td colspan="2" width="645" valign="top" height="80" align="left"><b>WHICH MOTIFS ARE 
+						CHECKED FOR A MATCH WITH EVERY SITE?</b><br>
+					<br>
+					The 33 motifs that are included in our analysis are the following:
+				</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="80"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="80"></td>
+			</tr>
+			<!--Space-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="30"></td>
+				<td width="30"></td>
+				<td colspan="2" width="645" valign="top" height="30" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="30"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="30"></td>
+			</tr>
+			<!--kinases/motifs-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">PKA</td>
+				<td width="545" height="22" align="left">R-X-<b>S/T</b><sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left">R-R/K-X-<b>S/T</b><sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left">K-R-X-X-<b>S/T</b><sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">CK1</td>
+				<td width="545" height="22" align="left">S-X-X-<b>S/T</b><sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left">S/T-X-X-X-<b>S</b><sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">CK2</td>
+				<td width="545" height="22" align="left"><b>S/T</b>-X-X-E<sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">GSK3</td>
+				<td width="545" height="22" align="left"><b>S</b>-X-X-X-S<sup>2</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">CDK2</td>
+				<td width="545" height="22" align="left"><b>S</b>/<b>T</b>-P-X-K/R<sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">CAMK2</td>
+				<td width="545" height="22" align="left">R-X-X-<b>S/T</b><sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left">R-X-X-<b>S/T</b>-V<sup>1</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">ERK/MAPK</td>
+				<td width="545" height="22" align="left">P-X-<b>S/T</b>-P<sup>3</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left">V-X-<b>S/T</b>-P<sup>3</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left">P-E-<b>S/T</b>-P<sup>3</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30" height="22"></td>
+				<td width="100" height="22" align="left">PKB/AKT</td>
+				<td width="545" height="22" align="left">R-R/S/T-X-<b>S/T</b>-X-S/T<sup>4</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30" height="22"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left">R-X-R-X-X-<b>S/T</b><sup>4</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">PKC</td>
+				<td width="545" height="22" align="left">R-X-X-<b>S/T</b>-X-R<sup>5</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">PKD</td>
+				<td width="545" height="22" align="left">L/V/I-X-R/K-X-X-<b>S/T</b><sup>5</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">LCK</td>
+				<td width="545" height="22" align="left">I/E/V-<b>Y</b>-E/G-E/D/P/N-I/V/L<sup>6</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">ABL</td>
+				<td width="545" height="22" align="left">I/V/L-<b>Y</b>-X-X-P/F<sup>6</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">SRC</td>
+				<td width="545" height="22" align="left">E/D-X-X-<b>Y</b>-X-X-D/E/A/G/S/T<sup>7</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">ALK</td>
+				<td width="545" height="22" align="left"><b>Y</b>-X-X-I/L/V/M<sup>7</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">EGFR</td>
+				<td width="545" height="22" align="left">D/P/S/A/E/N-X-<b>Y</b>-V/L/D/E/I/N/P<sup>8</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--CDK1-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">CDK1</td>
+				<td width="545" height="22" align="left"><b>S</b>/<b>T</b>-P-X-K/R<sup>13</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"><b>S</b>/<b>T</b>-P-K/R<sup>13</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--AURORA-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">AURORA</td>
+				<td width="545" height="22" align="left">R/K-X-<b>S</b>/<b>T</b>-I/L/V<sup>9</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--AURORA-A-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">AURORA-A</td>
+				<td width="545" height="22" align="left">R/K/N-R-X-<b>S</b>/<b>T</b>-M/L/V/I<sup>10</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--PLK-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">PLK</td>
+				<td width="545" height="22" align="left">D/E-X-<b>S</b>/<b>T</b>-V/I/L/M-X-D/E<sup>11</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--PLK1-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">PLK1</td>
+				<td width="545" height="22" align="left">E/D-X-<b>S</b>/<b>T</b>-F/L/I/Y/W/V/M<sup>11</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--NEK6-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">NEK6</td>
+				<td width="545" height="22" align="left">L-X-X-<b>S</b>/<b>T</b><sup>12</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--CHK1/2-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">CHK1/2</td>
+				<td width="545" height="22" align="left">L-X-R-X-X-<b>S</b>/<b>T</b><sup>14</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--CHK1-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">CHK1</td>
+				<td width="545" height="22" align="left">M/I/L/V-X-R/K-X-X-<b>S</b>/<b>T</b><sup>15</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--PDK1-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">PDK1</td>
+				<td width="545" height="22" align="left">F-X-X-F-<b>S</b>/<b>T</b>-F/Y</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--NIMA-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left">NIMA</td>
+				<td width="545" height="22" align="left">F/L/M-R/K-R/K-<b>S</b>/<b>T</b><sup>16</sup></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<!--REFERENCES-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="22"></td>
+				<td width="30"></td>
+				<td width="100" height="22" align="left"></td>
+				<td width="545" height="22" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="22"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="22"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>1</sup> Pearson R.B. and Kemp B.E., <i>Protein 
+						kinase site sequences and consensus specificity motifs: tabulations</i>, 
+					Methods Enzymol 200, 62-81(1991)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>2</sup> Fiol C.J. et al., <i>Ordered 
+						multisite protein phosphorylation. Analysis of glycogen synthase kinase 3 
+						action using model peptide substrates.</i>, J Biol Chem 265(11): 6061-5 
+					(1990)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>3</sup> Davis R.J., <i>The 
+						mitogen-activated protein kinase signal transduction pathway</i>, J Biol 
+					Chem 268(20)): 14553-6 (1993)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>4</sup> Johnson S.A. and Hunter T., <i>Kinomics: 
+						methods for deciphering the kinome</i>, Nature Methods 2(1):17-25 (2005)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>5</sup> Hutti J.E. et al., <i>A rapid 
+						method for determining protein kinase phosphorylation specificity</i>, 
+					Nature Methods 1(1): 27-9 (2004)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>6</sup> Songyang Z. et al., <i>Catalytic 
+						specificity of protein-tyrosine kinases is critical for selective signalling</i>, 
+					Nature 373(6514):536-9 (1995)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>7</sup> Schwartz D. et al., <i>An 
+						iterative statistical approach to the identification of protein phosphorylation 
+						motifs from large-scale data sets</i>, Nature Biotechnology 23(11):1391-8 
+					(2005)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>8</sup> Mishra et al., <i>Human protein 
+						reference database</i>, Nucleic Acids Res 34:D411-4 (2006)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>9</sup> Cheeseman I.M. et al., <i>Phospho-regulation 
+						of kinetochore-microtubule attachments by the Aurora kinase Ipl1p</i>, Cell 
+					111(2):163-72 (2002)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>10</sup> Ferrari S. et al., <i>Aurora-A 
+						site specificity: a study with synthetic peptide substrates</i>, Biochem J 
+					390(1):293-302 (2005)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>11</sup> Nakajima S. et al., <i>Identification 
+						of a consensus motif for Plk (Polo-like kinase) phosphorylation reveals Myt1 as 
+						a Plk1 substrate</i>, J Biol Chem 278(28):25277-80 (2003)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>12</sup> Lizcano J.M. et al., <i>Molecular 
+						basis for the substrate specificity of NIMA-related kinase-6 (NEK6).</i>, J 
+					Biol Chem 277(31): 27839-49 (2002)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>13</sup> Loew E.D. et al., <i>Specificity 
+						determinants of recruitment peptides bound to phospho-CDK2/cyclin</i>, 
+					Biochemistry 41: 15625-15634 (2002)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="60"></td>
+				<td width="30" height="60"></td>
+				<td width="100" height="60" align="left"></td>
+				<td width="545" height="60" align="left"><sup>14</sup> Kim M.A. et al., <i>Identification 
+						of novel substrates for human checkpoint kinase Chk1 and Chk2 through 
+						genome-wide screening using a consensus Chk phosphorylation motif</i>, Exp 
+					Mol Med 39(2): 205-12 (2007)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="60"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="60"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="40"></td>
+				<td width="30" height="40"></td>
+				<td width="100" height="40" align="left"></td>
+				<td width="545" height="40" align="left"><sup>15</sup> Hutchins et al., <i>Substrate 
+						specificity determinants of the checkpoint protein kinase Chk1</i>, FEBS 
+					Lett 466(1): 91-5 (2000)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="40"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="40"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="10"></td>
+				<td width="30" height="10"></td>
+				<td width="100" height="10" align="left"></td>
+				<td width="545" height="10" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="10"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="10"></td>
+			</tr>
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="60"></td>
+				<td width="30" height="60"></td>
+				<td width="100" height="60" align="left"></td>
+				<td width="545" height="60" align="left"><sup>16</sup> Songyang et al., <i>A structural 
+						basis for kinase specificities of protein Ser/Thr kinases: primary sequence 
+						preference of casein kinases I and II, NIMA, phosphorylase kinase, 
+						calmodulin-dependent kinase II CDK5 and Erk1</i>, Mol Cell Biol 16: 
+					6486-6493 (1996)</td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="60"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="60"></td>
+			</tr>
+			<!--Space-->
+			<tr>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/left.jpg" width="60" height="30"></td>
+				<td width="30"></td>
+				<td colspan="2" width="645" valign="top" height="30" align="left"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/right.jpg" width="44" height="30"></td>
+				<td><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/darkblue.jpg" width="801" height="30"></td>
+			</tr>
+			<!--BOTTOM-->
+			<tr>
+				<td colspan="7"><img alt="" src="PHOSIDA%20posttranslational%20modification%20database_files/bottom.jpg" width="1580" height="124"></td>
+			</tr>
+		</tbody></table>
+	
+
+
+</body></html>

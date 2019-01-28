@@ -4,6 +4,7 @@
 import re
 import pandas as pd
 import numpy as np
+import dominate
 
 
 class SequenceAnnotationTools(object):
@@ -75,34 +76,14 @@ class SequenceAnnotationTools(object):
         cln.columns = ["MIP_clean"]
         return cln
 
-    @classmethod
-    def htmlTagGen(cls, tag, style=None, mod=None):
-        """Return generated HTML tags."""
-        mod = mod or "style"
-
-        if not tag.startswith("<"):
-            tag = "<{}>".format(tag)
-
-        close_tag = tag.replace("<", "</")
-
-        if style is not None:
-            mod = " {} =".format(mod)
-            style = mod+"\'{}\'".format(style)
-
-        else:
-            style = ""
-
-        style_tag = tag.replace(">", style+">")
-
-        return style_tag, close_tag
 
     @classmethod
-    def seqTagInject(cls, seq, ind, tag=None, style=None):
+    def inject_single_sequence_tag(cls, seq, ind, tag=None):
         """Return sequence with HTML tags injected."""
-        tag = tag or "span"
-        style_tag, close_tag = cls.htmlTagGen(tag, style)
 
-        tags = style_tag+"{}"+close_tag
+        tag = tag or dominate.tags.b
+
+        tags = tag("{}").render()
 
         seq_list = list(seq)
         for i in ind:
@@ -110,17 +91,14 @@ class SequenceAnnotationTools(object):
         return "".join(seq_list)
 
     @classmethod
-    def tagInjector(cls, dataframe, best_pos=None, tag=None, style=None):
+    def tag_injector(cls, dataframe, best_pos=None, tag=None):
         """Return dataframe of html injected sequences."""
-        style = style or "color:red;text-transform:lowercase;"
 
         if best_pos is None:
             best_pos = cls.find_best_position(dataframe)
 
-        # seqTagInject(dataframe.Sequence[1],best_pos[1]-1,style=style)
+        # inject_single_sequence_tag(dataframe.Sequence[1],best_pos[1]-1,style=style)
         dataframe = dataframe.Sequence
-        highlight_PTM = [cls.seqTagInject(dataframe[i], best_pos[i]-1, tag=tag, style=style) for i in dataframe.index]
-        highlight_PTM_DF = pd.DataFrame(highlight_PTM,
-                                        index=dataframe.index,
-                                        columns=["TaggedSequence"])
-        return highlight_PTM_DF
+        result = [cls.inject_single_sequence_tag(dataframe[i], best_pos[i]-1, tag=tag) for i in dataframe.index]
+        result = pd.DataFrame(result, index=dataframe.index, columns=["TaggedSequence"])
+        return result

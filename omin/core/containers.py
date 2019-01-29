@@ -783,6 +783,8 @@ class Proteins(ProteomeDiscovererRaw):
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
         # Set the title.
         self._title = "Proteins"
+        # Rename columns for consistency.
+        self._rename_columns()
         # ----------------------------------------------
         # Filter for master proteins and high confidence
         # ----------------------------------------------
@@ -792,10 +794,11 @@ class Proteins(ProteomeDiscovererRaw):
         # METADATA: Number of high confidence protein.
         self.metadata['high_confidence_ids'] = self.master_high_confidence.shape[0]
 
-        # Find and relabel the Entrez Gene ID column.
-        self._set_entrez()
-        # Select the first master protein accession.
-        self._set_master_protein_accession()
+        # # Find and relabel the Entrez Gene ID column.
+        # self._set_entrez()
+        # # Select the first master protein accession.
+        # self._set_master_protein_accession()
+
         # Create the master_index
         self._set_master_index()
         # Attempt to rescue Entrez Gene IDs
@@ -810,6 +813,24 @@ class Proteins(ProteomeDiscovererRaw):
         self.add_database(MitoCartaTwo.essential)
         # Filter the abundance by master_high_confidence
         self.filter_abundance()
+
+
+    def _rename_columns(self):
+        """Find and relabel the Entrez Gene ID column as well as Master Protein Accession column as Accession.
+        """
+        if "Gene ID" in self.raw: # PD2.1 Workaround
+            #FIXME: In PD2.1 Gene ID is actually the gene name. Make sure that this will not break anything with PD2.2.
+            self.raw.rename(columns={'Gene ID':'GeneName'}, inplace=True)
+
+        if "Entrez Gene ID" in self.raw: # PD2.1 Workaround
+            self.raw.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
+
+        if "Accession" in self.raw: # PD2.1
+            pass
+
+        if "Master Protein Accessions" in self.raw: # PD2.2
+            self.raw.rename(columns={'Master Protein Accessions':'Accession'}, inplace=True)
+
 
     @property
     def high_confidence(self):

@@ -130,10 +130,13 @@ class Process(Project):
         self._peptide_groups_mitocarta_fillna()
 
         # Reset the master_index.
-        self._reset_master_index(verbose=verbose)
+        self._reset_proteins_master_index(verbose=verbose)
 
         # Link proteins to peptides
         self._link_proteins_to_peptides()
+
+        # Reset the peptides groups master index
+        self._reset_peptide_groups_master_index()
 
         # # Attempt to calculate the relative occupancy.
         self._calculate_relative_occupancy(verbose=verbose)
@@ -172,7 +175,7 @@ class Process(Project):
                     print(err)
 
 
-    def _reset_master_index(self, verbose=True):
+    def _reset_proteins_master_index(self, verbose=True):
         """Work-around to return rows with missing values to protein.master_index.
         """
         # Create a copy of the old_master_index.
@@ -190,6 +193,28 @@ class Process(Project):
         result["Matrix"].fillna(False, inplace=True)
         result["IMS"].fillna(False, inplace=True)
         self.proteins.master_index = result
+
+
+    def _reset_peptide_groups_master_index(self):
+        """Work-around that fill missing descriptions in the peptide groups master index.
+        """
+        ind = self.proteins.raw.copy()[["Accession", "EntrezGeneID", "Description"]]
+
+        ind.EntrezGeneID = ind.EntrezGeneID.astype(str)
+
+        mito = omin.MitoCartaTwo.essential.copy()
+
+        mito.EntrezGeneID = mito.EntrezGeneID.astype(str)
+
+        ind = ind.merge(mito, on="EntrezGeneID", how="left")
+
+        trun = self.peptide_groups.master_index.copy().iloc[:, :5]
+
+        result = trun.merge(ind, on="Accession", how="left")
+
+        result[["MitoCarta2_List", "Matrix", "IMS"]] = result[["MitoCarta2_List", "Matrix", "IMS"]].fillna(False)
+
+        self.peptide_groups.master_index = result
 
 
     def _link_proteins_to_peptides(self):

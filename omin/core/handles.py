@@ -26,6 +26,9 @@ from pandomics import __version__ as pandomics_version
 from .base import repr_dec
 from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 
+from ..databases import mitocarta
+
+
 # Ugly hack to find this module's version number.
 # FIXME: use bump for versioning instead.
 __module_path__ = os.path.dirname(os.path.realpath(__file__))
@@ -202,7 +205,7 @@ class Process(Project):
 
         ind.EntrezGeneID = ind.EntrezGeneID.astype(str)
 
-        mito = omin.MitoCartaTwo.essential.copy()
+        mito = mitocarta.MitoCartaTwo.essential.copy()
 
         mito.EntrezGeneID = mito.EntrezGeneID.astype(str)
 

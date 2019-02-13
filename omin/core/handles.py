@@ -141,6 +141,9 @@ class Process(Project):
         # Reset the peptides groups master index
         self._reset_peptide_groups_master_index()
 
+        # Remove the extra gene id column that is introduced from the function above.
+        self._peptide_groups_entrez_gene_clean_up()
+
         # # Attempt to calculate the relative occupancy.
         self._calculate_relative_occupancy(verbose=verbose)
 
@@ -219,6 +222,13 @@ class Process(Project):
 
         self.peptide_groups.master_index = result
 
+    def _peptide_groups_entrez_gene_clean_up(self):
+        """Workaround that cleans up the extra EntrezGeneID column introduced by the function above.
+        """
+        if "EntrezGeneID_y" in self.peptide_groups.master_index:
+            self.peptide_groups.master_index.drop("EntrezGeneID_y", axis=1, inplace=True)
+        if "EntrezGeneID_x" in self.peptide_groups.master_index:
+            self.peptide_groups.master_index.rename({"EntrezGeneID_x":"EntrezGeneID"}, axis=1, inplace=True)
 
     def _link_proteins_to_peptides(self):
         """Links protiens to peptides.

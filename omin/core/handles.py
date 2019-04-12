@@ -222,6 +222,7 @@ class Process(Project):
 
         self.peptide_groups.master_index = result
 
+
     def _peptide_groups_entrez_gene_clean_up(self):
         """Workaround that cleans up the extra EntrezGeneID column introduced by the function above.
         """
@@ -229,6 +230,7 @@ class Process(Project):
             self.peptide_groups.master_index.drop("EntrezGeneID_y", axis=1, inplace=True)
         if "EntrezGeneID_x" in self.peptide_groups.master_index:
             self.peptide_groups.master_index.rename({"EntrezGeneID_x":"EntrezGeneID"}, axis=1, inplace=True)
+
 
     def _link_proteins_to_peptides(self):
         """Links protiens to peptides.

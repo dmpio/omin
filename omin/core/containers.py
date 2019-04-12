@@ -904,7 +904,6 @@ class Proteins(ProteomeDiscovererRaw):
     def _set_master_index(self):
         """Attempt to set the master index for the Proteins.
         """
-        # FIXME: Add try and except for each of these columns.
         master_index_components = ["EntrezGeneID", "Description"]
 
         # Start the master index with the the first master protein accession.

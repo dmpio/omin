@@ -818,6 +818,10 @@ class Proteins(ProteomeDiscovererRaw):
     def _rename_columns(self):
         """Find and relabel the Entrez Gene ID column as well as Master Protein Accession column as Accession.
         """
+
+        if "Gene Symbol" in self.raw: # PD2.3 Workaround
+            self.raw.rename(columns={'Gene Symbol':'GeneName'}, inplace=True)
+
         if "Gene ID" in self.raw: # PD2.1 Workaround
             #FIXME: In PD2.1 Gene ID is actually the gene name. Make sure that this will not break anything with PD2.2.
             self.raw.rename(columns={'Gene ID':'GeneName'}, inplace=True)

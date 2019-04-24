@@ -30,10 +30,12 @@ setup(
     install_requires=['pandas',
                       'xlrd',# Needed for pandas export of DataFrames to xlsx
                       'numpy',
-                      'guipyter',
                       'dominate',
-                      'pandomics',
-                      'matplotlib_venn'],
+                      'statsmodels',
+                      'intermine',
+                      'matplotlib_venn',
+                      'guipyter',
+                      'pandomics'],
     entry_points = {
         'console_scripts': [
             'omin=omin.cli.cli:main',

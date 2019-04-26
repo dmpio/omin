@@ -33,6 +33,8 @@ setup(
                       'dominate',
                       'statsmodels',
                       'intermine',
+                      'lxml',
+                      'beautifulsoup4',
                       'matplotlib_venn',
                       'guipyter',
                       'pandomics'],

@@ -1,9 +1,9 @@
-
-
 try:
     import rpy2.robjects as ro
+    from rpy2.robjects.packages import importr
 
     RPY2_INSTALL=True
+
 except Exception as err:
     RPY2_INSTALL=False
     msg = """rpi2 does not appear to be instaled on your system.
@@ -12,9 +12,6 @@ except Exception as err:
     https://rpy2.readthedocs.io/en/version_2.8.x/overview.html#install-from-source
     """
     print(msg)
-
-# FIXME: Add error handling for wether or not limma is installed.
-# FIXME: Add install instructions and or a way to automatically install limma into R env.
 
 
 # Adding a function to the R library limma.
@@ -79,15 +76,31 @@ reduceFit <- function(fit, results=NULL, file, digits=NULL, adjust="none", metho
 
 """
 
+def install_limma():
+    base = importr('base')
+    base.source("http://www.bioconductor.org/biocLite.R")
+    biocinstaller = importr("BiocInstaller")
+    biocinstaller.biocLite("limma")
 
 
 if RPY2_INSTALL:
 
-    class RTools(object):
+    class RTools:
         """
         """
-        # Initialize the reducefit function if limma is installed.
-        reduceFit = R(reduce_fit_script)
+        try:
+            limma = importr('limma')
+            # Initialize the reducefit function if limma is installed.
+            limma.reduce_fit = ro.r(reduce_fit_script)
+
+        except Exception as err:
+            print(err)
+            print("Attempting to install limma")
+
+            try:
+                install_limma()
+            except Exception as err:
+                print(err)
 
 
 else:# If rpy2 is not installed an empty class is given.

@@ -680,6 +680,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
         Parameters
         ----------
         selected_mod: str
+            Only peptides with the given modification will be filtered for.
 
         comparisons: list
             In the format: [[numerator, denominator],...]

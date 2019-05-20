@@ -515,23 +515,6 @@ class PeptideGroups(ProteomeDiscovererRaw):
         return found
 
 
-    def get_in_vivo_modifications(self):
-        """Return list of the in vivo modifications.
-
-        Parameters
-        ----------
-        df : Dataframe
-
-        Returns
-        -------
-        invivo_modifications : set
-        """
-
-        present_modifications = self.get_all_modifications()
-        chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
-        invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
-        return invivo_modifications
-
     def _set_in_vivo_modifications(self):
         """FIXME: Add docs.
         """

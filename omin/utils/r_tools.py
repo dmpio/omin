@@ -88,9 +88,19 @@ if RPY2_INSTALL:
     class RTools:
         """
         """
+        # Set robjects as ro.
+        ro = ro
+        # Set the robjects.r as R
+        R = ro.r
+        # Set the rprint function.
+        rprint = ro.globalenv.get("print")
+        # Initialize the base package.
+        base = importr('base')
+
         try:
+            # Initialize the limma module.
             limma = importr('limma')
-            # Initialize the reducefit function if limma is installed.
+            # Initialize the reducefit function.
             limma.reduce_fit = ro.r(reduce_fit_script)
 
         except Exception as err:
@@ -99,6 +109,11 @@ if RPY2_INSTALL:
 
             try:
                 install_limma()
+                # Initialize the limma module.
+                limma = importr('limma')
+                # Initialize the reducefit function.
+                limma.reduce_fit = ro.r(reduce_fit_script)
+
             except Exception as err:
                 print(err)
 

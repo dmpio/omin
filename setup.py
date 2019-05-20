@@ -30,6 +30,7 @@ setup(
     install_requires=['pandas',
                       'xlrd',# Needed for pandas export of DataFrames to xlsx
                       'numpy',
+                      'scipy',
                       'dominate',
                       'statsmodels',
                       'intermine',

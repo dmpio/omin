@@ -194,7 +194,8 @@ class ProteomeDiscovererRaw(Container):
 
         # Compile the regular expression to catch things in (parenthesis).
         # FIXME: BIG ASSUMPTION HERE. DOCUMENT OR DIE. #DOD
-        rx = re.compile("\((.+)\)")
+        rx = re.compile("[\[\(](.+)[\[\)\]]")
+
         study_factors = []
         for i in range(1, len(column_names.columns)):
             try:
@@ -304,8 +305,8 @@ class ProteomeDiscovererRaw(Container):
         # FIXME: Add try and excepts with some kind of unique string passed
         by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
 
-        # Regex for isolating the study factor from it's catagory.
-        rx = re.compile('(.+)\s\(.+\)')
+        # Regex for isolating the study factor from it's category.
+        rx = re.compile('(.+)\s[\[\(].+[\]\)]')
 
         tag_for_fraction = ""
         for i in by_fn:
@@ -314,10 +315,11 @@ class ProteomeDiscovererRaw(Container):
             terms = list(map(lambda x:x.strip(), terms))
             #  FIXME: add some try and excepts with better docs.
             if len(terms) == 1:
+                parens = set(["(", ")", "[", "]"])
 
-                if any(["(" in i or ")" in i for i in terms]):
+                if any([len(parens & set(list(i))) > 0 for i in terms]):
                     term = terms[0]
-                    # Isolate the study factor from it's catagory.
+                    # Isolate the study factor from it's category.
                     term = rx.findall(term)
                 else:
                     term = terms

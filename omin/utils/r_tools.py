@@ -6,7 +6,7 @@ try:
 
 except Exception as err:
     RPY2_INSTALL=False
-    msg = """rpi2 does not appear to be instaled on your system.
+    msg = """rpy2 does not appear to be instaled on your system.
     It can be installed by following the directions found here:
 
     https://rpy2.readthedocs.io/en/version_2.8.x/overview.html#install-from-source

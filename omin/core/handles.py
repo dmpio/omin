@@ -150,6 +150,9 @@ class Process(Project):
         # Add mitocarta info to metadata.
         self._add_mitocarta_metadata(verbose=verbose)
 
+        # Super hack fix for the metadata leak
+        # self._peptides_metadata_leak_fix()
+
         # Extract the gene names.
         self.peptide_groups._gene_name_extractor()
 
@@ -286,6 +289,7 @@ class Process(Project):
             related_proteins_dict = dict()
             for k,v in self.proteins.load_normalized.__dict__.items():
                 # related_proteins = v.iloc[self.proteins.link_to_peptides.index]
+                # FIXME: the next line thows a future warning about passing a list-like to loc
                 related_proteins = v.loc[self.proteins.link_to_peptides.index]
                 # related_proteins.index = self.peptide_groups.raw.index
                 related_proteins.index = self.peptide_groups.master_index.index
@@ -346,6 +350,36 @@ class Process(Project):
             except Exception as err:
                 if verbose:
                     print("Could not add Mitocarta info to metadata.", err)
+
+
+    def _peptides_metadata_leak_fix(self):
+        proteins_raw_master_index = self.proteins.raw[["Accession", "EntrezGeneID", "GeneName", "Description"]]
+        proteins_entrez_gene_ids = proteins_raw_master_index.EntrezGeneID.first_member().dropna().astype(np.int64)
+        proteins_entrez_gene_ids = pd.DataFrame(proteins_entrez_gene_ids, columns=["EntrezGeneID"])
+        proteins_with_mitocarta = proteins_entrez_gene_ids.merge(mitocarta.MitoCartaTwo.essential, on="EntrezGeneID", how="left")
+        proteins_with_mitocarta.index = proteins_entrez_gene_ids.index
+        proteins_with_mitocarta = proteins_with_mitocarta.reindex(index=proteins_raw_master_index.index)
+
+        # Fill all the NaNs with False
+        proteins_with_mitocarta.MitoCarta2_List.fillna(False, inplace=True)
+        proteins_with_mitocarta.Matrix.fillna(False, inplace=True)
+        proteins_with_mitocarta.IMS.fillna(False, inplace=True)
+
+        del proteins_with_mitocarta["EntrezGeneID"]
+
+        proteins_with_mitocarta = pd.concat([proteins_raw_master_index, proteins_with_mitocarta], axis=1)
+        peptides_accession = self.peptide_groups.raw["Master Protein Accessions"].first_member()
+        peptides_accession = pd.DataFrame(peptides_accession)
+        peptides_accession.columns = ["Accession"]
+        peptides_seq_and_mods = self.peptide_groups.raw[['Sequence', 'Modifications', 'Modifications in Proteins', 'Positions in Proteins']]
+        peptide_pre_master_index = pd.concat([peptides_accession, peptides_seq_and_mods], axis=1)
+        peptide_master_index_complete = peptide_pre_master_index.merge(proteins_with_mitocarta, on="Accession", how="left")
+
+        peptide_master_index_complete.MitoCarta2_List.fillna(False, inplace=True)
+        peptide_master_index_complete.Matrix.fillna(False, inplace=True)
+        peptide_master_index_complete.IMS.fillna(False, inplace=True)
+
+        self.peptide_groups.master_index = peptide_master_index_complete
 
 
     def comparision(self, on=None, where=None, fraction_key=None, mask=None, right=None,

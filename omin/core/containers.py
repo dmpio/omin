@@ -329,6 +329,8 @@ class ProteomeDiscovererRaw(Container):
                     term = term[0].lower()
                     # Replace any whitespace with underscore.
                     term = re.sub("\s", "_", term)
+
+                    term = re.sub('-', '_', term)
                     # print(term)
                     tag_for_fraction = "_".join([tag_for_fraction, term])
 

@@ -261,7 +261,7 @@ class ProteomeDiscovererRaw(Container):
             # FIXME: Proof this against Inputase ect.
             # To do that that load the regex with ~ [Ii]nput[\w[punctuation]]
             # FIXME: Redundant filtering of raw DataFrames = memory leak
-            input_abundance = self.Abundance.filter(regex="[Ii]nput").shape[1]
+            input_abundance = self.Abundance.filter(regex="[Ii][Nn][Pp][Uu][Tt]").shape[1]
             number_input = input_abundance/plex_number
         except Exception:
             print("utils.SelectionTools.find_number_input failed")
@@ -563,7 +563,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
         """
         # FIXME: NORMALIZE INPUT TO ITS SELF.
 
-        input_mask = self.study_factor_table[self.study_factor_with_input].str.contains("[Ii]nput")
+        input_mask = self.study_factor_table[self.study_factor_with_input].str.contains("[Ii][Nn][Pp][Uu][Tt]")
         # FIXME: Replace the bobo method to find input fraction numbers
         number_input_fractions = len(self.study_factor_table.loc[input_mask]._Fn.unique())
 

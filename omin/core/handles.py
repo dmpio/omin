@@ -260,7 +260,7 @@ class Process(Project):
         if self.proteins.input_number > 0:
             if verbose:
                 print("Input fractions found calculating relative occupancy...")
-            input_mask = self.proteins.study_factor_table[self.proteins.study_factor_with_input].str.contains("[Ii]nput")
+            input_mask = self.proteins.study_factor_table[self.proteins.study_factor_with_input].str.contains("[Ii][Nn][Pp][Uu][Tt]")
             number_input_fractions = len(self.proteins.study_factor_table.loc[input_mask]._Fn.unique())
             # isolate the input fractions study factors.
             inps = self.proteins.study_factor_table.loc[input_mask]

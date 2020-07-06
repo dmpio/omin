@@ -282,7 +282,7 @@ class ProteomeDiscovererRaw(Container):
         """
         # FIXME: Ensure that the methods that use this know what to do with None.
         # FIXME: Inputase-proof this function or provide informative error handling with messages.
-        rx = re.compile("[Ii]nput")
+        rx = re.compile("[Ii][Nn][Pp][Uu][Tt]")
         study_factor_with_input = None
         for k,v in self.study_factor_dict.items():
             #FIXME: BIG ASSUMPTION HERE -> There will be only one study factor that contains a term including [Ii]nput.
@@ -313,12 +313,18 @@ class ProteomeDiscovererRaw(Container):
             terms = by_fn[i].unique()
 
             terms = list(map(lambda x:x.strip(), terms))
+
+            terms = list(filter(lambda k: 'POOL' not in k, terms))
+
+            terms = list(filter(lambda k: 'Pool' not in k, terms))
+
             #  FIXME: add some try and excepts with better docs.
             if len(terms) == 1:
                 parens = set(["(", ")", "[", "]"])
 
                 if any([len(parens & set(list(i))) > 0 for i in terms]):
                     term = terms[0]
+
                     # Isolate the study factor from it's category.
                     term = rx.findall(term)
                 else:

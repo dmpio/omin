@@ -194,7 +194,8 @@ class ProteomeDiscovererRaw(Container):
 
         # Compile the regular expression to catch things in (parenthesis).
         # FIXME: BIG ASSUMPTION HERE. DOCUMENT OR DIE. #DOD
-        rx = re.compile("\((.+)\)")
+        rx = re.compile("[\[\(](.+)[\[\)\]]")
+
         study_factors = []
         for i in range(1, len(column_names.columns)):
             try:
@@ -260,7 +261,7 @@ class ProteomeDiscovererRaw(Container):
             # FIXME: Proof this against Inputase ect.
             # To do that that load the regex with ~ [Ii]nput[\w[punctuation]]
             # FIXME: Redundant filtering of raw DataFrames = memory leak
-            input_abundance = self.Abundance.filter(regex="[Ii]nput").shape[1]
+            input_abundance = self.Abundance.filter(regex="[Ii][Nn][Pp][Uu][Tt]").shape[1]
             number_input = input_abundance/plex_number
         except Exception:
             print("utils.SelectionTools.find_number_input failed")
@@ -281,7 +282,7 @@ class ProteomeDiscovererRaw(Container):
         """
         # FIXME: Ensure that the methods that use this know what to do with None.
         # FIXME: Inputase-proof this function or provide informative error handling with messages.
-        rx = re.compile("[Ii]nput")
+        rx = re.compile("[Ii][Nn][Pp][Uu][Tt]")
         study_factor_with_input = None
         for k,v in self.study_factor_dict.items():
             #FIXME: BIG ASSUMPTION HERE -> There will be only one study factor that contains a term including [Ii]nput.
@@ -304,20 +305,27 @@ class ProteomeDiscovererRaw(Container):
         # FIXME: Add try and excepts with some kind of unique string passed
         by_fn = self.study_factor_table.loc[self.study_factor_table._Fn == fraction_number].iloc[:, 2:]
 
-        # Regex for isolating the study factor from it's catagory.
-        rx = re.compile('(.+)\s\(.+\)')
+        # Regex for isolating the study factor from it's category.
+        rx = re.compile('(.+)\s[\[\(].+[\]\)]')
 
         tag_for_fraction = ""
         for i in by_fn:
             terms = by_fn[i].unique()
 
             terms = list(map(lambda x:x.strip(), terms))
+
+            terms = list(filter(lambda k: 'POOL' not in k, terms))
+
+            terms = list(filter(lambda k: 'Pool' not in k, terms))
+
             #  FIXME: add some try and excepts with better docs.
             if len(terms) == 1:
+                parens = set(["(", ")", "[", "]"])
 
-                if any(["(" in i or ")" in i for i in terms]):
+                if any([len(parens & set(list(i))) > 0 for i in terms]):
                     term = terms[0]
-                    # Isolate the study factor from it's catagory.
+
+                    # Isolate the study factor from it's category.
                     term = rx.findall(term)
                 else:
                     term = terms
@@ -327,6 +335,8 @@ class ProteomeDiscovererRaw(Container):
                     term = term[0].lower()
                     # Replace any whitespace with underscore.
                     term = re.sub("\s", "_", term)
+
+                    term = re.sub('-', '_', term)
                     # print(term)
                     tag_for_fraction = "_".join([tag_for_fraction, term])
 
@@ -515,23 +525,6 @@ class PeptideGroups(ProteomeDiscovererRaw):
         return found
 
 
-    def get_in_vivo_modifications(self):
-        """Return list of the in vivo modifications.
-
-        Parameters
-        ----------
-        df : Dataframe
-
-        Returns
-        -------
-        invivo_modifications : set
-        """
-
-        present_modifications = self.get_all_modifications()
-        chemical_modifications = {'Oxidation', 'Carbamidomethyl', 'TMT6plex', 'TMT10plex'}
-        invivo_modifications = [modification for modification in present_modifications if modification not in chemical_modifications]
-        return invivo_modifications
-
     def _set_in_vivo_modifications(self):
         """FIXME: Add docs.
         """
@@ -570,7 +563,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
         """
         # FIXME: NORMALIZE INPUT TO ITS SELF.
 
-        input_mask = self.study_factor_table[self.study_factor_with_input].str.contains("[Ii]nput")
+        input_mask = self.study_factor_table[self.study_factor_with_input].str.contains("[Ii][Nn][Pp][Uu][Tt]")
         # FIXME: Replace the bobo method to find input fraction numbers
         number_input_fractions = len(self.study_factor_table.loc[input_mask]._Fn.unique())
 
@@ -593,29 +586,34 @@ class PeptideGroups(ProteomeDiscovererRaw):
         # Create a list of linkage DataFrames.
         inps, frcs = self._separate_enriched_and_input()
 
+        # Create a list of linkage DataFrames.
         linked = []
-        for i in inps:
-            for j in frcs:
-                # If the fractions have the same shape then proceed with linking.
+        for j in frcs:
+            for i in inps:
                 if j.shape == i.shape:
-                    # Generate a integer score of the similarity.
-                    score = sum(sum(j.values == i.values))
-                    # Create a DataFrame of the links.
+                    # Isolate the just the columns to compare.
+                    cols_to_compare = list(filter(lambda x: x not in {"_Fn", "Fraction"}, j.columns))
+                    # Create bolean comparison matrix.
+                    comparison_matrix = j[cols_to_compare].values == i[cols_to_compare].values
+                    # Find the number of cells in the matrix.
+                    number_of_cells = comparison_matrix.shape[0]*comparison_matrix.shape[1]
+                    # Calculate similarity 1 being the most simillar 0 being the least.
+                    score = sum(sum(comparison_matrix))/number_of_cells
+                    # Create the link DataFrame
                     link = pd.DataFrame(i.index, columns=["Link"], index=j.index)
+                    # Create score DataFrame
                     score_df = pd.DataFrame([i.shape[0]*[score]]).T
                     score_df.columns = ["Score"]
+                    # Give the score_df the same index as j.
                     score_df.index = j.index
+                    # Concatenate j, link and score_df
                     j_prime = pd.concat([j, link, score_df], axis=1)
                     linked.append(j_prime)
 
 
         scores = np.array([i.Score.unique()[0] for i in linked])
-        # # Isolate the highest scoring linked fractions
-        # linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
-
-        # # Create a cutoff list that is approximately half of the scores.
-        # cut_off = scores[(-scores).argsort()][:int(len(scores)/2)]
-        # linked = list(filter(lambda x:x.Score.unique()[0] in cut_off, linked))
+        # Isolate the highest scoring linked fractions
+        linked = list(filter(lambda x:x.Score.unique()[0] == scores.max(), linked))
 
         return linked
 
@@ -675,6 +673,7 @@ class PeptideGroups(ProteomeDiscovererRaw):
         Parameters
         ----------
         selected_mod: str
+            Only peptides with the given modification will be filtered for.
 
         comparisons: list
             In the format: [[numerator, denominator],...]
@@ -778,19 +777,22 @@ class Proteins(ProteomeDiscovererRaw):
         ProteomeDiscovererRaw.__init__(self, filepath_or_buffer=filepath_or_buffer, title="Select proteins file", *args, **kwargs)
         # Set the title.
         self._title = "Proteins"
+        # Rename columns for consistency.
+        self._rename_columns()
         # ----------------------------------------------
         # Filter for master proteins and high confidence
         # ----------------------------------------------
         # FIXME: This may be redone in the future.
-        self._high_confidence = self.high_confidence
+        # self._high_confidence = self.high_confidence
         self.master_high_confidence = self.is_master_protein
         # METADATA: Number of high confidence protein.
         self.metadata['high_confidence_ids'] = self.master_high_confidence.shape[0]
 
-        # Find and relabel the Entrez Gene ID column.
-        self._set_entrez()
-        # Select the first master protein accession.
-        self._set_master_protein_accession()
+        # # Find and relabel the Entrez Gene ID column.
+        # self._set_entrez()
+        # # Select the first master protein accession.
+        # self._set_master_protein_accession()
+
         # Create the master_index
         self._set_master_index()
         # Attempt to rescue Entrez Gene IDs
@@ -803,8 +805,34 @@ class Proteins(ProteomeDiscovererRaw):
         # self.gene_name_extractor()
         # Attach MitoCarta2 data to the master_index.
         self.add_database(MitoCartaTwo.essential)
+
+        # Attach MitoCarta2 data to the master_index.
+        # self.add_database(MitoCartaThree.essential)
+
         # Filter the abundance by master_high_confidence
         self.filter_abundance()
+
+
+    def _rename_columns(self):
+        """Find and relabel the Entrez Gene ID column as well as Master Protein Accession column as Accession.
+        """
+
+        if "Gene Symbol" in self.raw: # PD2.3 Workaround
+            self.raw.rename(columns={'Gene Symbol':'GeneName'}, inplace=True)
+
+        if "Gene ID" in self.raw: # PD2.1 Workaround
+            #FIXME: In PD2.1 Gene ID is actually the gene name. Make sure that this will not break anything with PD2.2.
+            self.raw.rename(columns={'Gene ID':'GeneName'}, inplace=True)
+
+        if "Entrez Gene ID" in self.raw: # PD2.1 Workaround
+            self.raw.rename(columns={'Entrez Gene ID':'EntrezGeneID'}, inplace=True)
+
+        if "Accession" in self.raw: # PD2.1
+            pass
+
+        if "Master Protein Accessions" in self.raw: # PD2.2
+            self.raw.rename(columns={'Master Protein Accessions':'Accession'}, inplace=True)
+
 
     @property
     def high_confidence(self):
@@ -829,8 +857,6 @@ class Proteins(ProteomeDiscovererRaw):
     @property
     def is_master_protein(self):
         "Filter raw protein DataFrame for master proteins."
-
-
 
         try:
             # BIG ASSUMPTION: self.high_confidence is able to work
@@ -880,7 +906,6 @@ class Proteins(ProteomeDiscovererRaw):
     def _set_master_index(self):
         """Attempt to set the master index for the Proteins.
         """
-        # FIXME: Add try and except for each of these columns.
         master_index_components = ["EntrezGeneID", "Description"]
 
         # Start the master index with the the first master protein accession.

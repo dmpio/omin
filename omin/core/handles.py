@@ -26,6 +26,9 @@ from pandomics import __version__ as pandomics_version
 from .base import repr_dec
 from .containers import PeptideGroups, Proteins, Occupancy, Normalized
 
+from ..databases import mitocarta
+
+
 # Ugly hack to find this module's version number.
 # FIXME: use bump for versioning instead.
 __module_path__ = os.path.dirname(os.path.realpath(__file__))
@@ -130,10 +133,16 @@ class Process(Project):
         self._peptide_groups_mitocarta_fillna()
 
         # Reset the master_index.
-        self._reset_master_index(verbose=verbose)
+        self._reset_proteins_master_index(verbose=verbose)
 
         # Link proteins to peptides
         self._link_proteins_to_peptides()
+
+        # Reset the peptides groups master index
+        self._reset_peptide_groups_master_index()
+
+        # Remove the extra gene id column that is introduced from the function above.
+        self._peptide_groups_entrez_gene_clean_up()
 
         # # Attempt to calculate the relative occupancy.
         self._calculate_relative_occupancy(verbose=verbose)
@@ -141,7 +150,10 @@ class Process(Project):
         # Add mitocarta info to metadata.
         self._add_mitocarta_metadata(verbose=verbose)
 
-        # Extract the gene namesself.
+        # Super hack fix for the metadata leak
+        # self._peptides_metadata_leak_fix()
+
+        # Extract the gene names.
         self.peptide_groups._gene_name_extractor()
 
         self.proteins._gene_name_extractor()
@@ -172,67 +184,7 @@ class Process(Project):
                     print(err)
 
 
-    def _link_proteins_to_peptides(self):
-        """Links protiens to peptides.
-        """
-        link_to_peptides = self.peptide_groups.master_index.merge(self.proteins.master_index, on="Accession", how="left", left_index=True)
-        link_to_peptides = link_to_peptides.Accession
-        self.proteins.link_to_peptides = link_to_peptides
-
-
-    def _calculate_relative_occupancy(self, verbose=False):
-        """Calculate the relative occupancy if possible.
-        """
-        self.peptide_groups.relative_occupancy = Occupancy()
-        self.proteins.load_normalized = Normalized()
-        self.proteins.relative_occupancy = Occupancy()
-
-        if self.proteins.input_number > 0:
-            if verbose:
-                print("Input fractions found calculating relative occupancy...")
-            input_mask = self.proteins.study_factor_table[self.proteins.study_factor_with_input].str.contains("[Ii]nput")
-            number_input_fractions = len(self.proteins.study_factor_table.loc[input_mask]._Fn.unique())
-            # isolate the input fractions study factors.
-            inps = self.proteins.study_factor_table.loc[input_mask]
-            inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
-            normalized = dict()
-            for inp in inps:
-                if len(inp._Fn.unique()) == 1:
-                    inp_fn = inp._Fn.unique()[0]
-                    inp_tag = self.proteins.fraction_tag(inp_fn)
-
-                    if inp_tag in self.peptide_groups.load_normalized.__dict__:
-                        inp_pr_linked = self.proteins.Abundance[self.proteins.Abundance.columns[inp.index]]
-                        inp_pg_linked = self.peptide_groups.Abundance[self.peptide_groups.Abundance.columns[inp.index]]
-                        load_norm = inp_pr_linked.normalize_to(inp_pg_linked)
-                        normalized[inp_tag] = load_norm
-
-            self.proteins.load_normalized = Normalized(**normalized)
-            related_proteins_dict = dict()
-            for k,v in self.proteins.load_normalized.__dict__.items():
-                # related_proteins = v.iloc[self.proteins.link_to_peptides.index]
-                related_proteins = v.loc[self.proteins.link_to_peptides.index]
-                # related_proteins.index = self.peptide_groups.raw.index
-                related_proteins.index = self.peptide_groups.master_index.index
-                related_proteins_dict[k] = related_proteins
-            self.peptide_groups.load_normalized_related_proteins = Normalized(**related_proteins_dict)
-
-            occupancy = dict()
-            for k,v in self.peptide_groups._linked_fractions.items():
-                peptide_norm = self.peptide_groups.load_normalized.__dict__[k].log2_normalize()
-                proteins_related_norm = self.peptide_groups.load_normalized_related_proteins.__dict__[v].log2_normalize()
-                result = peptide_norm.subtract_by_matrix(proteins_related_norm, prepend_cols="Relative Occupancy: ")
-                occupancy[k] = result
-            self.peptide_groups.relative_occupancy = Occupancy(**occupancy)
-
-        # No input fractions found.
-        else:
-            if verbose:
-                print("Could not generate relative occupancy from data.")
-            pass
-
-
-    def _reset_master_index(self, verbose=True):
+    def _reset_proteins_master_index(self, verbose=True):
         """Work-around to return rows with missing values to protein.master_index.
         """
         # Create a copy of the old_master_index.
@@ -252,6 +204,139 @@ class Process(Project):
         self.proteins.master_index = result
 
 
+    def _reset_peptide_groups_master_index(self):
+        """Work-around that fill missing descriptions in the peptide groups master index.
+        """
+        ind = self.proteins.raw.copy()[["Accession", "EntrezGeneID", "Description"]]
+
+        ind.EntrezGeneID = ind.EntrezGeneID.astype(str)
+
+        mito = mitocarta.MitoCartaTwo.essential.copy()
+
+        mito.EntrezGeneID = mito.EntrezGeneID.astype(str)
+
+        ind = ind.merge(mito, on="EntrezGeneID", how="left")
+
+        trun = self.peptide_groups.master_index.copy().iloc[:, :5]
+
+        result = trun.merge(ind, on="Accession", how="left")
+
+        result[["MitoCarta2_List", "Matrix", "IMS"]] = result[["MitoCarta2_List", "Matrix", "IMS"]].fillna(False)
+
+        self.peptide_groups.master_index = result
+
+
+    def _peptide_groups_entrez_gene_clean_up(self):
+        """Workaround that cleans up the extra EntrezGeneID column introduced by the function above.
+        """
+        if "EntrezGeneID_y" in self.peptide_groups.master_index:
+            self.peptide_groups.master_index.drop("EntrezGeneID_y", axis=1, inplace=True)
+        if "EntrezGeneID_x" in self.peptide_groups.master_index:
+            self.peptide_groups.master_index.rename({"EntrezGeneID_x":"EntrezGeneID"}, axis=1, inplace=True)
+
+
+    def _link_proteins_to_peptides(self):
+        """Links protiens to peptides.
+
+        Creates a series that serves as a map between proteins and peptides
+        groups. The series has the same number of rows as the peptides groups
+        but the index corresponds to the proteins.
+        """
+
+        link_to_peptides = self.peptide_groups.master_index.merge(self.proteins.master_index,
+                                                                  on="Accession",
+                                                                  how="left",
+                                                                  left_index=True,
+                                                                  validate="m:1")
+        link_to_peptides = link_to_peptides.Accession
+        self.proteins.link_to_peptides = link_to_peptides
+
+
+    def _normalize_input_protiens_to_input_peptides(self, verbose=False):
+        """Normalize input proteins to input peptides.
+        """
+        self.proteins.load_normalized = Normalized()
+
+        if self.proteins.input_number > 0:
+            if verbose:
+                print("Input fractions found calculating relative occupancy...")
+            input_mask = self.proteins.study_factor_table[self.proteins.study_factor_with_input].str.contains("[Ii][Nn][Pp][Uu][Tt]")
+            number_input_fractions = len(self.proteins.study_factor_table.loc[input_mask]._Fn.unique())
+            # isolate the input fractions study factors.
+            inps = self.proteins.study_factor_table.loc[input_mask]
+            inps = [inps.loc[inps._Fn.str.contains(i)] for i in inps._Fn.unique()]
+            normalized = dict()
+            for inp in inps:
+                if len(inp._Fn.unique()) == 1:
+                    inp_fn = inp._Fn.unique()[0]
+                    inp_tag = self.proteins.fraction_tag(inp_fn)
+
+                    if inp_tag in self.peptide_groups.load_normalized.__dict__:
+                        inp_pr_linked = self.proteins.Abundance[self.proteins.Abundance.columns[inp.index]]
+                        inp_pg_linked = self.peptide_groups.Abundance[self.peptide_groups.Abundance.columns[inp.index]]
+                        load_norm = inp_pr_linked.normalize_to(inp_pg_linked)
+                        normalized[inp_tag] = load_norm
+            self.proteins.load_normalized = Normalized(**normalized)
+
+
+    def _link_related_load_normalized_protein_abundances_to_peptides(self, verbose=False):
+        """
+        """
+        # Check for the presence of input fractions.
+        if self.proteins.input_number > 0:
+            # Normalize input proteins to input peptides.
+            self._normalize_input_protiens_to_input_peptides()
+            related_proteins_dict = dict()
+            for k,v in self.proteins.load_normalized.__dict__.items():
+                # related_proteins = v.iloc[self.proteins.link_to_peptides.index]
+                # FIXME: the next line thows a future warning about passing a list-like to loc
+                related_proteins = v.loc[self.proteins.link_to_peptides.index]
+                # related_proteins.index = self.peptide_groups.raw.index
+                related_proteins.index = self.peptide_groups.master_index.index
+                related_proteins_dict[k] = related_proteins
+            self.peptide_groups.load_normalized_related_proteins = Normalized(**related_proteins_dict)
+
+
+    def _filter_out_false_hit_related_proteins(self):
+        """Removes the false hits in the related proteins.
+
+        For some unknown reason false hits are generated from merging the
+        peptides and proteins data.
+        """
+        accessions_in_proteins = self.peptide_groups.master_index.Accession.isin(self.proteins.master_index.Accession)
+
+        for k,v in self.peptide_groups.load_normalized_related_proteins.__dict__.items():
+            related_proteins_filtered = v.loc[accessions_in_proteins]
+            related_proteins_filtered = related_proteins_filtered.reindex(v.index)
+            self.peptide_groups.load_normalized_related_proteins.__dict__[k] = related_proteins_filtered
+
+
+    def _calculate_relative_occupancy(self, verbose=False):
+        """Calculate the relative occupancy if possible.
+        """
+        # Initalize the empty relative occupancy container.
+        self.peptide_groups.relative_occupancy = Occupancy()
+        # Check for the presence of input fractions.
+        if self.proteins.input_number > 0:
+            self._link_related_load_normalized_protein_abundances_to_peptides()
+            self._filter_out_false_hit_related_proteins()
+
+            # Calculate relative occupancy.
+            occupancy = dict()
+            for k,v in self.peptide_groups._linked_fractions.items():
+                peptide_norm = self.peptide_groups.load_normalized.__dict__[k].log2_normalize()
+                proteins_related_norm = self.peptide_groups.load_normalized_related_proteins.__dict__[v].log2_normalize()
+                result = peptide_norm.subtract_by_matrix(proteins_related_norm, prepend_cols="Relative Occupancy: ")
+                occupancy[k] = result
+            self.peptide_groups.relative_occupancy = Occupancy(**occupancy)
+
+        # No input fractions found.
+        else:
+            if verbose:
+                print("Could not generate relative occupancy from data.")
+            pass
+
+
     def _add_mitocarta_metadata(self, verbose=False):
         for mod in self.peptide_groups._in_vivo_modifications:
             # Filter for given in vivo modification.
@@ -265,6 +350,36 @@ class Process(Project):
             except Exception as err:
                 if verbose:
                     print("Could not add Mitocarta info to metadata.", err)
+
+
+    def _peptides_metadata_leak_fix(self):
+        proteins_raw_master_index = self.proteins.raw[["Accession", "EntrezGeneID", "GeneName", "Description"]]
+        proteins_entrez_gene_ids = proteins_raw_master_index.EntrezGeneID.first_member().dropna().astype(np.int64)
+        proteins_entrez_gene_ids = pd.DataFrame(proteins_entrez_gene_ids, columns=["EntrezGeneID"])
+        proteins_with_mitocarta = proteins_entrez_gene_ids.merge(mitocarta.MitoCartaTwo.essential, on="EntrezGeneID", how="left")
+        proteins_with_mitocarta.index = proteins_entrez_gene_ids.index
+        proteins_with_mitocarta = proteins_with_mitocarta.reindex(index=proteins_raw_master_index.index)
+
+        # Fill all the NaNs with False
+        proteins_with_mitocarta.MitoCarta2_List.fillna(False, inplace=True)
+        proteins_with_mitocarta.Matrix.fillna(False, inplace=True)
+        proteins_with_mitocarta.IMS.fillna(False, inplace=True)
+
+        del proteins_with_mitocarta["EntrezGeneID"]
+
+        proteins_with_mitocarta = pd.concat([proteins_raw_master_index, proteins_with_mitocarta], axis=1)
+        peptides_accession = self.peptide_groups.raw["Master Protein Accessions"].first_member()
+        peptides_accession = pd.DataFrame(peptides_accession)
+        peptides_accession.columns = ["Accession"]
+        peptides_seq_and_mods = self.peptide_groups.raw[['Sequence', 'Modifications', 'Modifications in Proteins', 'Positions in Proteins']]
+        peptide_pre_master_index = pd.concat([peptides_accession, peptides_seq_and_mods], axis=1)
+        peptide_master_index_complete = peptide_pre_master_index.merge(proteins_with_mitocarta, on="Accession", how="left")
+
+        peptide_master_index_complete.MitoCarta2_List.fillna(False, inplace=True)
+        peptide_master_index_complete.Matrix.fillna(False, inplace=True)
+        peptide_master_index_complete.IMS.fillna(False, inplace=True)
+
+        self.peptide_groups.master_index = peptide_master_index_complete
 
 
     def comparision(self, on=None, where=None, fraction_key=None, mask=None, right=None,

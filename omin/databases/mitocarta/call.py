@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Call the Mitocarta 2.0 database."""
+"""Call the Mitocarta databases."""
 
 # LICENSE
 # -------
@@ -34,3 +34,26 @@ class MitoCartaTwo(object):
     def look_up(cls, syn_list):
         """Look-up a given accession number in MitoCarta 2.0."""
         return cls.data[cls.data.Synonyms.str.contains('|'.join(syn_list))]
+
+
+# class MitoCartaThree(object):
+#     """MitoCarta2 database calls."""
+#
+#     # Load the string for the mitocarta database.
+#     db_name = 'complete_mitocarta_3.p'
+#     # Get this files dir as a string.
+#     this_dir, _ = os.path.split(__file__)
+#     # Create the path string.
+#     carta_file_path = os.path.join(this_dir, db_name)
+#     # load the MitoCarta 3.0 database
+#     data = pd.read_pickle(carta_file_path)
+#     # Change the incorrectly labeled column from MouseGeneID to EntrezGeneID
+#     data.rename(columns={"MouseGeneID": "EntrezGeneID"}, inplace=True)
+#     # Collect the essential columns.
+#     essential = data[["MouseGeneID", "MitoCarta3.0_SubMitoLocalization"]]
+#
+#
+#     @classmethod
+#     def look_up(cls, syn_list):
+#         """Look-up a given accession number in MitoCarta 3.0."""
+#         return cls.data[cls.data.Synonyms.str.contains('|'.join(syn_list))]

@@ -175,7 +175,7 @@ def alt_volcano(dataframe, domain=(-5,5), range=(0,8), title=''):
 
     size = alt.Size('ipadj', legend=alt.Legend(title='1 - FDR'))
 
-    x = alt.X('FC', scale=alt.Scale(domain=domain), title="Log2 FC")
+    x = alt.X('Log2FC', scale=alt.Scale(domain=domain), title="Log2 FC")
 
     y = alt.X('nlog10_pvalue', scale=alt.Scale(domain=range), title="-Log10(p-value)")
 

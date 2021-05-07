@@ -8,8 +8,8 @@ from .network_tools import IntermineTools, FastaTools, UniProtTools
 from .string_tools import StringTools
 from .io_tools import IOTools, UserProfile
 from .pd_tools import PDStudyTools # FIXME: Find a way to integrate into containers.
-
-# from r_tools import RTools
+from .sequence_annotation import SequenceAnnotationTools
+# from .r_tools import RTools
 
 #DESTROY the FOLLOWING
 from .selection_tools import SelectionTools

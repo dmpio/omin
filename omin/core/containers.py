@@ -805,6 +805,10 @@ class Proteins(ProteomeDiscovererRaw):
         # self.gene_name_extractor()
         # Attach MitoCarta2 data to the master_index.
         self.add_database(MitoCartaTwo.essential)
+
+        # Attach MitoCarta2 data to the master_index.
+        # self.add_database(MitoCartaThree.essential)
+
         # Filter the abundance by master_high_confidence
         self.filter_abundance()
 

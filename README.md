@@ -67,8 +67,18 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 
 1. Initialize the software ![usage_0](/images/usage_0.PNG)
 
+1. Drag and drop the peptide isoforms file and proteins file from the Proteome Discoverer analysis into a folder with the name Raw_Data at the same level as the notebook ![usage_1](/images/usage_1.PNG)
+
+1. Create the process object `proc` using the command in cell 3. Can also see meta-data on the from the peptides and proteins by using the commands in cells 4 and 5 ![usage_2](/images/usage_2.PNG)
+
+1. Check that the study factors were isolated correctly by using the command in cell 6 ![usage_3](/images/usage_3.PNG)
+
+1. Check to see if the peptide groups were normalized by using the commands in cell 7 ![usage_4](/images/usage_4.PNG)
+
+1. Then create a mask for the enriched modification you would like to examine using the command in cell 8 ![usage_5](/images/usage_5.PNG)
+
 ---
-## Omin overview
+## Omin process object overview
 
 <p align="center"><img src="/images/omin_state_diagram.png" ></p>
 

@@ -12,9 +12,9 @@ setup(
     name='omin',
     version=__version__,
     description='Tools for omics analysis',
-    url='https://github.com/draperjames/skunkworks',
+    url='https://github.com/draperjames/omin',
     author='James Draper',
-    author_email='james.draper@duke.edu',
+    author_email='jadraper88@gmail.com',
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -29,6 +29,7 @@ setup(
 	package_data = {'omin': ['__version__', 'databases/mitocarta/*.p']},
     install_requires=['pandas',
                       'xlrd',# Needed for pandas export of DataFrames to xlsx
+                      'altair',
                       'numpy',
                       'scipy',
                       'dominate',

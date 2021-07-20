@@ -65,35 +65,7 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 
 ## Usage:
 
-### Jupyter Notebook/Lab + cookiecutter
-
-1. [`cookiecutter`]() requires `Git`. You can install `Git` if it is not installed already directions can be found here: [installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-
-1. Install [cookiecutter](https://github.com/audreyr/cookiecutter)   
-    1. Installing via Anaconda prompt(Windows7/8/10).    
-        1. Click the start menu type `anaconda prompt` and press <kbd>Enter</kbd>
-        2. Once the prompt has started run the following command:    
-            `pip install cookiecutter -U`
-
-1. Using cookiecutter:
-    1. Open a command prompt.
-    2. Use the [`cd`](#FIXME: Add link) command to change your current directory to where you would like to create your project.
-    3. When at your target directory copy and paste the following command then press <kbd>Enter</kbd>:    
-        `cookiecutter https://github.com/dmpio/cookiecutter-omin-jupyter-notebook`
-    4. `cookiecutter` will prompt you for your name and email then it will create a custom jupyter notebook `.ipynb` file populating it with the information collected from the prompts.
-    5. #FIXME: Add a fancy GIF showing behavior.
-
-
-#### Jupyter Notebook/Lab extensions
-
-1. Install jupyter
-
-
----
-
-## Usage: Command line
-
-- Content TK.
+1. Initialize the software ![usage_0](/images/usage_0.PNG)
 
 ---
 ## Omin overview

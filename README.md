@@ -75,7 +75,15 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 
 1. Check to see if the peptide groups were normalized by using the commands in cell 7 ![usage_4](/images/usage_4.PNG)
 
-1. Then create a mask for the enriched modification you would like to examine using the command in cell 8 ![usage_5](/images/usage_5.PNG)
+1. Then create a mask for the enriched modification you would like to examine using the command in cell 8. Also we can see the result object initialized in cell 10 ![usage_5](/images/usage_5.PNG)
+
+1. In cell 11 we can see the creation of the interactive of the volcano plot for the peptide relative abundance ![usage_6](/images/usage_6.PNG)
+
+1. In cell 12 the we are comparing the NR fraction to the fraction without NR in the relative occupancy of the acetyl-peptides and adding that to the result object. That result object is exported to a csv in cell 14. In cell 13 we see the creation of the volcano plot that was made ![usage_7](/images/usage_7.PNG)
+
+1. Comparisons in protein expression is made in a simillar way in cell 24 ![usage_8](/images/usage_8.PNG)
+
+
 
 ---
 ## Omin process object overview

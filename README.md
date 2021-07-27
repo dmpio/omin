@@ -86,7 +86,6 @@ If you are running windows we suggest that you install Miniconda3 in `%PROGRAMFI
 1. The interactive volcano plot for the protein expression is made in cell 25 and the protein expression data is exported using the command in cell 26 ![usage_9](/images/usage_9.PNG)
 
 
-
 ---
 ## Omin process object overview
 

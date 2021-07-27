@@ -14,7 +14,8 @@ import re
 import os
 import guipyter as gptr
 # FIXME: Should this be a try and except for pandas
-from pandomics import pandas
+# from pandomics import pandas
+from .pandomics import pandas
 
 # ----------------
 # INTERNAL IMPORTS

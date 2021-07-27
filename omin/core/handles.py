@@ -15,10 +15,12 @@ DataFrames or provided by the user.
 import re
 import os
 import numpy as np
-from pandomics import pandas as pd
+# from pandomics import pandas as pd
+from .pandomics import pandas as pd
+
 # Get the version numbers of the hard dependencies.
-from guipyter import __version__ as guipyter_version
-from pandomics import __version__ as pandomics_version
+# from guipyter import __version__ as guipyter_version
+# from pandomics import __version__ as pandomics_version
 
 # ----------------
 # INTERNAL IMPORTS
@@ -72,8 +74,8 @@ class Project(object):
         # Set all of the version info for object verification.
         self._version_info = dict()
         self._version_info["omin"] = omin_version
-        self._version_info["guipyter"] = guipyter_version
-        self._version_info["pandomics"] = pandomics_version
+        # self._version_info["guipyter"] = guipyter_version
+        # self._version_info["pandomics"] = pandomics_version
 
         # FIXME: For some reason even if a list is provided guipyter is stil triggered.
         if file_list is not None:

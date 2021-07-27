@@ -19,9 +19,12 @@ import itertools
 import numpy as np
 
 # Import pandas with the pandomics plug-in.
-from pandomics import pandas as pd
+# from pandomics import pandas as pd
+from .pandomics import pandas as pd
+
 # Import the guipyter DataLoader class.
-from guipyter import DataLoader
+# from guipyter import DataLoader
+from .guipyter import DataLoader
 
 # from pandomics import pandas
 

@@ -37,9 +37,7 @@ setup(
                       'intermine',
                       'lxml',
                       'beautifulsoup4',
-                      'matplotlib_venn',
-                      'guipyter',
-                      'pandomics'],
+                      'matplotlib_venn'],
     entry_points = {
         'console_scripts': [
             'omin=omin.cli.cli:main',

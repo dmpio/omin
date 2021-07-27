@@ -10,3 +10,5 @@ from . import handles
 from . import containers
 from . import base
 from . import operations
+from . import pandomics
+from . import guipyter

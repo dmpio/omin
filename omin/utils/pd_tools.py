@@ -3,7 +3,8 @@
 DEPRECATED: This will be eventually integrated into th econtainer class.
 """
 
-import guipyter
+# import guipyter
+from ..core import guipyter
 from xml.etree import cElementTree as et
 
 

@@ -38,7 +38,7 @@ from .base import repr_dec, Handle
 # -------------
 from ..utils import IOTools
 from ..utils import StringTools
-from ..utils import SelectionTools
+# from ..utils import SelectionTools
 from ..utils import IntermineTools
 
 # --------

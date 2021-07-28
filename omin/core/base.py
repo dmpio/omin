@@ -12,7 +12,10 @@ Provides, base class used in the Container classes.
 # ----------------
 import re
 import os
-import guipyter as gptr
+# import guipyter as gptr
+from .guipyter import filedialog
+
+
 # FIXME: Should this be a try and except for pandas
 # from pandomics import pandas
 from .pandomics import pandas
@@ -75,7 +78,8 @@ def export(obj, desired_type=None, parent_dir=None):
     desired_type = desired_type or pandas.core.frame.DataFrame
 
     if parent_dir == None:
-        parent_dir = gptr.filedialog.askdirectory()
+        # parent_dir = gptr.filedialog.askdirectory()
+        parent_dir = filedialog.askdirectory()
         parent_dir = os.path.abspath(parent_dir)
 
     for i in obj._introspect().items():

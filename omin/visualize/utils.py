@@ -7,7 +7,8 @@
 
 import os
 import numpy as np
-from pandomics import pandas as pd
+# from pandomics import pandas as pd
+from ..core.pandomics import pandas as pd
 
 from ..utils import IOTools
 

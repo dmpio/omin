@@ -7,7 +7,9 @@
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 import os
-from pandomics import pandas as pd
+# from pandomics import pandas as pd
+
+from ...core.pandomics import pandas as pd
 
 
 class MitoCartaTwo(object):

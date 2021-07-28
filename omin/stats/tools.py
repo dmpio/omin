@@ -8,7 +8,9 @@ Statistical tools fo omin.
 # Copyright 2018 James Draper, Paul Grimsrud, Deborah Muoio, Colette Blach, Blair Chesnut, and Elizabeth Hauser.
 
 import numpy as np
-from pandomics import pandas as pd
+# from pandomics import pandas as pd
+from ..core.pandomics import pandas as pd
+
 from scipy.stats import ttest_ind
 from scipy.stats import f_oneway
 import functools

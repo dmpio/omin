@@ -23,7 +23,9 @@
 
 import xlrd
 # import pandas as pd
-from pandomics import pandas as pd
+# from pandomics import pandas as pd
+# from .core import pandomics as pd
+from ..core.pandomics import pandas as pd
 
 class CLITools(object):
     """Command Line Interface Tools.

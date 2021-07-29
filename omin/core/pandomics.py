@@ -168,7 +168,7 @@ setattr(pandas.DataFrame, "_comparator", _comparator)
 
 
 def fold_change(self, right=None, numerator=None, denominator=None, filter_out_numerator=False,
-                filter_out_denominator=False, column_name="FC", axis=1):
+                filter_out_denominator=False, column_name="Log2FC", axis=1):
 
     """Return the fold change of two groups in this DataFrame or this DataFrame and another(right).
 
@@ -339,7 +339,7 @@ def fold_change_with_ttest(self, numerator=None, denominator=None, right=None,
         pass
     # If missing_values is False rows will be droped if they any NaNs present.
     else:
-        result.dropna(subset=["FC", "pvalue"], inplace=True)
+        result.dropna(subset=["Log2FC", "pvalue"], inplace=True)
 
     return result
 

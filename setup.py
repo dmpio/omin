@@ -27,7 +27,7 @@ setup(
     keywords='pandas',
     packages=find_packages(),
 	package_data = {'omin': ['__version__', 'databases/mitocarta/*.p']},
-    install_requires=['pandas',
+    install_requires=['pandas==0.25.3',
                       'xlrd',# Needed for pandas export of DataFrames to xlsx
                       'altair',
                       'numpy',

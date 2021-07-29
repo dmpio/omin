@@ -35,6 +35,7 @@ setup(
                       'dominate',
                       'statsmodels',
                       'intermine',
+                      'jupyterlab',
                       'lxml',
                       'beautifulsoup4',
                       'matplotlib_venn'],
